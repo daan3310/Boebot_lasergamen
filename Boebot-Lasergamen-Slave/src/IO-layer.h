@@ -3,6 +3,6 @@
 
 #include "main.h"
 
-void printhelp(void);
+
 
 #endif 
