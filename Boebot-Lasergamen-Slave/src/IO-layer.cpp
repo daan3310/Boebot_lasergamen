@@ -11,7 +11,7 @@ uint initMotors(int timer)
     }
     ESP32PWM::allocateTimer(timer);
     myMotorTurret.setPeriodHertz(50);
-    myMotorTurret.attach(motorTurretPWM, 1000, 2000);
+    myMotorTurret.attach(motorTurretPWM, 500, 2500);
     
     digitalWrite(motorRechtsPWM, LOW);  // set speed to 0
     digitalWrite(motorRechtsDIR, HIGH); // set direction to forward
