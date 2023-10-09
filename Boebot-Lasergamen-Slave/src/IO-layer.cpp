@@ -8,7 +8,7 @@ uint initMotors(int timer)
     
     ESP32PWM::allocateTimer(timer);
     myMotorTurret.setPeriodHertz(50);
-    myMotorTurret.attach(motorTurretPWM, 1000, 2000);
+    myMotorTurret.attach(motorTurretPWM, 500, 2500);
     
     digitalWrite(motorRechtsPWM, LOW);  // set speed to 0
     digitalWrite(motorRechtsDIR, HIGH); // set direction to forward
@@ -55,11 +55,29 @@ uint updateMotor(motor currentMotor, int motorPower)
             digitalWrite(motorLinksDIR, direction); // might need to add ! to invert the direction
             break;
         case motorTurret:
-            myMotorTurret.write(1500 + (motorPower / 2));
+            myMotorTurret.write(1500 + (motorPower));
             break;
         default:
             //returnValue = updateMotor_invalid_value_for_currentMotor;
             break;
     }
     return returnValue;
+}
+
+struct PS4 IO_Layer_Besturing()
+{
+    struct PS4 PS4Inputs;
+  if (PS4.isConnected()) 
+  {
+    PS4Inputs.Cirkelknop = PS4.Circle();
+    PS4Inputs.R2 = PS4.R2Value();
+    PS4Inputs.L2 = PS4.L2Value();
+    PS4Inputs.Linkerjoystick_x = PS4.LStickX();
+    PS4Inputs.Linkerjoystick_y = PS4.LStickY();
+    PS4Inputs.Rechterjoystick_x = PS4.RStickX();
+    PS4Inputs.Rechterjoystick_y = PS4.RStickY();
+    return PS4Inputs;
+   }       
+
+    return PS4Inputs; 
 }

@@ -3,7 +3,10 @@
 
 #include "main.h"
 
-int Logiclayer_Besturing();
+#define STICKDRIFT 20
+
+struct PS4 Logiclayer_Besturing_Data(struct PS4 PS4Inputs);
+
 
 
 #endif

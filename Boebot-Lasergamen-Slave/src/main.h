@@ -4,6 +4,7 @@
 // Arduino Libraries
 #include <Arduino.h>
 #include "PS4Controller.h"
+#include <math.h>
 
 
 
@@ -13,5 +14,7 @@
 #include "UI-layer.h"
 #include <Wireless_Communication/Wireless_Communication.h>
 
+void Task1code( void * parameter);
+void Task2code( void * parameter);
 
 #endif
