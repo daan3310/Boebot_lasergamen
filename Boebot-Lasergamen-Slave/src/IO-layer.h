@@ -15,6 +15,7 @@ enum motor { motorRechts, motorLinks, motorTurret };
 // values outside this range are clamped to stay within valid values
 uint initMotors(int timer);
 uint updateMotor(motor currentMotor, int motorPower);
+uint updateServo(uint angle);
 
 #define buzzerPin   7
 void initBuzzer();

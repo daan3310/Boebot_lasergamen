@@ -67,6 +67,11 @@ uint updateMotor(motor currentMotor, int motorPower)
     return returnValue;
 }
 
+uint updateServo(uint angle)
+{
+    myMotorTurret.write(angle);
+}
+
 void initBuzzer()
 {
     pinMode(buzzerPin, OUTPUT);
