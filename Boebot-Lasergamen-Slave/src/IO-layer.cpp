@@ -8,7 +8,7 @@ uint initMotors(int timer)
     
     ESP32PWM::allocateTimer(timer);
     myMotorTurret.setPeriodHertz(50);
-    myMotorTurret.attach(motorTurretPWM, 1000, 2000);
+    myMotorTurret.attach(motorTurretPWM, 500, 2500);
     
     digitalWrite(motorRechtsPWM, LOW);  // set speed to 0
     digitalWrite(motorRechtsDIR, HIGH); // set direction to forward
@@ -55,7 +55,7 @@ uint updateMotor(motor currentMotor, int motorPower)
             digitalWrite(motorLinksDIR, direction); // might need to add ! to invert the direction
             break;
         case motorTurret:
-            myMotorTurret.write(1500 + (motorPower / 2));
+            myMotorTurret.write(1500 + (motorPower));
             break;
         default:
             //returnValue = updateMotor_invalid_value_for_currentMotor;

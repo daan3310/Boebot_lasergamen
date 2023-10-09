@@ -12,8 +12,15 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
     PS4InputsMain = IO_Layer_Besturing();
-    Logiclayer_Besturing_Data(PS4InputsMain);
+    PS4InputsMain = Logiclayer_Besturing_Data(PS4InputsMain);
     
+    updateMotor(motorLinks, PS4InputsMain.MotordataLinks);
+    updateMotor(motorRechts, PS4InputsMain.MotordataRechts);
+    
+    if (PS4InputsMain.Cirkelknop == true) // Zet een timer neer
+    {
+      Serial.print("Schiet");
+    }
     
     delay(10);
   }
