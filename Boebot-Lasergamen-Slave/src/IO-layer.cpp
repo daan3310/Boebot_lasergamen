@@ -5,7 +5,10 @@ Servo myMotorTurret;
 uint initMotors(int timer)
 {
     uint returnValue = 0;
-    
+    if(0 > timer || 4 < timer)
+    {
+        //returnValue = initMotors_timer_invalid;
+    }
     ESP32PWM::allocateTimer(timer);
     myMotorTurret.setPeriodHertz(50);
     myMotorTurret.attach(motorTurretPWM, 1000, 2000);
@@ -55,7 +58,7 @@ uint updateMotor(motor currentMotor, int motorPower)
             digitalWrite(motorLinksDIR, direction); // might need to add ! to invert the direction
             break;
         case motorTurret:
-            myMotorTurret.write(1500 + (motorPower / 2));
+            myMotorTurret.writeMicroseconds(1500 + (motorPower / 2));
             break;
         default:
             //returnValue = updateMotor_invalid_value_for_currentMotor;
