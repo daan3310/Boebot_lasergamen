@@ -16,6 +16,10 @@ enum motor { motorRechts, motorLinks, motorTurret };
 uint initMotors(int timer);
 uint updateMotor(motor currentMotor, int motorPower);
 
+#define buzzerPin   7
+void initBuzzer();
+void setBuzzer(bool value);
+
 #endif 
 
 

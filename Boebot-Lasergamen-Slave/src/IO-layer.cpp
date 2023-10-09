@@ -66,3 +66,16 @@ uint updateMotor(motor currentMotor, int motorPower)
     }
     return returnValue;
 }
+
+void initBuzzer()
+{
+    pinMode(buzzerPin, OUTPUT);
+}
+
+void setBuzzer(bool value)
+{
+    digitalWrite(buzzerPin, value);
+}
+
+
+
