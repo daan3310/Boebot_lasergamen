@@ -18,7 +18,8 @@ uint updateMotor(motor currentMotor, int motorPower);
 
 
 
-struct PS4 {
+struct PS4 
+{
     //R2, L2, Rechterjoystick, Linkerjoystick, Rondje schieten,
     uint8_t R2 = 0;
     uint8_t L2 = 0;
