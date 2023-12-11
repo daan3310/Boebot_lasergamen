@@ -8,7 +8,8 @@ TaskHandle_t Task2;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200); 
-  PS4.begin("5c:96:56:b2:fb:c6");
+  //PS4.begin("5c:96:56:b2:fb:c6");
+  PS4.begin("80:ea:23:1b:fc:e7");
   initMotors(0);
 
   xTaskCreatePinnedToCore
