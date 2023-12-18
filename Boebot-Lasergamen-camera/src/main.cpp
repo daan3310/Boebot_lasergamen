@@ -33,6 +33,22 @@
  */
 
 // ================================ CODE ======================================
+// Wifi
+#include <WiFi.h>
+
+const char* ssid = "Leaphy Lasergame!";
+const char* password = "Leaphydebug1!";
+
+String serverName = "192.168.0.101";   // REPLACE WITH YOUR Raspberry Pi IP ADDRESS
+//String serverName = "example.com";   // OR REPLACE WITH YOUR DOMAIN NAME
+String serverPath = "/upload";
+
+const int serverPort = 5000;
+
+WiFiClient client;
+
+
+// end wifi
 
 #include <esp_log.h>
 #include <esp_system.h>
@@ -132,6 +148,10 @@ static esp_err_t init_camera(void)
 #endif
 
 void setup() {
+
+    WiFi_init(1);       // 1 = debug mode
+
+
   #if ESP_CAMERA_SUPPORTED
     if(ESP_OK != init_camera()) {
         return;
@@ -163,3 +183,119 @@ int myFunction(int x, int y) {
   return x + y;
 }
 */
+
+int WiFi_init(bool debug)
+{
+    int error = 0;
+
+    WiFi.mode(WIFI_STA);
+    if (debug == true)
+    {
+        Serial.println();
+        Serial.print("Connecting to ");
+        Serial.println(ssid);
+        
+  
+    }
+    WiFi.begin(ssid, password);  
+    while (WiFi.status() != WL_CONNECTED) 
+    {
+        if(debug == true) Serial.print(".");
+        delay(500);
+    }
+
+    if (debug == true)
+    { 
+        Serial.println();
+        Serial.print("ESP32-CAM IP Address: ");
+        Serial.println(WiFi.localIP());
+    }
+
+
+    return error;  
+}
+
+int SendFoto(bool debug)
+{
+    int error = 0;
+    String getAll;
+    String getBody;
+
+    camera_fb_t * fb = NULL;
+
+    // fb = esp_camera_fb_get(); //Take a picture! Smile :)
+    // if(!fb) 
+    // {
+    //     Serial.println("Camera capture failed");
+    //     delay(1000);
+    //     error = 1;
+    //     return error;
+    // }
+
+    if (debug == true)
+    {
+        Serial.println("Connecting to server: " + serverName);
+    }
+
+    if (client.connect(serverName.c_str(), serverPort)) {
+    Serial.println("Connection successful!");    
+    String head = "\r\nContent-Disposition: form-data; name=\"imageFile\"; filename=\"esp32-cam.jpg\"\r\nContent-Type: image/jpeg\r\n\r\n";
+    //String tail = "\r\n--RandomNerdTutorials--\r\n";
+
+    uint32_t imageLen = fb->len;
+    uint32_t extraLen = head.length() + tail.length();
+    uint32_t totalLen = imageLen + extraLen;
+  
+    client.println("POST " + serverPath + " HTTP/1.1");
+    client.println("Host: " + serverName);
+    client.println("Content-Length: " + String(totalLen));
+    client.println("Content-Type: multipart/form-data; boundary=RandomNerdTutorials");
+    client.println();
+    client.print(head);
+
+    uint8_t *fbBuf = fb->buf;
+    size_t fbLen = fb->len;
+    for (size_t n=0; n<fbLen; n=n+1024) {
+      if (n+1024 < fbLen) {
+        client.write(fbBuf, 1024);
+        fbBuf += 1024;
+      }
+      else if (fbLen%1024>0) {
+        size_t remainder = fbLen%1024;
+        client.write(fbBuf, remainder);
+      }
+    }   
+    client.print(tail);
+
+    esp_camera_fb_return(fb);
+    
+    int timoutTimer = 10000;
+    long startTimer = millis();
+    boolean state = false;
+    
+    while ((startTimer + timoutTimer) > millis()) {
+      Serial.print(".");
+      delay(100);      
+      while (client.available()) {
+        char c = client.read();
+        if (c == '\n') {
+          if (getAll.length()==0) { state=true; }
+          getAll = "";
+        }
+        else if (c != '\r') { getAll += String(c); }
+        if (state==true) { getBody += String(c); }
+        startTimer = millis();
+      }
+      if (getBody.length()>0) { break; }
+    }
+    Serial.println();
+    client.stop();
+    Serial.println(getBody);
+  }
+  else {
+    getBody = "Connection to " + serverName +  " failed.";
+    Serial.println(getBody);
+  }
+
+    return error;
+}
