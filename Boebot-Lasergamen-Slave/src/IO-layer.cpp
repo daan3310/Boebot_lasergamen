@@ -1,6 +1,15 @@
 #include "IO-layer.h"
 
 Servo myMotorTurret;
+SPIClass * vspi = NULL;
+
+byte Flag_SPI;
+
+void IRAM_ATTR Timer0_ISR()
+{
+  Flag_SPI = 1;
+}
+
 
 uint initMotors(int timer)
 {
@@ -81,3 +90,66 @@ struct PS4 IO_Layer_Besturing()
 
     return PS4Inputs; 
 }
+byte initSPI()
+{
+  vspi = new SPIClass(VSPI);  
+  
+  vspi->begin(HSPI_SCLK, HSPI_MISO, HSPI_MOSI, HSPI_SS);
+
+  pinMode(HSPI_SS, OUTPUT); //HSPI SS
+
+  return 0;
+}
+
+byte* hspi_send_command(byte cmd, byte data[3]) 
+{  
+  byte dataOut[4]; // junk data to illustrate usage
+  
+  static byte dataIn[4];
+  
+  dataOut[0] = cmd;
+  for (int i = 0; i<3;i++)
+  {
+    dataOut[i+1] = data[i];
+  }
+
+  //use it as you would the regular arduino SPI API
+  vspi->beginTransaction(SPISettings(spiClk, MSBFIRST, SPI_MODE3));
+
+  digitalWrite(HSPI_SS, LOW); //pull SS low to prep other end for transfer
+  delay(10);
+
+  
+  vspi->transferBytes(dataIn, dataOut, 4);  
+
+  delay(10);
+  digitalWrite(HSPI_SS, HIGH); //pull ss high to signify end of data transfer
+
+  vspi->endTransaction();
+
+  return dataIn;
+
+}
+
+
+
+byte* InitTimerInterrupt(uint Prescaler, uint TimerTicks)
+{
+    byte* pFlag_SPI = &Flag_SPI;
+
+    hw_timer_t *Timer0_Cfg = NULL;
+
+    Timer0_Cfg = timerBegin(0, Prescaler, true); 
+    timerAttachInterrupt(Timer0_Cfg, &Timer0_ISR, true);
+    timerAlarmWrite(Timer0_Cfg, TimerTicks, true); 
+    timerAlarmEnable(Timer0_Cfg);
+    
+    return pFlag_SPI;
+}
+
+void InitLedstrip()
+{
+
+
+}
+
