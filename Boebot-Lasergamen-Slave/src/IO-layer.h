@@ -11,10 +11,28 @@ enum motor { motorRechts, motorLinks, motorTurret };
 #define motorLinksPWM 23
 #define motorLinksDIR 18
 #define motorTurretPWM 13
+
+
+
+
+#define HSPI_MISO   26
+#define HSPI_MOSI   27
+#define HSPI_SCLK   25
+#define HSPI_SS     14
+static const int spiClk = 1000000; // 1 MHz clock
+
+
+
 // this function accepts values from -1024 to 1024 and sets the motor to this value
 // values outside this range are clamped to stay within valid values
 uint initMotors(int timer);
 uint updateMotor(motor currentMotor, int motorPower);
+
+byte* InitTimerInterrupt(uint Prescaler, uint TimerTicks);
+byte initSPI();
+byte* hspi_send_command(byte cmd, byte data[3]);
+
+
 
 
 
