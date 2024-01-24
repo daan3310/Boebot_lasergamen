@@ -90,22 +90,32 @@ esp_err_t non_blocking_queue_transaction_slave_spi(void* TxBuf, void*RxBuf, uint
 #endif
 
 #ifdef USE_WIFI
+const char* ssid = "Leaphy Lasergame!";
+const char* password = "Leaphydebug1!";
+String serverName = "192.168.0.102";   
+String serverPath = "/upload";  // Flask upload route
+const int serverPort = 5000;
+WiFiClient client;
+
 IPAddress init_wifi()
 {
-    WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); 
+    WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // disable brownout
 
     WiFi.mode(WIFI_STA);
-    // Serial.println();
-    // Serial.print("Connecting to ");
-    // Serial.println(ssid);
+    Serial.println();
+    Serial.print("Connecting to ");
+    Serial.println(ssid);
     WiFi.begin(ssid, password);  
     while (WiFi.status() != WL_CONNECTED) {
-    // Serial.print(".");
+    Serial.print(".");
     delay(500);
     }
-    // Serial.println();
-    // Serial.print("ESP32-CAM IP Address: ");
-    // Serial.println(WiFi.localIP());
+    Serial.println();
+    Serial.print("ESP32-CAM IP Address: ");
+    Serial.println(WiFi.localIP());
+
+    // WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 1); // enable brownout
+
     return WiFi.localIP();
 }
 
@@ -243,8 +253,8 @@ esp_err_t init_camera()
     config.pin_pclk = PCLK_GPIO_NUM;
     config.pin_vsync = VSYNC_GPIO_NUM;
     config.pin_href = HREF_GPIO_NUM;
-    config.pin_sccb_sda = SIOD_GPIO_NUM;
-    config.pin_sccb_scl = SIOC_GPIO_NUM;
+    config.pin_sscb_sda = SIOD_GPIO_NUM;
+    config.pin_sscb_scl = SIOC_GPIO_NUM;
     config.pin_pwdn = PWDN_GPIO_NUM;
     config.pin_reset = RESET_GPIO_NUM;
     config.xclk_freq_hz = 20000000;

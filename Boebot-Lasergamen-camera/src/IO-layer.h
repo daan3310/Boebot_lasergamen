@@ -5,6 +5,9 @@
 
 #define USE_SPI 1
 #ifdef USE_SPI
+
+#include "driver/spi_slave.h"
+
 #define MAP_SPI_PINS 1
 #ifdef MAP_SPI_PINS
 #define GPIO_MOSI           13
@@ -29,24 +32,24 @@ esp_err_t blocking_transmit_slave_spi(void* TxBuf, void*RxBuf, uint Length_in_bi
 #endif
 
 
-// #define USE_WIFI 1
+#define USE_WIFI 1
 #ifdef USE_WIFI
 
 #include <WiFi.h>
-
+#include "soc/soc.h"
 #include "soc/rtc_cntl_reg.h"
 
-const char* ssid = "Leaphy Lasergame!";
-const char* password = "Leaphydebug1!";
+// extern const char* ssid;
+// extern const char* password;
 
-String serverName = "192.168.0.102";   
-//String serverName = "example.com";   
+// extern String serverName;   
+// // extern String serverName;   
 
-String serverPath = "/upload";  // Flask upload route
+// extern String serverPath;  // Flask upload route
 
-const int serverPort = 5000;
+// extern const int serverPort;
 
-WiFiClient client;
+// extern WiFiClient client;
 
 IPAddress init_wifi();
 
@@ -55,7 +58,7 @@ IPAddress init_wifi();
 
 
 
-// #define USE_CAMERA 1
+#define USE_CAMERA 1
 #ifdef USE_CAMERA
 
 #include "esp_camera.h"
