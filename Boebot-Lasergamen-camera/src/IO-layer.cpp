@@ -35,14 +35,15 @@ esp_err_t init_slave_spi()
         .mode=3,
         // .post_setup_cb,
         .post_trans_cb = my_post_trans_cb,
+        
     };
+
+
 
     // Initialize SPI slave interface
     esp_err_t error = spi_slave_initialize(HSPI_HOST, &buscfg, &slvcfg, SPI_DMA_CH_AUTO);
-
     // clear spi_slave_transaction_t
     memset(&t, 0, sizeof(t));
-
     return error;
 }
 
@@ -54,7 +55,7 @@ esp_err_t blocking_transmit_slave_spi(void* TxBuf, void*RxBuf, uint Length_in_bi
   // r = 0;
   t.rx_buffer = RxBuf;
   
-  return spi_slave_transmit(HSPI_HOST, &t, portMAX_DELAY);
+  return spi_slave_transmit(HSPI_HOST, &t, 1000); // portMAX_DELAY
   
   // return ESP_OK;
 }
@@ -114,7 +115,7 @@ IPAddress init_wifi()
     Serial.print("ESP32-CAM IP Address: ");
     Serial.println(WiFi.localIP());
 
-    // WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 1); // enable brownout
+    WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 1); // enable brownout
 
     return WiFi.localIP();
 }

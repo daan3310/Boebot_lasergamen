@@ -16,7 +16,7 @@ void updateFSM()
             receivebuf[1] = 0;
             receivebuf[2] = 0;
             receivebuf[3] = 0;
-            blocking_transmit_slave_spi(sendbuf, receivebuf, 8*5);
+            blocking_transmit_slave_spi(sendbuf, receivebuf, 8*5);  
             if(STARTGAME == receivebuf[0])
             {
                 currentState = STATE_1;
@@ -78,10 +78,12 @@ void updateFSM()
             blocking_transmit_slave_spi(sendbuf, receivebuf, 8*5);
             if(PLACEMAKER == receivebuf[0])
             {
+                Serial.print("Hello_Placemaker");
                 currentState = STATE_4;
             }
             else if(STARTGAME == receivebuf[0])
             {
+                Serial.print("Hello_Placemaker 2");
                 currentState = STATE_1;
             }
             break;
@@ -98,7 +100,8 @@ void updateFSM()
             blocking_transmit_slave_spi(sendbuf, receivebuf, 8*5);
             if(SHOOT == receivebuf[0])
             {
-                // sendPhoto();
+                Serial.print("Hello_world!");
+                //sendPhoto();
             }
             if(STARTGAME == receivebuf[0])
             {

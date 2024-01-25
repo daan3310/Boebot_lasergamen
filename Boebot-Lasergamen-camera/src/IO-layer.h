@@ -16,8 +16,8 @@
 #define GPIO_CS             15
 #endif
 
-extern DMA_ATTR char sendbuf[];
-extern DMA_ATTR char receivebuf[];
+extern DMA_ATTR char sendbuf[6];
+extern DMA_ATTR char receivebuf[6];
 extern spi_slave_transaction_t t;
 // extern uint8_t i;
 // extern uint8_t r;

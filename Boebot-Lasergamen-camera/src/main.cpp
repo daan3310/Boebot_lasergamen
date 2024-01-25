@@ -3,19 +3,21 @@
 void setup() {
   Serial.begin(115200);
 
-  Serial.println("going to init slave spi");
-  init_slave_spi();
-  Serial.println("done init slave spi");
+  //might cause big issue:
+   Serial.println("going to init wifi");
+   init_wifi();
+   Serial.println("done init wifi");
 
-  // // might cause big issue:
-  // Serial.println("going to init wifi");
-  // init_wifi();
-  // Serial.println("done init wifi");
+  //might cause big issue:
+  Serial.println("going to init camera");
+  init_camera();
+  Serial.println("done init camera");
 
-  // // might cause big issue:
-  // Serial.println("going to init camera");
-  // init_camera();
-  // Serial.println("done init camera");
+  // Serial.println("going to init slave spi");
+  // init_slave_spi();
+  // Serial.println("done init slave spi");
+
+
 }
 
 
@@ -43,5 +45,8 @@ void loop() {
   Serial.println();
 
   updateFSM();
+  sendPhoto();
+  delay(1000);
 
+  //even denken als hij hieruit komt
 }
