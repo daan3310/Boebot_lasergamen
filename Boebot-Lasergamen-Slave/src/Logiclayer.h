@@ -4,13 +4,15 @@
 #include "main.h"
 #include "IO-layer.h"
 
-#define STICKDRIFT 20
 
 struct PS4 Logiclayer_Besturing_Data(struct PS4 PS4Inputs);
 
-byte* Logiclayer_SPI_CMD(int cmd, byte data[3]);
+byte Logiclayer_SPI_CMD(byte cmd, byte data[3]);
+byte Logiclayer_SPI_CMD_NO_DATA(byte CMD);
 
 void Logiclayer_set_colour(byte Color[3]);
+
+byte Logiclayer_Startup_SPI(byte state);
 
 // Definition for SPI Commands from master to slave
 enum SPICMD
@@ -33,8 +35,6 @@ enum SPICMD
 
     AMOUNTOFCMD
 };
-
-
 
 
 #endif

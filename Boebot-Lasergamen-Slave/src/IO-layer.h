@@ -6,20 +6,10 @@
 
 // any motor added to the system should be added to this enum "motor" and the switch case in the "updateMotor" function in IO-layer.cpp
 enum motor { motorRechts, motorLinks, motorTurret };
-#define motorRechtsPWM 5
-#define motorRechtsDIR 19
-#define motorLinksPWM 23
-#define motorLinksDIR 18
-#define motorTurretPWM 13
 
 
-
-
-#define HSPI_MISO   26
-#define HSPI_MOSI   27
-#define HSPI_SCLK   25
-#define HSPI_SS     14
-static const int spiClk = 1000000; // 1 MHz clock
+extern byte My_SPI_dataIn[DATALENGTH];
+extern byte My_Flag_SPI;
 
 
 
@@ -27,10 +17,9 @@ static const int spiClk = 1000000; // 1 MHz clock
 // values outside this range are clamped to stay within valid values
 uint initMotors(int timer);
 uint updateMotor(motor currentMotor, int motorPower);
-
-byte* InitTimerInterrupt(uint Prescaler, uint TimerTicks);
+void InitTimerInterrupt(uint Prescaler, uint TimerTicks);
 byte initSPI();
-byte* hspi_send_command(byte cmd, byte data[3]);
+byte hspi_send_command(byte cmd, byte data[DATALENGTH-1]);
 
 
 
