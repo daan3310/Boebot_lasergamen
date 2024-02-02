@@ -1,5 +1,7 @@
 #include "UI-layer.h"
 
+unsigned long CurrentMillis = 0;
+
 byte UI_layer_error_handling(byte error)
 {   
     Serial.println();
@@ -45,4 +47,46 @@ byte UI_layer_error_handling(byte error)
     }
 
     return 0;
+}
+
+
+// Function for keeping up the millis timer and checking if you're allowed to send a Status again
+// 
+void UI_layer_Shoot()
+{
+    CurrentMillis = millis();
+    UPDATECURRENTTIME(CurrentMillis);
+    unsigned long Millis_Per_Timer = CurrentMillis + TIMERSTATUS;
+    unsigned long Millis_Per_Shoot = CurrentMillis + TIMERSHOOT; // reloading time
+
+    byte status =0;
+    // eerst een functie om te schieten
+    // daarna een functie om de huidige tijd te checken
+    // if1 als 100ms nieuwe status van willem
+    // if2 als 1s nieuwe status naar willem als de status al terug is gelezen 
+
+    Logiclayer_SPI_CMD_NO_DATA(SHOOT);
+    while (1)
+    {
+
+    UPDATECURRENTTIME(CurrentMillis);
+
+    if (CurrentMillis >= Millis_Per_Timer)
+    {
+        Serial.println("Getting current status");
+        Millis_Per_Timer = CurrentMillis + TIMERSTATUS;
+    }
+    
+    if (CurrentMillis >= Millis_Per_Shoot && status != ERROR)
+    {
+        Serial.println("Reloaded");
+        Millis_Per_Shoot = CurrentMillis + TIMERSHOOT;
+    }
+    else if (CurrentMillis >= Millis_Per_Shoot)
+    {
+        Serial.println("Error: Geen reactie van CAM");
+        Millis_Per_Shoot = CurrentMillis + TIMERSHOOT;
+    }
+
+    }
 }

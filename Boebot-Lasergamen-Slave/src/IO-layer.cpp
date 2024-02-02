@@ -3,11 +3,15 @@
 Servo myMotorTurret;
 SPIClass * vspi = NULL;
 
-byte Flag_SPI;
+byte My_Flag_SPI;
+
+byte My_SPI_dataIn[4] = {0,0,0,0};
+
+
 
 void IRAM_ATTR Timer0_ISR()
 {
-  Flag_SPI = 1;
+  My_Flag_SPI = 1;
 }
 
 
@@ -92,6 +96,7 @@ struct PS4 IO_Layer_Besturing()
 }
 byte initSPI()
 {
+ 
   vspi = new SPIClass(VSPI);  
   
   vspi->begin(HSPI_SCLK, HSPI_MISO, HSPI_MOSI, HSPI_SS);
@@ -101,55 +106,63 @@ byte initSPI()
   return 0;
 }
 
-byte* hspi_send_command(byte cmd, byte data[3]) 
+byte hspi_send_command(byte cmd, byte data[DATALENGTH-1]) 
 {  
-  byte dataOut[4]; // junk data to illustrate usage
+
+  #if DEBUG > 0
+  Function_Print_Spi_output(cmd,data);
+  #endif
+
+  byte dataOut[DATALENGTH]; 
+  byte dataIn[DATALENGTH];
   
-  static byte dataIn[4];
   
   dataOut[0] = cmd;
-  for (int i = 0; i<3;i++)
+  for (int i = 0; i<DATALENGTH-1;i++)
   {
     dataOut[i+1] = data[i];
   }
-
   //use it as you would the regular arduino SPI API
-  vspi->beginTransaction(SPISettings(spiClk, MSBFIRST, SPI_MODE3));
-
+  vspi->beginTransaction(SPISettings(SPICLK, MSBFIRST, SPI_MODE3));
   digitalWrite(HSPI_SS, LOW); //pull SS low to prep other end for transfer
-  delay(10);
+  delay(SSPINTIME);
 
   
-  vspi->transferBytes(dataIn, dataOut, 4);  
+  vspi->transferBytes(dataOut, dataIn, DATALENGTH);  
 
-  delay(10);
+  delay(SSPINTIME);
   digitalWrite(HSPI_SS, HIGH); //pull ss high to signify end of data transfer
+  for (int i = 0; i<DATALENGTH;i++)
+  {
+    My_SPI_dataIn[i] = dataIn[i];
+  }
 
   vspi->endTransaction();
 
-  return dataIn;
+  return 0;
 
 }
 
 
 
-byte* InitTimerInterrupt(uint Prescaler, uint TimerTicks)
+void InitTimerInterrupt(uint Prescaler, uint TimerTicks)
 {
-    byte* pFlag_SPI = &Flag_SPI;
-
     hw_timer_t *Timer0_Cfg = NULL;
 
     Timer0_Cfg = timerBegin(0, Prescaler, true); 
     timerAttachInterrupt(Timer0_Cfg, &Timer0_ISR, true);
     timerAlarmWrite(Timer0_Cfg, TimerTicks, true); 
     timerAlarmEnable(Timer0_Cfg);
-    
-    return pFlag_SPI;
 }
 
 void InitLedstrip()
 {
 
 
+}
+
+void InitStepperMotor()
+{
+    
 }
 

@@ -3,7 +3,9 @@
 
 #include "main.h"
 
-// Enumerator for different 
+#define UPDATECURRENTTIME(a) (a = millis())
+
+// Enumerator for different error types
 enum ERROR
 {
     CONTROLLERNOTDETECTED,
@@ -19,5 +21,7 @@ enum ERROR
 };
 
 byte UI_layer_error_handling(byte);
+
+void UI_layer_Shoot();
 
 #endif
