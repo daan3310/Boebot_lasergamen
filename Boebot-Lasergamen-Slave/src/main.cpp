@@ -21,8 +21,11 @@ void setup() {
   // put your setup code here, to run once:
   int i = 0;
 
-  Serial.begin(115200); 
+  Serial.begin(115200)
+  //PS4.begin("5c:96:56:b2:fb:c6");
+  PS4.begin("80:ea:23:1b:fc:e7");
 
+  
   PS4.begin(MAC_PS4);
 
   myStepper.setSpeed(10);
