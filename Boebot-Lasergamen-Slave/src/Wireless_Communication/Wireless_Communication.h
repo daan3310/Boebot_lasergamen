@@ -4,11 +4,8 @@
 #include <Arduino.h>
 
 #include "Wireless_Communication/WiFi-Setup.h"
-#include "Wireless_Communication/WiFi-Setup.h"
 
 int SetupWifi();
-int SetupBLE();
-int BLENotify();
 
 
 #endif

@@ -1,0 +1,17 @@
+{
+    "folders": [
+		{
+			"name": "Boebot-Lasergamen-Slave",
+			"path": "../../Boebot-Lasergamen-Slave"
+		},
+		{
+			"name": "Boebot-Lasergamen-camera",
+			"path": ".."
+		}
+	],
+    "settings": {
+        "files.associations": {
+            "functional": "cpp"
+        }
+    }
+}
