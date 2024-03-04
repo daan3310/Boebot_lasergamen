@@ -111,6 +111,7 @@ IPAddress init_wifi(){
 
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 1); // enable brownout
 
+    Serial.println("done init wifi");
     return WiFi.localIP();
 }
 
