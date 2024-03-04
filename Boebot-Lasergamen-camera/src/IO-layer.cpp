@@ -10,14 +10,12 @@ uint8_t my_post_trans_cb_flag = 0;
 
 #ifdef USE_SPI
 
-void my_post_trans_cb(spi_slave_transaction_t *trans)
-{
+void my_post_trans_cb(spi_slave_transaction_t *trans){
   my_post_trans_cb_flag = 1;
   // Serial.println("my_post_trans_cb");
 }
 
-esp_err_t init_slave_spi()
-{
+esp_err_t init_slave_spi(){
     // Configuration for the SPI bus
     spi_bus_config_t buscfg={
         .mosi_io_num=GPIO_MOSI,
@@ -38,8 +36,6 @@ esp_err_t init_slave_spi()
         
     };
 
-
-
     // Initialize SPI slave interface
     esp_err_t error = spi_slave_initialize(HSPI_HOST, &buscfg, &slvcfg, SPI_DMA_CH_AUTO);
     // clear spi_slave_transaction_t
@@ -47,8 +43,7 @@ esp_err_t init_slave_spi()
     return error;
 }
 
-esp_err_t blocking_transmit_slave_spi(void* TxBuf, void*RxBuf, uint Length_in_bits)
-{
+esp_err_t blocking_transmit_slave_spi(void* TxBuf, void*RxBuf, uint Length_in_bits){
   t.length = Length_in_bits;
   // i = 170;
   t.tx_buffer = TxBuf;
@@ -60,8 +55,7 @@ esp_err_t blocking_transmit_slave_spi(void* TxBuf, void*RxBuf, uint Length_in_bi
   // return ESP_OK;
 }
 
-esp_err_t non_blocking_queue_transaction_slave_spi(void* TxBuf, void*RxBuf, uint Length_in_bits)
-{
+esp_err_t non_blocking_queue_transaction_slave_spi(void* TxBuf, void*RxBuf, uint Length_in_bits){
   t.length = Length_in_bits;
   t.tx_buffer = TxBuf;
   t.rx_buffer = RxBuf;
@@ -91,23 +85,23 @@ esp_err_t non_blocking_queue_transaction_slave_spi(void* TxBuf, void*RxBuf, uint
 #endif
 
 #ifdef USE_WIFI
-const char* ssid = "Leaphy Lasergame!";
+const char* ssid     = "Leaphy Lasergame!";
 const char* password = "Leaphydebug1!";
-String serverName = "192.168.0.102";   
-String serverPath = "/upload";  // Flask upload route
+String serverName    = "192.168.0.102";   
+String serverPath    = "/upload";  // Flask upload route
 const int serverPort = 5000;
 WiFiClient client;
 
-IPAddress init_wifi()
-{
+IPAddress init_wifi(){
+    Serial.println("going to init wifi");
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // disable brownout
 
     WiFi.mode(WIFI_STA);
     Serial.println();
     Serial.print("Connecting to ");
     Serial.println(ssid);
-    WiFi.begin(ssid, password);  
-    while (WiFi.status() != WL_CONNECTED) {
+    WiFi.begin(ssid, password); 
+    while (WiFi.status() != WL_CONNECTED){
     Serial.print(".");
     delay(500);
     }
@@ -123,13 +117,13 @@ IPAddress init_wifi()
 #endif
 
 #ifdef USE_CAMERA
-String sendPhoto() {
+String sendPhoto(){
   String getAll;
   String getBody;
 
   camera_fb_t *fb = NULL;
   fb = esp_camera_fb_get();
-  if (!fb) {
+  if (!fb){
     Serial.println("Camera capture failed");
     delay(1000);
     ESP.restart();
@@ -138,7 +132,7 @@ String sendPhoto() {
   Serial.println("Connecting to server: " + serverName);
   #endif 
 
-  if (client.connect(serverName.c_str(), serverPort)) {
+  if (client.connect(serverName.c_str(), serverPort)){
 
     #ifdef DEBUG
     Serial.println("Connection successful!");
@@ -166,10 +160,10 @@ String sendPhoto() {
     size_t fbLen = fb->len;
 
     for (size_t n = 0; n < fbLen; n = n + 1024) {
-      if (n + 1024 < fbLen) {
+      if (n + 1024 < fbLen){
         client.write(fbBuf, 1024);
         fbBuf += 1024;
-      } else if (fbLen % 1024 > 0) {
+      } else if (fbLen % 1024 > 0){
         size_t remainder = fbLen % 1024;
         client.write(fbBuf, remainder);
       }
@@ -208,8 +202,7 @@ String sendPhoto() {
     client.stop();
     //Serial.println(getBody);
   } 
-  else 
-  {
+  else{
 
     #ifdef DEBUG
     Serial.print("Connection to ");
@@ -222,8 +215,7 @@ String sendPhoto() {
   return getBody;
 }
 
-unsigned long benchMark_sendPhoto()
-{
+unsigned long benchMark_sendPhoto(){
     unsigned long lastMillis = millis();
     
     lastMillis = millis();
@@ -237,8 +229,7 @@ unsigned long benchMark_sendPhoto()
     // }
 }
 
-esp_err_t init_camera()
-{
+esp_err_t init_camera(){
     camera_config_t config;
     config.ledc_channel = LEDC_CHANNEL_0;
     config.ledc_timer = LEDC_TIMER_0;
@@ -266,7 +257,8 @@ esp_err_t init_camera()
     config.frame_size = FRAMESIZE_SVGA;
     config.jpeg_quality = 10;  //0-63 lower number means higher quality
     config.fb_count = 2;
-    } else {
+    } 
+    else{
     config.frame_size = FRAMESIZE_CIF;
     config.jpeg_quality = 12;  //0-63 lower number means higher quality
     config.fb_count = 1;
@@ -274,7 +266,7 @@ esp_err_t init_camera()
   
     // camera init
     esp_err_t err = esp_camera_init(&config);
-    if (err != ESP_OK) {
+    if (err != ESP_OK){
     Serial.printf("Camera init failed with error 0x%x", err);
     }
     return err;

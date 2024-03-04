@@ -1,18 +1,21 @@
 #include "main.h"
 
-void setup() {
+void setup(){
   Serial.begin(115200);
 
+  /* INIT WIFI */
   //might cause big issue:
-   Serial.println("going to init wifi");
-   init_wifi();
-   Serial.println("done init wifi");
+  Serial.println("going to init wifi");
+  init_wifi();
+  Serial.println("done init wifi");
 
+  /* INIT CAMERA */
   //might cause big issue:
   Serial.println("going to init camera");
   init_camera();
   Serial.println("done init camera");
 
+  /* INIT SPI SLAVE */
   // Serial.println("going to init slave spi");
   // init_slave_spi();
   // Serial.println("done init slave spi");
@@ -22,7 +25,7 @@ void setup() {
 
 uint8_t pinState = 0;
 uint8_t lastPinState = 0;
-void loop() {
+void loop(){
   // Serial.print("currentState: ");
   // Serial.println(currentState);
   
@@ -48,8 +51,7 @@ void loop() {
   // updateFSM();
 
   pinState = digitalRead(GPIO_CS);
-  if((0 == lastPinState) & (1 == pinState))
-  {
+  if((0 == lastPinState) & (1 == pinState)){
     sendPhoto();
   }
   lastPinState = pinState;

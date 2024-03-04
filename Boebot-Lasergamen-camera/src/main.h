@@ -3,12 +3,10 @@
 
 // Arduino Libraries
 #include <Arduino.h>
+#include <ArduinoJson.h>
 
 /* Standard C Libraries */
 // #include <stdio.h>
-
-/* Lib */
-#include "../lib/ArduinoJson-v6.21.5.h"
 
 // User Libraries
 #include "IO-layer.h"
