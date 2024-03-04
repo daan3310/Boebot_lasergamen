@@ -5,9 +5,7 @@ void setup(){
 
   /* INIT WIFI */
   //might cause big issue:
-  Serial.println("going to init wifi");
   init_wifi();
-  Serial.println("done init wifi");
 
   /* INIT CAMERA */
   //might cause big issue:
