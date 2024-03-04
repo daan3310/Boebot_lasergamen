@@ -10,10 +10,10 @@ TaskHandle_t Task2;
 volatile byte Shoot = 0;
 volatile byte Flag_error_handler = 0;
 volatile byte error = 0;
-
+int valS = 90;
 byte Teamkleur[3];
 
-Stepper myStepper = Stepper(STEPSPERREVOLUTION, Stepper_IN1, Stepper_IN3, Stepper_IN2, Stepper_IN4);
+Servo servoT;
 
 
 
@@ -28,8 +28,7 @@ void setup() {
   
   PS4.begin(MAC_PS4);
 
-  myStepper.setSpeed(10);
-  //myStepper.step(STEPSPERREVOLUTION);
+  servoT.attach(servopin);
 
   initMotors(0);
 
@@ -227,20 +226,26 @@ void Function_Print_Spi_input(int state)
 
 }
 
-void Set_Stepper_direction(signed char Direction)
+void servodirection(signed char Direction)
 {
-  if (Direction > 0 + STICKDRIFT)
+  if (Direction > 0 + STICKDRIFT && valS<=180)
   {
-    myStepper.step(STEPSPERREVOLUTION/32);
-
+    valS = valS+1;
+    servoT.write(valS);
   }
-  else if (Direction < 0 - STICKDRIFT)
+  else if (Direction < 0 - STICKDRIFT && valS>=0)
   {
-    myStepper.step(-STEPSPERREVOLUTION/32);
-
+    valS = valS-1;
+    servoT.write(valS);
   }
   else if (Direction > 0 - STICKDRIFT && Direction < 0 + STICKDRIFT)
   {
-    myStepper.step(0);
+    valS = valS;
+    servoT.write(valS);
+  }
+  else
+  {
+    valS = valS;
+    servoT.write(valS);
   }
 }

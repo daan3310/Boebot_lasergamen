@@ -41,9 +41,6 @@
 #define HSPI_SCLK   25
 #define HSPI_SS     14
 
-#define Stepper_IN1 2
-#define Stepper_IN2 16
-#define Stepper_IN3 13
-#define Stepper_IN4 12
+#define servopin 2
 
 #endif

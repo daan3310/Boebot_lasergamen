@@ -7,6 +7,7 @@
 #include <math.h>
 #include <SPI.h>
 #include "Config.h"
+#include <Servo.h>
 
 #include <Stepper.h>
 
