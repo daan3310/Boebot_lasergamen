@@ -92,6 +92,50 @@ String serverPath    = "/upload";  // Flask upload route
 const int serverPort = 5000;
 WiFiClient client;
 
+void init_game(void){
+  bool connected = 0;
+  while(!connected){
+    if (connect_pi()==1){
+      connected = 1;
+    }
+    else{
+      Serial.println("Connecting ..");
+      delay(500);
+    }
+  }
+}
+
+/* Connect to the HTTP server on the Rpi by sending ESP MAC-ADDRESS */ 
+bool connect_pi(void){
+  HTTPClient http;
+
+  http.begin("http://" + String(serverName) + serverPath);
+  http.addHeader("Content-Type", "Mac address");
+  String MAC_ADDRESS = "16";
+  int address_length = MAC_ADDRESS.length();
+  int totalLen = address_length;
+
+  int httpResponseCode = http.POST(MAC_ADDRESS);
+
+  if (httpResponseCode > 0) {
+    Serial.print("HTTP Response code: ");
+    Serial.println(httpResponseCode);
+
+    // Read the JSON response from the server
+    DynamicJsonDocument jsonDoc(1024);  // Adjust the size based on your JSON response
+    deserializeJson(jsonDoc, http.getString());
+
+    // Extract data from the JSON response
+    String acknowledgment = jsonDoc["acknowledgment"];
+    Serial.println("Acknowledgment: " + acknowledgment);
+  } else {
+    Serial.print("Error in HTTP request. Code: ");
+    Serial.println(httpResponseCode);
+  }
+  
+  return 1;
+}
+
 IPAddress init_wifi(){
     Serial.println("going to init wifi");
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // disable brownout

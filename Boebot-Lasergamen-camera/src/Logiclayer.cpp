@@ -91,7 +91,7 @@ void updateFSM(){
             blocking_transmit_slave_spi(sendbuf, receivebuf, 8*5);
             if(SHOOT == receivebuf[0]){
                 Serial.print("Hello_world!");
-                //sendPhoto();
+                // sendPhoto();
             }
             if(STARTGAME == receivebuf[0]){
                 currentState = STATE_1;
