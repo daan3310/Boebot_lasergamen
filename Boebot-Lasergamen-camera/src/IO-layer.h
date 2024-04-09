@@ -24,8 +24,13 @@ extern spi_slave_transaction_t t;
 extern uint8_t my_post_trans_cb_flag;
 
 void my_post_trans_cb(spi_slave_transaction_t *trans);
+
 void init_game(void);
 bool connect_pi(void);
+String SendHTTPmessage(String message);
+bool RequestJSON(void);
+String WaitForMessage(void);
+void FSM(String message);
 
 esp_err_t init_slave_spi();
 
@@ -85,8 +90,6 @@ IPAddress init_wifi();
 #define VSYNC_GPIO_NUM    25
 #define HREF_GPIO_NUM     23
 #define PCLK_GPIO_NUM     22
-
-
 
 esp_err_t init_camera();
 

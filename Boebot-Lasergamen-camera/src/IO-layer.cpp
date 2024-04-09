@@ -88,53 +88,232 @@ esp_err_t non_blocking_queue_transaction_slave_spi(void* TxBuf, void*RxBuf, uint
 const char* ssid     = "Leaphy Lasergame!";
 const char* password = "Leaphydebug1!";
 String serverName    = "192.168.0.102";   
-String serverPath    = "/upload";  // Flask upload route
+String serverPath    = "/startup";  // Flask upload route (voor image) (flask library python)
 const int serverPort = 5000;
 WiFiClient client;
 
+/*===============================================================================*/
+
 void init_game(void){
   bool connected = 0;
+  Serial.println("Connecting to HTTP server");
   while(!connected){
-    if (connect_pi()==1){
+    if (connect_pi() == 1){
       connected = 1;
+      Serial.println("Connected");
     }
     else{
-      Serial.println("Connecting ..");
+      Serial.print(".");
       delay(500);
     }
   }
 }
 
-/* Connect to the HTTP server on the Rpi by sending ESP MAC-ADDRESS */ 
-bool connect_pi(void){
+/* Stuur mac address naar pi. pi stuurt json die uitgelezen word */
+bool connect_pi(void) {
+  #ifdef DEBUG  
+  Serial.println("Connecting to server: " + serverName);
+  #endif 
+
+  if (client.connect(serverName.c_str(), serverPort)) {
+
+    #ifdef DEBUG
+    Serial.println("Connection successful!");
+    #endif
+
+    String head        = "--ESP32\r\nContent-Disposition: form-data; name=\"mac_address\"; filename=\"12345678\"\r\nContent-Type: mac_address\r\n\r\n";
+    String tail        = "\r\n--ESP32--\r\n";
+    String mac_address = "00:11:22:AA:BB:CC"; //tijdelijk mac address, mac address nader te bepalen'
+
+    uint16_t totalLen  = head.length() + tail.length() + mac_address.length();
+
+    #ifdef DEBUG
+    Serial.println("Sending HTTP POST request...");
+    #endif
+
+    /* Send HTTP request */ 
+    client.println("POST " + serverPath + " HTTP/1.1");
+    client.println("Host: " + serverName);
+    client.println("Content-Length: " + String(totalLen));
+    client.println("Content-Type: multipart/form-data; boundary=ESP32");
+    client.println();
+    client.print(head);
+    client.print(mac_address);
+    client.print(tail);
+
+    Serial.println("Waiting for server response...");
+
+    /* wait for response */ 
+    while (!client.available()) {
+      delay(100);
+      Serial.print(".");
+    }
+
+    /* read response */
+    String input = client.readString();
+
+    /* parse JSON */
+    // StaticJsonDocument<128> doc;
+    // StaticJsonDocument<512> doc;
+
+    // DeserializationError error = deserializeJson(doc, input);
+
+    Serial.println(input);
+    
+    String myString = "{\"mac_address\":\"00:11:22:AA:BB:CC\",\"message\":\"Registered MAC 00:11:22:AA:BB:CC for IP 192.168.0.100.\"}";
+
+    // if (error) {
+    //   Serial.print(F("JSON parsing failed: "));
+    //   Serial.println(error.f_str());
+    //   return 0;
+    // } 
+    // else {
+      /* Access parsed JSON data */ 
+      // const char* message = doc["message"]; // "Registered MAC <MAC_ADDRESS> for IP <IP_ADDRESS>."
+      // const char* mac = doc["mac_address"];
+      Serial.print("Received message from server: ");
+      // Serial.println(message);
+      if (strcmp(input.c_str(), myString.c_str()) == 0) {
+          Serial.println("Wrong mac address");
+          return 0;
+      // }
+    }
+
+    Serial.println("Right mac address, return 1");
+
+    client.stop();
+    return 1;
+  } 
+  else {
+    #ifdef DEBUG
+    Serial.print("Connection to ");
+    Serial.print(serverName);
+    Serial.println("Connection failed.");
+    #endif
+    return 0;
+  }
+}
+
+/* Stuur een HTTP request en print de reactie. */
+String SendHTTPmessage(String message){
+  #ifdef DEBUG  
+  Serial.println("Connecting to server: " + serverName);
+  #endif 
+
+  if (client.connect(serverName.c_str(), serverPort)) {
+
+    #ifdef DEBUG
+    Serial.println("Connection successful!");
+    #endif
+
+    String head = "--ESP32\r\nContent-Disposition: form-data; name=\"mac_address\"; filename=\"12345678\"\r\nContent-Type: mac_address\r\n\r\n";
+    String tail = "\r\n--ESP32--\r\n";
+
+    uint16_t totalLen  = head.length() + tail.length() + message.length();
+
+    #ifdef DEBUG
+    Serial.println("Sending HTTP message...");
+    #endif
+
+    /* Send HTTP request */ 
+    client.println("POST " + serverPath + " HTTP/1.1");
+    client.println("Host: " + serverName);
+    client.println("Content-Length: " + String(totalLen));
+    client.println("Content-Type: multipart/form-data; boundary=ESP32");
+    client.println();
+    client.print(head);
+    client.print(message);
+    client.print(tail);
+
+    Serial.println("Waiting for server response...");
+
+    /* wait for response */ 
+    while (!client.available()) {
+      delay(100);
+      Serial.print(".");
+    }
+
+  /* read response */
+  String response = client.readString();
+
+  client.stop();
+
+  return response;
+  }
+}
+
+/* Send HTTP request to pi for JSON */
+bool RequestJSON(void){
   HTTPClient http;
 
+  /* Creat HTTP Message */
   http.begin("http://" + String(serverName) + serverPath);
-  http.addHeader("Content-Type", "Mac address");
+  http.addHeader("Content-Type", "Json request");
   String MAC_ADDRESS = "16";
   int address_length = MAC_ADDRESS.length();
   int totalLen = address_length;
 
+  /* Send HTTP Request */
   int httpResponseCode = http.POST(MAC_ADDRESS);
 
+  /* Check HTTP Response code */
   if (httpResponseCode > 0) {
     Serial.print("HTTP Response code: ");
     Serial.println(httpResponseCode);
 
-    // Read the JSON response from the server
+    /* Read the JSON response from the server */ 
     DynamicJsonDocument jsonDoc(1024);  // Adjust the size based on your JSON response
     deserializeJson(jsonDoc, http.getString());
 
-    // Extract data from the JSON response
+    const char* data = jsonDoc["temp"];
+
+    /* Extract data from the JSON response */ 
     String acknowledgment = jsonDoc["acknowledgment"];
     Serial.println("Acknowledgment: " + acknowledgment);
-  } else {
+    return 1;
+  } 
+  else {
     Serial.print("Error in HTTP request. Code: ");
     Serial.println(httpResponseCode);
+    return 0;
   }
-  
-  return 1;
 }
+
+String WaitForMessage(void){
+  String message;
+
+  while (!client.available()){
+    delay(100);
+    Serial.print(".");
+  }
+
+  message = client.readString();
+
+  const size_t JSON_CAPACITY = 256;
+  DynamicJsonDocument doc(JSON_CAPACITY);
+  DeserializationError error = deserializeJson(doc, message);
+
+  if (error) {
+    Serial.print(F("deserializeJson() failed: "));
+    Serial.println(error.f_str());
+    return String(); // Return empty string if JSON parsing failed
+  }
+
+  const char* return_string = doc["temp"];
+
+  // return return_string;
+  return message;
+}
+
+// void FSM(String message){
+//   switch(message){
+//     case "game over":
+//       Serial.println("game over\n");
+//       break;
+//   }
+// }
+
+/*===============================================================================*/
 
 IPAddress init_wifi(){
     Serial.println("going to init wifi");
