@@ -89,6 +89,8 @@ const char* ssid     = "Leaphy Lasergame!";
 const char* password = "Leaphydebug1!";
 String serverName    = "192.168.0.102";   
 String serverPath    = "/startup";  // Flask upload route (voor image) (flask library python)
+String serverPath2   = "/gamestate/00:11:22:AA:BB:CC";
+String MAC           = "00:11:22:AA:BB:CC";
 const int serverPort = 5000;
 WiFiClient client;
 
@@ -98,15 +100,11 @@ void init_game(void){
   bool connected = 0;
   Serial.println("Connecting to HTTP server");
   while(!connected){
-    if (connect_pi() == 1){
-      connected = 1;
-      Serial.println("Connected");
-    }
-    else{
-      Serial.print(".");
-      delay(500);
-    }
+    connected = connect_pi();
+    Serial.print(".");
+    delay(500);
   }
+  Serial.println("Connected");
 }
 
 /* Stuur mac address naar pi. pi stuurt json die uitgelezen word */
@@ -141,7 +139,9 @@ bool connect_pi(void) {
     client.print(mac_address);
     client.print(tail);
 
+    #ifdef DEBUG
     Serial.println("Waiting for server response...");
+    #endif
 
     /* wait for response */ 
     while (!client.available()) {
@@ -150,52 +150,84 @@ bool connect_pi(void) {
     }
 
     /* read response */
+    String decoded_string;
     String input = client.readString();
-
-    /* parse JSON */
-    // StaticJsonDocument<128> doc;
-    // StaticJsonDocument<512> doc;
-
-    // DeserializationError error = deserializeJson(doc, input);
-
     Serial.println(input);
-    
-    String myString = "{\"mac_address\":\"00:11:22:AA:BB:CC\",\"message\":\"Registered MAC 00:11:22:AA:BB:CC for IP 192.168.0.100.\"}";
 
-    // if (error) {
-    //   Serial.print(F("JSON parsing failed: "));
-    //   Serial.println(error.f_str());
-    //   return 0;
-    // } 
-    // else {
-      /* Access parsed JSON data */ 
-      // const char* message = doc["message"]; // "Registered MAC <MAC_ADDRESS> for IP <IP_ADDRESS>."
-      // const char* mac = doc["mac_address"];
-      Serial.print("Received message from server: ");
-      // Serial.println(message);
-      if (strcmp(input.c_str(), myString.c_str()) == 0) {
-          Serial.println("Wrong mac address");
-          return 0;
-      // }
+    /* remove http overhead from input */
+    int jsonStartIndex = input.indexOf("\r\n\r\n");
+
+    if (jsonStartIndex != -1) {
+      decoded_string = input.substring(jsonStartIndex + 4);
+      decoded_string.trim();
+
+      #ifdef DEBUG
+      Serial.println("Extracted JSON content:");
+      Serial.println(decoded_string);
+      #endif
+    } 
+    else {
+      #ifdef DEBUG
+      Serial.println("JSON content not found in HTTP response.");
+      #endif
+      return 0;
     }
 
-    Serial.println("Right mac address, return 1");
+    /* parse JSON */
+    DynamicJsonDocument doc(512);  //192
+    DeserializationError error = deserializeJson(doc, decoded_string);
 
-    client.stop();
-    return 1;
+    if (error) {
+      #ifdef DEBUG
+      Serial.print(F("JSON parsing failed: "));
+      Serial.println(error.f_str());
+      #endif
+      return 0;
+    } 
+    else {
+      /* Access parsed JSON data */ 
+      const char* message = doc["message"]; // "Registered MAC <MAC_ADDRESS> for IP <IP_ADDRESS>."
+      const char* MAC_ADDRESS = doc["mac_address"]; // "<MAC_ADDRESS>"
+      const char* IP = doc["IP"]; // "<IP_ADDRESS>"
+
+      /* print json data */
+      #ifdef DEBUG
+      Serial.println("Mac address: " + String(mac_address));
+      Serial.println("IP address: " + String(IP));
+      Serial.println("Team: " + String(message));
+      #endif
+
+      if(!strcmp(MAC_ADDRESS, mac_address.c_str())) {
+        #ifdef DEBUG
+        Serial.println("Wrong mac address");
+        #endif
+
+        return 0;
+      }
+      else {
+        #ifdef DEBUG
+        Serial.println("Right mac address, return 1");
+        #endif
+        client.stop();
+
+        return 1;
+      }
+    }
   } 
+
   else {
     #ifdef DEBUG
     Serial.print("Connection to ");
     Serial.print(serverName);
     Serial.println("Connection failed.");
     #endif
+
     return 0;
   }
 }
 
-/* Stuur een HTTP request en print de reactie. */
-String SendHTTPmessage(String message){
+/* Request game data, receive data in JSON format */
+bool Gamestate(void){
   #ifdef DEBUG  
   Serial.println("Connecting to server: " + serverName);
   #endif 
@@ -208,21 +240,19 @@ String SendHTTPmessage(String message){
 
     String head = "--ESP32\r\nContent-Disposition: form-data; name=\"mac_address\"; filename=\"12345678\"\r\nContent-Type: mac_address\r\n\r\n";
     String tail = "\r\n--ESP32--\r\n";
-
-    uint16_t totalLen  = head.length() + tail.length() + message.length();
+    uint16_t totalLen  = head.length() + tail.length();
 
     #ifdef DEBUG
-    Serial.println("Sending HTTP message...");
+    Serial.println("Sending HTTP POST request...");
     #endif
 
     /* Send HTTP request */ 
-    client.println("POST " + serverPath + " HTTP/1.1");
+    client.println("GET " + serverPath2 + " HTTP/1.1");
     client.println("Host: " + serverName);
     client.println("Content-Length: " + String(totalLen));
     client.println("Content-Type: multipart/form-data; boundary=ESP32");
     client.println();
     client.print(head);
-    client.print(message);
     client.print(tail);
 
     Serial.println("Waiting for server response...");
@@ -233,84 +263,172 @@ String SendHTTPmessage(String message){
       Serial.print(".");
     }
 
-  /* read response */
-  String response = client.readString();
+    /* read response */
+    String decoded_string;
+    String input = client.readString();
+    Serial.println(input);
 
-  client.stop();
+    /* remove http overhead from input */
+    int jsonStartIndex = input.indexOf("\r\n\r\n");
 
-  return response;
-  }
-}
+    if (jsonStartIndex != -1) {
+      decoded_string = input.substring(jsonStartIndex + 4);
+      decoded_string.trim();
+  
+      Serial.println("Extracted JSON content:");
+      Serial.println(decoded_string);
+    } 
+    else {
+      Serial.println("JSON content not found in HTTP response.");
+      return 0;
+    }
 
-/* Send HTTP request to pi for JSON */
-bool RequestJSON(void){
-  HTTPClient http;
+    /* parse JSON */
+    DynamicJsonDocument doc(512);
+    DeserializationError error = deserializeJson(doc, decoded_string);
 
-  /* Creat HTTP Message */
-  http.begin("http://" + String(serverName) + serverPath);
-  http.addHeader("Content-Type", "Json request");
-  String MAC_ADDRESS = "16";
-  int address_length = MAC_ADDRESS.length();
-  int totalLen = address_length;
+    if (error) {
+      Serial.print(F("deserializeJson() failed: "));
+      Serial.println(error.f_str());
+    return 0;
+    }   
+    else {
+      /* Access parsed JSON data */ 
+      const char* Mac_address = doc["Mac_address"];
+      const char* IP          = doc["IP"];
+      const char* Team        = doc["Team"]; 
+      const char* Team_color  = doc["Team_color"];
+      int Team_score          = doc["Team_score"];
+      int Enemy_team_score    = doc["Enemy_team_score"]; 
+      int Hit_points          = doc["Hit_points"]; 
+      int Hits                = doc["Hits"]; 
 
-  /* Send HTTP Request */
-  int httpResponseCode = http.POST(MAC_ADDRESS);
+      /* print json data */
+      #ifdef DEBUG
+      Serial.println("Mac address: " + String(Mac_address));
+      Serial.println("IP address: " + String(IP));
+      Serial.println("Team: " + String(Team));
+      Serial.println("Team color: " + String(Team_color));
+      Serial.print("Team score: ");
+      Serial.println(Team_score);
+      Serial.print("Enemy team score: ");
+      Serial.println(Enemy_team_score);
+      Serial.print("Hit points: ");
+      Serial.println(Hit_points);
+      Serial.print("Hits: ");
+      Serial.println(Hits);
+      #endif
+    }
 
-  /* Check HTTP Response code */
-  if (httpResponseCode > 0) {
-    Serial.print("HTTP Response code: ");
-    Serial.println(httpResponseCode);
-
-    /* Read the JSON response from the server */ 
-    DynamicJsonDocument jsonDoc(1024);  // Adjust the size based on your JSON response
-    deserializeJson(jsonDoc, http.getString());
-
-    const char* data = jsonDoc["temp"];
-
-    /* Extract data from the JSON response */ 
-    String acknowledgment = jsonDoc["acknowledgment"];
-    Serial.println("Acknowledgment: " + acknowledgment);
-    return 1;
+    client.stop();
+    return 1; 
   } 
   else {
-    Serial.print("Error in HTTP request. Code: ");
-    Serial.println(httpResponseCode);
+    #ifdef DEBUG
+    Serial.print("Connection to ");
+    Serial.print(serverName);
+    Serial.println("Connection failed.");
+    #endif
+
     return 0;
-  }
+  } 
 }
 
-String WaitForMessage(void){
-  String message;
-
+int WaitForMessage(void){
   while (!client.available()){
     delay(100);
     Serial.print(".");
   }
 
-  message = client.readString();
+  /* read response */
+  String decoded_string;
+  String input = client.readString();
+  Serial.println(input);
 
-  const size_t JSON_CAPACITY = 256;
-  DynamicJsonDocument doc(JSON_CAPACITY);
-  DeserializationError error = deserializeJson(doc, message);
+  /* remove http overhead from input */
+  int jsonStartIndex = input.indexOf("\r\n\r\n");
+
+  if (jsonStartIndex != -1) {
+    decoded_string = input.substring(jsonStartIndex + 4);
+    decoded_string.trim();
+  
+    Serial.println("Extracted JSON content:");
+    Serial.println(decoded_string);
+  } 
+  else {
+    Serial.println("JSON content not found in HTTP response.");
+    return 0;
+  }
+
+  /* parse JSON */
+  DynamicJsonDocument doc(512);
+  DeserializationError error = deserializeJson(doc, decoded_string);
 
   if (error) {
     Serial.print(F("deserializeJson() failed: "));
     Serial.println(error.f_str());
-    return String(); // Return empty string if JSON parsing failed
+  return 0;
+  }   
+  else {
+    /* Access parsed JSON data */ 
+    const char* Mac_address = doc["Mac_address"];
+    const char* IP          = doc["IP"];
+    const char* Team        = doc["Team"]; 
+    const char* Team_color  = doc["Team_color"];
+    int Team_score          = doc["Team_score"];
+    int Enemy_team_score    = doc["Enemy_team_score"]; 
+    int Hit_points          = doc["Hit_points"]; 
+    int Hits                = doc["Hits"]; 
+
+    /* print json data */
+    #ifdef DEBUG
+    Serial.println("Mac address: " + String(Mac_address));
+    Serial.println("IP address: " + String(IP));
+    Serial.println("Team: " + String(Team));
+    Serial.println("Team color: " + String(Team_color));
+    Serial.print("Team score: ");
+    Serial.println(Team_score);
+    Serial.print("Enemy team score: ");
+    Serial.println(Enemy_team_score);
+    Serial.print("Hit points: ");
+    Serial.println(Hit_points);
+    Serial.print("Hits: ");
+    Serial.println(Hits);
+    #endif
   }
+  
+  /* PLEUR HIER IETS VAN EEN SWITCH CASE IN */
 
-  const char* return_string = doc["temp"];
+  client.stop();
 
-  // return return_string;
-  return message;
+  return 1;
 }
 
-// void FSM(String message){
-//   switch(message){
-//     case "game over":
-//       Serial.println("game over\n");
-//       break;
+
+// String WaitForMessage(void){
+//   String message;
+// 
+//   while (!client.available()){
+//     delay(100);
+//     Serial.print(".");
 //   }
+// 
+//   message = client.readString();
+// 
+//   const size_t JSON_CAPACITY = 256;
+//   DynamicJsonDocument doc(JSON_CAPACITY);
+//   DeserializationError error = deserializeJson(doc, message);
+// 
+//   if (error) {
+//     Serial.print(F("deserializeJson() failed: "));
+//     Serial.println(error.f_str());
+//     return String(); // Return empty string if JSON parsing failed
+//   }
+// 
+//   const char* return_string = doc["temp"];
+// 
+//   // return return_string;
+//   return message;
 // }
 
 /*===============================================================================*/

@@ -99,3 +99,22 @@ void updateFSM(){
             break;   
     }
 }
+
+void MessageFSM(void){
+    int ReceiveMessage = WaitForMessage();
+
+    switch(ReceiveMessage){
+        case 0x01:
+            Serial.println("case 0x01");
+            break;
+        case 0x02:
+            Serial.println("case 0x02");
+            break;
+        case 0x03:
+            Serial.println("case 0x03");
+            break;
+        case 0x04:
+            Serial.println("case 0x04");
+            break;
+    }
+}
