@@ -90,7 +90,9 @@ const char* password = "Leaphydebug1!";
 String serverName    = "192.168.0.102";   
 String serverPath    = "/startup";  // Flask upload route (voor image) (flask library python)
 String serverPath2   = "/gamestate/00:11:22:AA:BB:CC";
+String serverPath3   = "/shoot";
 String MAC           = "00:11:22:AA:BB:CC";
+const char* MAC_str  = "00:11:22:AA:BB:CC";
 const int serverPort = 5000;
 WiFiClient client;
 
@@ -192,12 +194,13 @@ bool connect_pi(void) {
 
       /* print json data */
       #ifdef DEBUG
-      Serial.println("Mac address: " + String(mac_address));
+      Serial.println("Mac address: " + String(MAC_ADDRESS));
       Serial.println("IP address: " + String(IP));
-      Serial.println("Team: " + String(message));
+      Serial.println("Message: " + String(message));
       #endif
 
-      if(!strcmp(MAC_ADDRESS, mac_address.c_str())) {
+      // if (strcmp(MAC_ADDRESS, MAC_str) == 0){
+      if ((String)MAC_ADDRESS != (String)MAC){
         #ifdef DEBUG
         Serial.println("Wrong mac address");
         #endif
@@ -491,7 +494,7 @@ String sendPhoto(){
     Serial.println("Sending HTTP POST request...");
     #endif
 
-    client.println("POST " + serverPath + " HTTP/1.1");
+    client.println("POST " + serverPath3 + " HTTP/1.1");
     client.println("Host: " + serverName);
     client.println("Content-Length: " + String(totalLen));
     client.println("Content-Type: multipart/form-data; boundary=ESP32");

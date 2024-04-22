@@ -2,17 +2,17 @@
 
 void setup(){
   Serial.begin(115200);
-  Serial2.begin(6900, SERIAL_8N1);
+  // Serial2.begin(6900, SERIAL_8N1);
 
   /* Init Wifi */
   Serial.println("Init wifi");
   init_wifi();
   Serial.println("Wifi initialised");
 
-  /* Init Camera */
-  // Serial.println("going to init camera");
-  // init_camera();
-  // Serial.println("done init camera");
+  /* Init Camera <-- camera errort, problemen met Serial2??? */
+  Serial.println("going to init camera");
+  init_camera();
+  Serial.println("done init camera");
 
   delay(2000);
 
@@ -37,8 +37,17 @@ void setup(){
 void loop(){
   
   bool done = 0;
-  while(!done){
+  while(!done) {
+    Serial.println("Send a photo");
+    sendPhoto();
+    Serial.println("main loop");
     done = Gamestate();
+    delay(1000);
+    done = 0;
+  }
+
+  while(1) {
+    Serial.println("inf loop");
     delay(1000);
   }
 
