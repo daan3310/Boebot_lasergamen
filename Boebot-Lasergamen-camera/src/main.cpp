@@ -51,9 +51,8 @@ void loop() {
   byte test1 = 0;
   if(Serial.available()>0){
     test1 = Serial.read();
-    while(Serial.available()>0){
-      Serial.read();
-    }
+    //while(Serial.available()>0){
+    //Serial.read();
     Serial.write(test1);
     //Serial.write("\n");
   }

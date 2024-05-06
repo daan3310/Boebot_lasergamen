@@ -16,6 +16,7 @@ byte Teamkleur[3];
 Servo servoT;
 
 int it = 0;
+byte testsarr[10];
 
 void setup() {
   // put your setup code here, to run once:
@@ -110,33 +111,37 @@ void setup() {
 }
 
 void loop() { 
-  byte tests = 25;
+  byte tests = 3;
   Serial.write(tests);
   byte tests1 = 0;
-  int testsarr[10];
+  //byte testsarr[5];
   if(Serial.available() > 0){
     tests1 = Serial.read();
-    Serial.println(tests1);
-    // if(tests1==10){
-    //   Serial.print("received value: ");
-    //   Serial.println(testsarr[0]);
-    //   for(int ic = 0;ic<6;ic++){
-    //     testsarr[ic]=0;
-    //   }
-    //   it = 0;
-    // }
-    // else{
-    //   //Serial.println(tests1);
-    //   Serial.print("ontvangen: ");
-    //   Serial.println(tests1);
-    //   testsarr[it] = tests1;
-    //   //Serial.print("array waarde: ");
-    //   //Serial.println(testsarr[it]);
-    //   Serial.print("it: ");
-    //   Serial.println(it);
-    //   //Serial.println(testsarr[it]);
-    //   it = it+1;
-    // }
+    //Serial.println(tests1);
+    //Serial.print("\n");
+    if(tests1==10){
+       //Serial.print("received value: ");
+       //Serial.println(testsarr[0]);
+       for(int ic = 0;ic<10;ic++){
+         testsarr[ic]=0;
+       }
+       it = 0;
+    }
+    else{
+      //Serial.println(tests1);
+      //Serial.print("ontvangen: ");
+      //Serial.println(tests1);
+      testsarr[it] = tests1;
+      //Serial.print("array waarde: ");
+      //Serial.println(testsarr[it]);
+      //Serial.print("it: ");
+      //Serial.println(it);
+      //Serial.println(testsarr[it]);
+      it = it+1;
+    }
+    if(testsarr[0]>0){
+      Serial.println(testsarr[0]);
+    }
     //Serial.print("Receivewaarde: ");
     //char testp = (char) tests1;
     //tests1.trim();
