@@ -1,23 +1,22 @@
 #include "main.h"
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
+  //might cause big issue:
+  // Serial.println("going to init wifi");
+  // init_wifi();
+  // Serial.println("done init wifi");
 
   //might cause big issue:
-   Serial.println("going to init wifi");
-   init_wifi();
-   Serial.println("done init wifi");
-
-  //might cause big issue:
-  Serial.println("going to init camera");
-  init_camera();
-  Serial.println("done init camera");
+  // Serial.println("going to init camera");
+  // init_camera();
+  // Serial.println("done init camera");
 
   // Serial.println("going to init slave spi");
   // init_slave_spi();
   // Serial.println("done init slave spi");
-
-  pinMode(GPIO_CS, INPUT);
+  
+  //pinMode(GPIO_CS, INPUT);
 }
 
 uint8_t pinState = 0;
@@ -45,15 +44,19 @@ void loop() {
   // Serial.println(receivebuf[3], HEX);
   // Serial.println();
 
+  // Serial.println("Begintest");
   // updateFSM();
-
-  pinState = digitalRead(GPIO_CS);
-  if((0 == lastPinState) & (1 == pinState))
-  {
-    sendPhoto();
-  }
-  lastPinState = pinState;
+  //sendPhoto();
   // delay(1000);
-
+  byte test1 = 0;
+  if(Serial.available()>0){
+    test1 = Serial.read();
+    while(Serial.available()>0){
+      Serial.read();
+    }
+    Serial.write(test1);
+    //Serial.write("\n");
+  }
+  //Serial.write(54);
   //even denken als hij hieruit komt
 }

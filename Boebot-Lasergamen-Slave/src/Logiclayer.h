@@ -7,12 +7,12 @@
 
 struct PS4 Logiclayer_Besturing_Data(struct PS4 PS4Inputs);
 
-byte Logiclayer_SPI_CMD(byte cmd, byte data[3]);
-byte Logiclayer_SPI_CMD_NO_DATA(byte CMD);
+byte Logiclayer_Serial_CMD(byte cmd, byte data[3]);
+byte Logiclayer_Serial_CMD_NO_DATA(byte CMD);
 
 void Logiclayer_set_colour(byte Color[3]);
 
-byte Logiclayer_Startup_SPI(byte state);
+byte Logiclayer_Startup_Serial(byte state);
 
 // Definition for SPI Commands from master to slave
 enum SPICMD

@@ -7,6 +7,7 @@
 #ifdef USE_SPI
 
 #include "driver/spi_slave.h"
+#include <HardwareSerial.h>
 
 #define MAP_SPI_PINS 1
 #ifdef MAP_SPI_PINS
@@ -15,6 +16,9 @@
 #define GPIO_SCLK           14
 #define GPIO_CS             15
 #endif
+
+#define GPIO_TX 1
+#define GPIO_RX 3
 
 extern DMA_ATTR char sendbuf[6];
 extern DMA_ATTR char receivebuf[6];
@@ -25,9 +29,9 @@ extern uint8_t my_post_trans_cb_flag;
 
 void my_post_trans_cb(spi_slave_transaction_t *trans);
 
-esp_err_t init_slave_spi();
+//void init_slave_serial();
 
-esp_err_t blocking_transmit_slave_spi(void* TxBuf, void*RxBuf, uint Length_in_bits);
+esp_err_t blocking_transmit_slave_serial(void* TxBuf, void*RxBuf, uint Length_in_bits);
 
 #endif
 

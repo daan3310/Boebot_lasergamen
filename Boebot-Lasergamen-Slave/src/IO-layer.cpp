@@ -1,11 +1,13 @@
 #include "IO-layer.h"
 
+#define SERIAL_BAUD_RATE 115200  // Change baud rate as needed
+
 Servo myMotorTurret;
 SPIClass * vspi = NULL;
 
 byte My_Flag_SPI;
 
-byte My_SPI_dataIn[4] = {0,0,0,0};
+byte My_Serial_dataIn[4] = {0,0,0,0};
 
 
 
@@ -94,54 +96,46 @@ struct PS4 IO_Layer_Besturing()
 
     return PS4Inputs; 
 }
-byte initSPI()
-{
- 
-  vspi = new SPIClass(VSPI);  
-  
-  vspi->begin(HSPI_SCLK, HSPI_MISO, HSPI_MOSI, HSPI_SS);
 
-  pinMode(HSPI_SS, OUTPUT); //HSPI SS
-
-  return 0;
+byte initSerial() {
+  Serial.begin(SERIAL_BAUD_RATE);  // Initialize serial communication
 }
 
-byte hspi_send_command(byte cmd, byte data[DATALENGTH-1]) 
-{  
-
+byte serial_send_command(byte cmd, byte data[DATALENGTH-1]) {
   #if DEBUG > 0
-  Function_Print_Spi_output(cmd,data);
+  Function_Print_Serial_output(cmd, data);
   #endif
 
-  byte dataOut[DATALENGTH]; 
+  byte dataOut[DATALENGTH];
   byte dataIn[DATALENGTH];
-  
-  
+
   dataOut[0] = cmd;
-  for (int i = 0; i<DATALENGTH-1;i++)
-  {
-    dataOut[i+1] = data[i];
-  }
-  //use it as you would the regular arduino SPI API
-  vspi->beginTransaction(SPISettings(SPICLK, MSBFIRST, SPI_MODE3));
-  digitalWrite(HSPI_SS, LOW); //pull SS low to prep other end for transfer
-  delay(SSPINTIME);
-
-  
-  vspi->transferBytes(dataOut, dataIn, DATALENGTH);  
-
-  delay(SSPINTIME);
-  digitalWrite(HSPI_SS, HIGH); //pull ss high to signify end of data transfer
-  for (int i = 0; i<DATALENGTH;i++)
-  {
-    My_SPI_dataIn[i] = dataIn[i];
+  for (int i = 0; i < DATALENGTH - 1; i++) {
+    dataOut[i + 1] = data[i];
   }
 
-  vspi->endTransaction();
+  // Send data out through serial
+  Serial.write(dataOut, DATALENGTH);
+
+  // Read incoming data if needed
+  if (Serial.available() >= DATALENGTH) {
+    Serial.println("Datatest:");
+    //Serial.readBytes(dataIn, DATALENGTH);
+    for (int i = 0; i < DATALENGTH; i++) {
+      dataIn[i] = Serial.read();
+      Serial.print(dataIn[i]);
+      Serial.print(", ");
+    }
+    
+  }
+  // Copy received data to your buffer
+  for (int i = 0; i < DATALENGTH; i++) {
+    My_Serial_dataIn[i] = dataIn[i];
+  }
 
   return 0;
-
 }
+
 
 
 
