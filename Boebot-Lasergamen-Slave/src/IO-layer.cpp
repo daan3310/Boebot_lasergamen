@@ -119,7 +119,7 @@ byte serial_send_command(byte cmd, byte data[DATALENGTH-1]) {
 
   // Read incoming data if needed
   if (Serial.available() >= DATALENGTH) {
-    Serial.println("Datatest:");
+    //Serial.println("Datatest:");
     //Serial.readBytes(dataIn, DATALENGTH);
     for (int i = 0; i < DATALENGTH; i++) {
       dataIn[i] = Serial.read();

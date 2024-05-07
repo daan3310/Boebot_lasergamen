@@ -4,11 +4,11 @@ uint currentState = STATE_0; // 4 posible states
 
 void updateFSM()
 {
-    Serial.println("Logiclayer1");
+    //Serial.println("Logiclayer1");
     switch(currentState)
     {
         case STATE_0:
-            Serial.println("State0");
+            //Serial.println("State0");
             sendbuf[0] = 0;
             sendbuf[1] = 0;
             sendbuf[2] = 0;
@@ -36,7 +36,7 @@ void updateFSM()
             receivebuf[1] = 0;
             receivebuf[2] = 0;
             receivebuf[3] = 0;
-            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*4);
+            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*5);
             if(STATUSSLAVE == receivebuf[0])
             {
                 currentState = STATE_2;
@@ -57,7 +57,7 @@ void updateFSM()
             receivebuf[1] = 0;
             receivebuf[2] = 0;
             receivebuf[3] = 0;
-            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*4);
+            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*5);
             if(TEAMCOLOUR == receivebuf[0])
             {
                 currentState = STATE_3;
@@ -78,7 +78,7 @@ void updateFSM()
             receivebuf[1] = 0;
             receivebuf[2] = 0;
             receivebuf[3] = 0;
-            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*4);
+            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*5);
             if(PLACEMAKER == receivebuf[0])
             {
                 Serial.print("Hello_Placemaker");
@@ -100,11 +100,11 @@ void updateFSM()
             receivebuf[1] = 0;
             receivebuf[2] = 0;
             receivebuf[3] = 0;
-            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*4);
+            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*5);
             if(SHOOT == receivebuf[0])
             {
-                Serial.print("Hello_world!");
-                Serial.write("Helloworldtest");
+                //Serial.print("Hello_world!");
+                //Serial.write("Helloworldtest");
                 sendPhoto();
             }
             if(STARTGAME == receivebuf[0])

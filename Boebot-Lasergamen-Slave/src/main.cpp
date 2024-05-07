@@ -27,128 +27,128 @@ void setup() {
   //PS4.begin("80:ea:23:1b:fc:e7");
 
   
-  // PS4.begin(MAC_PS4);
+  PS4.begin(MAC_PS4);
 
-  // servoT.attach(servopin);
+  servoT.attach(servopin);
 
-  // initMotors(0);
+  initMotors(0);
 
-  // #if DEBUG > 0
-  // Serial.println("Waiting for controller:");
-  // #endif
+  #if DEBUG > 0
+  Serial.println("Waiting for controller:");
+  #endif
 
-  // // while(!PS4.isConnected())    
-  // // { 
-  // //   if (i == 300)
-  // //   {
+  // while(!PS4.isConnected())    
+  // { 
+  //   if (i == 300)
+  //   {
 
-  // //     UI_layer_error_handling(CONTROLLERNOTDETECTED);
-  // //     i = 0;
-  // //   }
-  // //   i++;
+  //     UI_layer_error_handling(CONTROLLERNOTDETECTED);
+  //     i = 0;
+  //   }
+  //   i++;
 
-  // //   delay(100);
-  // // }
-  // #if DEBUG > 0
-  // Serial.println("Controller detected:\n");
-  // #endif
-
-  // //initSPI();  // Initialise SPI
-  // i = 1;
-  
-  // #if DEBUG > 0
-  // Serial.println("Starting Serial");
-  // #endif
-  
-  // int state = 0;
-
-  // byte result = 0;
-  
-  // delay(100);
-
-  // // start a state diagram for start of the SPI communication
-  // // This can be blocking to allow Willem to start correctly
-  // //  
-  // #if DEBUG > 0
-  // while (state != 5)
-  // {
-  //   state = Logiclayer_Startup_Serial(state);
+  //   delay(100);
   // }
-  // #endif
-  // #if DEBUG > 0
-  // Serial.println("State machine done!");
-  // #endif
+  #if DEBUG > 0
+  Serial.println("Controller detected:\n");
+  #endif
+
+  //initSPI();  // Initialise SPI
+  i = 1;
   
-  // for (i = 0; i<sizeof(Teamkleur); i++)
-  // {
-  //   Teamkleur[i] = My_Serial_dataIn[i+1];
-  // }
+  #if DEBUG > 0
+  Serial.println("Starting Serial");
+  #endif
+  
+  int state = 0;
 
-  // Logiclayer_set_colour(Teamkleur);
-  // // Functie om de kleur van de esp32 te veranderen naar de corresponderende kleur
+  byte result = 0;
+  
+  delay(100);
 
-  // xTaskCreatePinnedToCore
-  // (
-  //   Task1code, /* Function to implement the task */
-  //   "Task1", /* Name of the task */
-  //   20000,  /* Stack size in words */
-  //   NULL,  /* Task input parameter */
-  //   0,  /* Priority of the task */
-  //   &Task1,  /* Task handle. */
-  //   0 /* Core where the task should run */
-  // ); 
+  // start a state diagram for start of the SPI communication
+  // This can be blocking to allow Willem to start correctly
+  //  
+  #if DEBUG > 0
+  while (state != 5)
+  {
+    state = Logiclayer_Startup_Serial(state);
+  }
+  #endif
+  #if DEBUG > 0
+  Serial.println("State machine done!");
+  #endif
+  
+  for (i = 0; i<sizeof(Teamkleur); i++)
+  {
+    Teamkleur[i] = My_Serial_dataIn[i+1];
+  }
 
-  // xTaskCreatePinnedToCore
-  // (
-  //   Task2code, /* Function to implement the task */
-  //   "Task2", /* Name of the task */
-  //   20000,  /* Stack size in words */
-  //   NULL,  /* Task input parameter */
-  //   1,  /* Priority of the task */
-  //   &Task2,  /* Task handle. */
-  //   1  /* Core where the task should run */
-  // );
+  Logiclayer_set_colour(Teamkleur);
+  // Functie om de kleur van de esp32 te veranderen naar de corresponderende kleur
+
+  xTaskCreatePinnedToCore
+  (
+    Task1code, /* Function to implement the task */
+    "Task1", /* Name of the task */
+    20000,  /* Stack size in words */
+    NULL,  /* Task input parameter */
+    0,  /* Priority of the task */
+    &Task1,  /* Task handle. */
+    0 /* Core where the task should run */
+  ); 
+
+  xTaskCreatePinnedToCore
+  (
+    Task2code, /* Function to implement the task */
+    "Task2", /* Name of the task */
+    20000,  /* Stack size in words */
+    NULL,  /* Task input parameter */
+    1,  /* Priority of the task */
+    &Task2,  /* Task handle. */
+    1  /* Core where the task should run */
+  );
 }
 
 void loop() { 
-  byte tests = 3;
-  Serial.write(tests);
-  byte tests1 = 0;
-  //byte testsarr[5];
-  if(Serial.available() > 0){
-    tests1 = Serial.read();
-    //Serial.println(tests1);
-    //Serial.print("\n");
-    if(tests1==10){
-       //Serial.print("received value: ");
-       //Serial.println(testsarr[0]);
-       for(int ic = 0;ic<10;ic++){
-         testsarr[ic]=0;
-       }
-       it = 0;
-    }
-    else{
-      //Serial.println(tests1);
-      //Serial.print("ontvangen: ");
-      //Serial.println(tests1);
-      testsarr[it] = tests1;
-      //Serial.print("array waarde: ");
-      //Serial.println(testsarr[it]);
-      //Serial.print("it: ");
-      //Serial.println(it);
-      //Serial.println(testsarr[it]);
-      it = it+1;
-    }
-    if(testsarr[0]>0){
-      Serial.println(testsarr[0]);
-    }
-    //Serial.print("Receivewaarde: ");
-    //char testp = (char) tests1;
-    //tests1.trim();
-    //int newl = "\n";
-    //Serial.println(tests1);
-    delay(500);
-  }
+  // byte tests = 3;
+  // Serial.write(tests);
+  // byte tests1 = 0;
+  // //byte testsarr[5];
+  // if(Serial.available() > 0){
+  //   tests1 = Serial.read();
+  //   //Serial.println(tests1);
+  //   //Serial.print("\n");
+  //   if(tests1==10){
+  //      //Serial.print("received value: ");
+  //      //Serial.println(testsarr[0]);
+  //      for(int ic = 0;ic<10;ic++){
+  //        testsarr[ic]=0;
+  //      }
+  //      it = 0;
+  //   }
+  //   else{
+  //     //Serial.println(tests1);
+  //     //Serial.print("ontvangen: ");
+  //     //Serial.println(tests1);
+  //     testsarr[it] = tests1;
+  //     //Serial.print("array waarde: ");
+  //     //Serial.println(testsarr[it]);
+  //     //Serial.print("it: ");
+  //     //Serial.println(it);
+  //     //Serial.println(testsarr[it]);
+  //     it = it+1;
+  //   }
+  //   if(testsarr[0]>0){
+  //     Serial.println(testsarr[0]);
+  //   }
+  //   //Serial.print("Receivewaarde: ");
+  //   //char testp = (char) tests1;
+  //   //tests1.trim();
+  //   //int newl = "\n";
+  //   //Serial.println(tests1);
+  //   delay(500);
+  // }
 }
 
 void Task1code( void * parameter) // Taken voor core 0

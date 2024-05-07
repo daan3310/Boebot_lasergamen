@@ -45,17 +45,17 @@ void loop() {
   // Serial.println();
 
   // Serial.println("Begintest");
-  // updateFSM();
+  updateFSM();
   //sendPhoto();
   // delay(1000);
-  byte test1 = 0;
-  if(Serial.available()>0){
-    test1 = Serial.read();
-    //while(Serial.available()>0){
-    //Serial.read();
-    Serial.write(test1);
-    //Serial.write("\n");
-  }
+  // byte test1 = 0;
+  // if(Serial.available()>0){
+  //   test1 = Serial.read();
+  //   //while(Serial.available()>0){
+  //   //Serial.read();
+  //   Serial.write(test1);
+  //   //Serial.write("\n");
+  // }
   //Serial.write(54);
   //even denken als hij hieruit komt
 }
