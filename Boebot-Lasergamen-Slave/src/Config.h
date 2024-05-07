@@ -23,7 +23,7 @@
 
 // SPI 
 #define SPICLK      1000000 // 1 MHz clock
-#define DATALENGTH  4
+#define DATALENGTH  6
 #define SSPINTIME   1 // time for the cs pin to go low
 
 //PS4 controller

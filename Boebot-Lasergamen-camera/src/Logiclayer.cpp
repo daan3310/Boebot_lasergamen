@@ -18,7 +18,7 @@ void updateFSM()
             receivebuf[1] = 0;
             receivebuf[2] = 0;
             receivebuf[3] = 0;
-            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*4);  
+            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*7);  
             if(STARTGAME == receivebuf[0])
             {
                 currentState = STATE_1;
@@ -26,7 +26,7 @@ void updateFSM()
             break;
         case STATE_1:
             // ACKNOWLEDGE
-            Serial.println("State1");
+            //Serial.println("State1");
             sendbuf[0] = ACKNOWLEDGE;
             sendbuf[1] = 0;
             sendbuf[2] = 0;
@@ -36,7 +36,7 @@ void updateFSM()
             receivebuf[1] = 0;
             receivebuf[2] = 0;
             receivebuf[3] = 0;
-            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*5);
+            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*7);
             if(STATUSSLAVE == receivebuf[0])
             {
                 currentState = STATE_2;
@@ -57,7 +57,7 @@ void updateFSM()
             receivebuf[1] = 0;
             receivebuf[2] = 0;
             receivebuf[3] = 0;
-            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*5);
+            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*7);
             if(TEAMCOLOUR == receivebuf[0])
             {
                 currentState = STATE_3;
@@ -78,7 +78,7 @@ void updateFSM()
             receivebuf[1] = 0;
             receivebuf[2] = 0;
             receivebuf[3] = 0;
-            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*5);
+            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*7);
             if(PLACEMAKER == receivebuf[0])
             {
                 Serial.print("Hello_Placemaker");
@@ -100,7 +100,7 @@ void updateFSM()
             receivebuf[1] = 0;
             receivebuf[2] = 0;
             receivebuf[3] = 0;
-            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*5);
+            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*7);
             if(SHOOT == receivebuf[0])
             {
                 //Serial.print("Hello_world!");

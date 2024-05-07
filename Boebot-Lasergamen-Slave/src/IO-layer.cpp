@@ -7,7 +7,7 @@ SPIClass * vspi = NULL;
 
 byte My_Flag_SPI;
 
-byte My_Serial_dataIn[4] = {0,0,0,0};
+byte My_Serial_dataIn[6] = {0,0,0,0};
 
 
 
@@ -98,7 +98,8 @@ struct PS4 IO_Layer_Besturing()
 }
 
 byte initSerial() {
-  Serial.begin(SERIAL_BAUD_RATE);  // Initialize serial communication
+  //Serial.begin(SERIAL_BAUD_RATE);  // Initialize serial communication
+  Serial.begin(9600);
 }
 
 byte serial_send_command(byte cmd, byte data[DATALENGTH-1]) {

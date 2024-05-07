@@ -22,7 +22,7 @@ esp_err_t blocking_transmit_slave_serial(void* TxBuf, void* RxBuf, uint Length_i
   // Cast the buffers to char pointers
   char* txBuffer = (char*)TxBuf;
   char* rxBuffer = (char*)RxBuf;
-  Serial.println("Begin");
+  //Serial.println("Begin");
   // Send data out through serial
   for(int i1 = 0; i1 < Length_in_bits / 8; i1++){
     Serial.println(txBuffer[i1], DEC);

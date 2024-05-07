@@ -40,7 +40,7 @@ struct PS4 Logiclayer_Besturing_Data(struct PS4 PS4Inputs)
   return PS4Inputs; 
 }
 
-byte Logiclayer_Serial_CMD(byte CMD, byte data[3])
+byte Logiclayer_Serial_CMD(byte CMD, byte data[5])
 {
   byte* datain;
   switch (CMD)
@@ -143,7 +143,7 @@ PS4.sendToController();
 
 byte Logiclayer_Startup_Serial(byte state)
 {
-  byte data[DATALENGTH-1] = {0x00,0x00,0x00}; 
+  byte data[DATALENGTH-1] = {0x00,0x00,0x00,0x00,0x00}; 
 
 switch (state)
     {

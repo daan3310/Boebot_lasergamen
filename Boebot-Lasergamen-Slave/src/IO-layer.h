@@ -8,7 +8,7 @@
 enum motor { motorRechts, motorLinks, motorTurret };
 
 
-extern byte My_Serial_dataIn[DATALENGTH];
+extern byte My_Serial_dataIn[DATALENGTHREC];
 extern byte My_Flag_SPI;
 
 
