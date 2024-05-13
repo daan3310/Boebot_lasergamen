@@ -20,8 +20,8 @@
 #define GPIO_TX 1
 #define GPIO_RX 3
 
-extern DMA_ATTR char sendbuf[6];
-extern DMA_ATTR char receivebuf[6];
+extern DMA_ATTR char sendbuf[4];
+extern DMA_ATTR char receivebuf[4];
 extern spi_slave_transaction_t t;
 // extern uint8_t i;
 // extern uint8_t r;

@@ -143,7 +143,7 @@ PS4.sendToController();
 
 byte Logiclayer_Startup_Serial(byte state)
 {
-  byte data[DATALENGTH-1] = {0x00,0x00,0x00,0x00,0x00}; 
+  byte data[DATALENGTH-1] = {0x00,0x00,0x00}; 
 
 switch (state)
     {

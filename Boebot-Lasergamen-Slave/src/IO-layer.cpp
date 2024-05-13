@@ -7,7 +7,7 @@ SPIClass * vspi = NULL;
 
 byte My_Flag_SPI;
 
-byte My_Serial_dataIn[6] = {0,0,0,0};
+byte My_Serial_dataIn[4] = {0,0,0,0};
 
 
 
@@ -97,10 +97,10 @@ struct PS4 IO_Layer_Besturing()
     return PS4Inputs; 
 }
 
-byte initSerial() {
-  //Serial.begin(SERIAL_BAUD_RATE);  // Initialize serial communication
-  Serial.begin(9600);
-}
+// byte initSerial() {
+//   //Serial.begin(SERIAL_BAUD_RATE);  // Initialize serial communication
+//   Serial.begin(9600);
+// }
 
 byte serial_send_command(byte cmd, byte data[DATALENGTH-1]) {
   #if DEBUG > 0
@@ -123,7 +123,7 @@ byte serial_send_command(byte cmd, byte data[DATALENGTH-1]) {
     //Serial.println("Datatest:");
     //Serial.readBytes(dataIn, DATALENGTH);
     for (int i = 0; i < DATALENGTH; i++) {
-      dataIn[i] = Serial.read();
+      dataIn[i] = Serial.read(); 
       Serial.print(dataIn[i]);
       Serial.print(", ");
     }

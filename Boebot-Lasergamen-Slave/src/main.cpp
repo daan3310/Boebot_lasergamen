@@ -233,7 +233,7 @@ void Task2code( void * parameter) // Taken voor core 1
   }
 }
 
-void Function_Print_Serial_output(byte CMD, byte data[3] )
+void Function_Print_Serial_output(byte CMD, byte data[5] )
 {
   Serial.println();
   Serial.print("Data out:");
@@ -263,8 +263,6 @@ void Function_Print_Serial_input(int state)
   Serial.print(", ");
   Serial.print(My_Serial_dataIn[3], DEC);
   Serial.println();
-
-
 }
 
 void servodirection(signed char Direction)

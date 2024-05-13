@@ -8,7 +8,7 @@
 enum motor { motorRechts, motorLinks, motorTurret };
 
 
-extern byte My_Serial_dataIn[DATALENGTHREC];
+extern byte My_Serial_dataIn[DATALENGTH];
 extern byte My_Flag_SPI;
 
 
@@ -18,7 +18,7 @@ extern byte My_Flag_SPI;
 uint initMotors(int timer);
 uint updateMotor(motor currentMotor, int motorPower);
 void InitTimerInterrupt(uint Prescaler, uint TimerTicks);
-byte initSerial();
+//byte initSerial();
 byte serial_send_command(byte cmd, byte data[DATALENGTH-1]);
 
 

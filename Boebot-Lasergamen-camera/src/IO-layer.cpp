@@ -2,8 +2,8 @@
 
 #define SERIAL_BAUD_RATE 115200  // Change baud rate as needed
 
-char sendbuf[6] = {0};
-char receivebuf[6] = {0};
+char sendbuf[4] = {0};
+char receivebuf[4] = {0};
 
 // Define callback flag and function
 uint8_t my_post_trans_cb_flag = 0;
@@ -24,14 +24,14 @@ esp_err_t blocking_transmit_slave_serial(void* TxBuf, void* RxBuf, uint Length_i
   char* rxBuffer = (char*)RxBuf;
   //Serial.println("Begin");
   // Send data out through serial
-  for(int i1 = 0; i1 < Length_in_bits / 8; i1++){
-    Serial.println(txBuffer[i1], DEC);
-  }
+  // for(int i1 = 0; i1 < Length_in_bits / 8; i1++){
+  //   Serial.println(txBuffer[i1]);
+  // }
   Serial.write(txBuffer, Length_in_bits / 8);
 
   // Wait for incoming data
   uint32_t start_time = millis();
-  while (Serial.available() < Length_in_bits / 8) {
+  while (Serial.available() <= (Length_in_bits / 8)) {
     if (millis() - start_time > 2000) {
       return ESP_ERR_TIMEOUT; // Return timeout error if not enough data received within timeout
     }
@@ -39,7 +39,7 @@ esp_err_t blocking_transmit_slave_serial(void* TxBuf, void* RxBuf, uint Length_i
 
   // Read incoming data
   //Serial.readBytes(rxBuffer, Length_in_bits / 8);
-  for (int i = 0; i < Length_in_bits / 8; i++) {
+  for (int i = 0; i <= (Length_in_bits / 8); i++) {
     rxBuffer[i] = Serial.read();
   }
   
