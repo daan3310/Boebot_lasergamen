@@ -2,6 +2,7 @@
 
 void setup() {
   Serial.begin(9600);
+  //Serial.begin(115200);
   //might cause big issue:
   // Serial.println("going to init wifi");
   // init_wifi();

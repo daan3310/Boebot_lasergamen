@@ -9,7 +9,7 @@
 #define TIMERTICKS 5000
 
 // SPI state machine time between states
-#define TIMEBETWEENCMDS 1000
+#define TIMEBETWEENCMDS 2
 
 // Steppermotor amount of steps per wenteling
 #define STEPSPERREVOLUTION 2048

@@ -27,7 +27,8 @@ void updateFSM()
         case STATE_1:
             // ACKNOWLEDGE
             //Serial.println("State1");
-            sendbuf[0] = ACKNOWLEDGE;
+            //sendbuf[0] = ACKNOWLEDGE;
+            sendbuf[0] = 0;
             sendbuf[1] = 0;
             sendbuf[2] = 0;
             sendbuf[3] = 0;
@@ -48,7 +49,9 @@ void updateFSM()
             break;
         case STATE_2:
             // ACKNOWLEDGE
-            sendbuf[0] = STATUSSLAVE;
+            //sendbuf[0] = STATUSSLAVE;
+            //sendbuf[0] = ERROR;
+            sendbuf[0] = ACKNOWLEDGE;
             sendbuf[1] = 0;
             sendbuf[2] = 0;
             sendbuf[3] = 0;

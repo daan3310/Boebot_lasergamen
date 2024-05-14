@@ -23,6 +23,7 @@ void setup() {
   int i = 0;
 
   Serial.begin(9600);
+  //Serial.setTimeout(2);
   //PS4.begin("5c:96:56:b2:fb:c6");
   //PS4.begin("80:ea:23:1b:fc:e7");
 
