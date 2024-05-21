@@ -25,7 +25,29 @@ byte hspi_send_command(byte cmd, byte data[DATALENGTH-1]);
 
 
 
-struct PS4 
+// struct PS4 
+// {
+//     //R2, L2, Rechterjoystick, Linkerjoystick, Rondje schieten,
+//     uint8_t R2 = 0;
+//     uint8_t L2 = 0;
+
+//     int8_t Rechterjoystick_x = 0;
+//     int8_t Rechterjoystick_y = 0;
+//     int8_t Linkerjoystick_x = 0;
+//     int8_t Linkerjoystick_y = 0;
+
+//     bool Cirkelknop = 0;
+
+//     int16_t MotordataLinks = 0; 
+//     int16_t MotordataRechts = 0;
+
+//     int8_t ServoHoek = 0; 
+
+// };
+
+// struct PS4 IO_Layer_Besturing();
+
+struct PS3
 {
     //R2, L2, Rechterjoystick, Linkerjoystick, Rondje schieten,
     uint8_t R2 = 0;
@@ -45,7 +67,6 @@ struct PS4
 
 };
 
-struct PS4 IO_Layer_Besturing();
-
+struct PS3 IO_Layer_Besturing();
 
 #endif 

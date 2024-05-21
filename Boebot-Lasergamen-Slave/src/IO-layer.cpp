@@ -77,22 +77,39 @@ uint updateMotor(motor currentMotor, int motorPower)
     return returnValue;
 }
 
-struct PS4 IO_Layer_Besturing()
+// struct PS4 IO_Layer_Besturing()
+// {
+//     struct PS4 PS4Inputs;
+//   if (PS4.isConnected()) 
+//   {
+//     PS4Inputs.Cirkelknop = PS4.Circle();
+//     PS4Inputs.R2 = PS4.R2Value();
+//     PS4Inputs.L2 = PS4.L2Value();
+//     PS4Inputs.Linkerjoystick_x = PS4.LStickX();
+//     PS4Inputs.Linkerjoystick_y = PS4.LStickY();
+//     PS4Inputs.Rechterjoystick_x = PS4.RStickX();
+//     PS4Inputs.Rechterjoystick_y = PS4.RStickY();
+//     return PS4Inputs;
+//    }       
+
+//     return PS4Inputs; 
+// }
+struct PS3 IO_Layer_Besturing()
 {
-    struct PS4 PS4Inputs;
-  if (PS4.isConnected()) 
+    struct PS3 PS3Inputs;
+  if (Ps3.isConnected()) 
   {
-    PS4Inputs.Cirkelknop = PS4.Circle();
-    PS4Inputs.R2 = PS4.R2Value();
-    PS4Inputs.L2 = PS4.L2Value();
-    PS4Inputs.Linkerjoystick_x = PS4.LStickX();
-    PS4Inputs.Linkerjoystick_y = PS4.LStickY();
-    PS4Inputs.Rechterjoystick_x = PS4.RStickX();
-    PS4Inputs.Rechterjoystick_y = PS4.RStickY();
-    return PS4Inputs;
+    PS3Inputs.Cirkelknop = Ps3.Circle();
+    PS3Inputs.R2 = Ps3.R2Value();
+    PS3Inputs.L2 = Ps3.L2Value();
+    PS3Inputs.Linkerjoystick_x = Ps3.LStickX();
+    PS3Inputs.Linkerjoystick_y = Ps3.LStickY();
+    PS3Inputs.Rechterjoystick_x = Ps3.RStickX();
+    PS3Inputs.Rechterjoystick_y = Ps3.RStickY();
+    return PS3Inputs;
    }       
 
-    return PS4Inputs; 
+    return PS3Inputs; 
 }
 byte initSPI()
 {

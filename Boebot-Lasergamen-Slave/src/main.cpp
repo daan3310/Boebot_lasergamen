@@ -3,6 +3,7 @@
 
 void Task1code(void* parameter);
 void Task2code(void* parameter);
+void servodirection(signed char Direction);
 
 TaskHandle_t Task1;
 TaskHandle_t Task2;
@@ -10,10 +11,10 @@ TaskHandle_t Task2;
 volatile byte Shoot = 0;
 volatile byte Flag_error_handler = 0;
 volatile byte error = 0;
-
+int valS = 90;
 byte Teamkleur[3];
 
-Stepper myStepper = Stepper(STEPSPERREVOLUTION, Stepper_IN1, Stepper_IN3, Stepper_IN2, Stepper_IN4);
+Servo servoT;
 
 
 
@@ -21,15 +22,13 @@ void setup() {
   // put your setup code here, to run once:
   int i = 0;
 
-  Serial.begin(115200)
+  Serial.begin(115200);
   //PS4.begin("5c:96:56:b2:fb:c6");
-  PS4.begin("80:ea:23:1b:fc:e7");
 
   
-  PS4.begin(MAC_PS4);
+  Ps3.begin(MAC_PS4);
 
-  myStepper.setSpeed(10);
-  //myStepper.step(STEPSPERREVOLUTION);
+  servoT.attach(servopin);
 
   initMotors(0);
 
@@ -37,7 +36,7 @@ void setup() {
   Serial.println("Waiting for controller:");
   #endif
 
-  while(!PS4.isConnected())    
+  while(!Ps3.isConnected())    
   { 
     if (i == 300)
     {
@@ -84,7 +83,7 @@ void setup() {
     Teamkleur[i] = My_SPI_dataIn[i+1];
   }
 
-  Logiclayer_set_colour(Teamkleur);
+
   // Functie om de kleur van de esp32 te veranderen naar de corresponderende kleur
 
   xTaskCreatePinnedToCore
@@ -152,7 +151,7 @@ void Task1code( void * parameter) // Taken voor core 0
 void Task2code( void * parameter) // Taken voor core 1
 {
   // Setup
-  struct PS4 PS4InputsMain;
+  struct PS3 PS3InputsMain;
   
  
   int i = 5;
@@ -161,13 +160,13 @@ void Task2code( void * parameter) // Taken voor core 1
   
   while(1)
   {
-    PS4InputsMain = IO_Layer_Besturing();
-    PS4InputsMain = Logiclayer_Besturing_Data(PS4InputsMain);
+    PS3InputsMain = IO_Layer_Besturing();
+    PS3InputsMain = Logiclayer_Besturing_Data(PS3InputsMain);
     
-    updateMotor(motorLinks, PS4InputsMain.MotordataLinks);
-    updateMotor(motorRechts, PS4InputsMain.MotordataRechts);
+    updateMotor(motorLinks, PS3InputsMain.MotordataLinks);
+    updateMotor(motorRechts, PS3InputsMain.MotordataRechts);
 
-    Set_Stepper_direction(PS4InputsMain.Rechterjoystick_x);
+   servodirection(PS3InputsMain.Rechterjoystick_x);
     
 
     // if (PS4.R2Value() > 20)
@@ -179,7 +178,7 @@ void Task2code( void * parameter) // Taken voor core 1
 
     // Gedachte kots
     // Deze functie is om te vragen
-    if (PS4InputsMain.Cirkelknop == true) // Zet een timer neer
+    if (PS3InputsMain.Cirkelknop == true) // Zet een timer neer
     {
       digitalWrite(12, HIGH);
       Shoot = 0xAA;
@@ -227,20 +226,26 @@ void Function_Print_Spi_input(int state)
 
 }
 
-void Set_Stepper_direction(signed char Direction)
+void servodirection(signed char Direction)
 {
-  if (Direction > 0 + STICKDRIFT)
+  if (Direction > 0 + STICKDRIFT && valS<=180)
   {
-    myStepper.step(STEPSPERREVOLUTION/32);
-
+    valS = valS+4;
+    servoT.write(valS);
   }
-  else if (Direction < 0 - STICKDRIFT)
+  else if (Direction < 0 - STICKDRIFT && valS>=0)
   {
-    myStepper.step(-STEPSPERREVOLUTION/32);
-
+    valS = valS-4;
+    servoT.write(valS);
   }
   else if (Direction > 0 - STICKDRIFT && Direction < 0 + STICKDRIFT)
   {
-    myStepper.step(0);
+    valS = valS;
+    servoT.write(valS);
+  }
+  else
+  {
+    valS = valS;
+    servoT.write(valS);
   }
 }

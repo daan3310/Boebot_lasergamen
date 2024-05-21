@@ -5,12 +5,11 @@
 #include "IO-layer.h"
 
 
-struct PS4 Logiclayer_Besturing_Data(struct PS4 PS4Inputs);
+struct PS3 Logiclayer_Besturing_Data(struct PS3 PS3Inputs);
 
 byte Logiclayer_SPI_CMD(byte cmd, byte data[3]);
 byte Logiclayer_SPI_CMD_NO_DATA(byte CMD);
 
-void Logiclayer_set_colour(byte Color[3]);
 
 byte Logiclayer_Startup_SPI(byte state);
 
