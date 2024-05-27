@@ -28,7 +28,7 @@ void setup() {
   //PS4.begin("80:ea:23:1b:fc:e7");
 
   
-  PS4.begin(MAC_PS4);
+  Ps3.begin(MAC_PS4);
 
   servoT.attach(servopin);
 
@@ -80,12 +80,12 @@ void setup() {
   Serial.println("State machine done!");
   #endif
   
-  for (i = 0; i<sizeof(Teamkleur); i++)
-  {
-    Teamkleur[i] = My_Serial_dataIn[i+1];
-  }
-
-  Logiclayer_set_colour(Teamkleur);
+  // for (i = 0; i<sizeof(Teamkleur); i++)
+  // {
+  //   Teamkleur[i] = My_Serial_dataIn[i+1];
+  // }
+  byte TeamNummer = My_Serial_dataIn[i+1];
+  Logiclayer_set_colour(TeamNummer);
   // Functie om de kleur van de esp32 te veranderen naar de corresponderende kleur
 
   xTaskCreatePinnedToCore
@@ -191,7 +191,7 @@ void Task1code( void * parameter) // Taken voor core 0
 void Task2code( void * parameter) // Taken voor core 1
 {
   // Setup
-  struct PS4 PS4InputsMain;
+  struct PS3 PS3InputsMain;
   
  
   int i = 5;
@@ -200,13 +200,13 @@ void Task2code( void * parameter) // Taken voor core 1
   
   while(1)
   {
-    PS4InputsMain = IO_Layer_Besturing();
-    PS4InputsMain = Logiclayer_Besturing_Data(PS4InputsMain);
+    PS3InputsMain = IO_Layer_Besturing();
+    PS3InputsMain = Logiclayer_Besturing_Data(PS3InputsMain);
     
-    updateMotor(motorLinks, PS4InputsMain.MotordataLinks);
-    updateMotor(motorRechts, PS4InputsMain.MotordataRechts);
+    updateMotor(motorLinks, PS3InputsMain.MotordataLinks);
+    updateMotor(motorRechts, PS3InputsMain.MotordataRechts);
 
-    servodirection(PS4InputsMain.Rechterjoystick_x);
+    servodirection(PS3InputsMain.Rechterjoystick_x);
     
 
     // if (PS4.R2Value() > 20)
@@ -218,7 +218,7 @@ void Task2code( void * parameter) // Taken voor core 1
 
     // Gedachte kots
     // Deze functie is om te vragen
-    if (PS4InputsMain.Cirkelknop == true) // Zet een timer neer
+    if (PS3InputsMain.Cirkelknop == true) // Zet een timer neer
     {
       //digitalWrite(12, HIGH);
       Shoot = 0xAA;

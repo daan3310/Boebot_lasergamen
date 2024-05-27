@@ -3,7 +3,7 @@
 
 // Arduino Libraries
 #include <Arduino.h>
-#include "PS4Controller.h"
+#include "Ps3Controller.h"
 #include <math.h>
 #include <SPI.h>
 #include "Config.h"

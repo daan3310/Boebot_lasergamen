@@ -73,7 +73,7 @@ void updateFSM()
         case STATE_3:
             // TEAMCOLOUR
             sendbuf[0] = TEAMCOLOUR;
-            sendbuf[1] = 255;
+            sendbuf[1] = 1;
             sendbuf[2] = 0;
             sendbuf[3] = 255;
 

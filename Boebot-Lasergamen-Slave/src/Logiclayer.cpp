@@ -1,31 +1,69 @@
 #include "Logiclayer.h"
 
 
-struct PS4 Logiclayer_Besturing_Data(struct PS4 PS4Inputs)
+// struct PS4 Logiclayer_Besturing_Data(struct PS4 PS4Inputs)
+// {
+//   uint ServoHoek = 0;
+//   PS4Inputs.MotordataLinks = PS4Inputs.R2 * 4;
+//   PS4Inputs.MotordataRechts = PS4Inputs.R2 * 4;
+  
+
+//   PS4Inputs.MotordataLinks += -PS4Inputs.L2 * 4;
+//   PS4Inputs.MotordataRechts += -PS4Inputs.L2 * 4;
+  
+
+//   if (PS4Inputs.Linkerjoystick_x > STICKDRIFT || PS4Inputs.Linkerjoystick_x < -STICKDRIFT)
+//   {
+
+//     PS4Inputs.MotordataLinks -= PS4Inputs.Linkerjoystick_x * 4;
+//     PS4Inputs.MotordataRechts += PS4Inputs.Linkerjoystick_x * 4;
+    
+//   }
+//   else 
+//   {
+//     PS4Inputs.Linkerjoystick_x = 0;
+//     PS4Inputs.Linkerjoystick_y = 0;
+//   }
+
+//   if (PS4Inputs.Rechterjoystick_x > STICKDRIFT || PS4Inputs.Rechterjoystick_x < -STICKDRIFT || PS4Inputs.Rechterjoystick_y > STICKDRIFT || PS4Inputs.Rechterjoystick_y < -STICKDRIFT)
+//   {
+
+//       // ADD features for Turret
+//   }
+//   else 
+//   {
+
+//     PS4Inputs.Rechterjoystick_x = 0;
+//     PS4Inputs.Rechterjoystick_y = 0;
+  
+//   }
+//   return PS4Inputs; 
+// }
+struct PS3 Logiclayer_Besturing_Data(struct PS3 PS3inputs)
 {
   uint ServoHoek = 0;
-  PS4Inputs.MotordataLinks = PS4Inputs.R2 * 4;
-  PS4Inputs.MotordataRechts = PS4Inputs.R2 * 4;
+  PS3inputs.MotordataLinks = PS3inputs.R2 * 4;
+  PS3inputs.MotordataRechts = PS3inputs.R2 * 4;
   
 
-  PS4Inputs.MotordataLinks += -PS4Inputs.L2 * 4;
-  PS4Inputs.MotordataRechts += -PS4Inputs.L2 * 4;
+  PS3inputs.MotordataLinks += -PS3inputs.L2 * 4;
+  PS3inputs.MotordataRechts += -PS3inputs.L2 * 4;
   
 
-  if (PS4Inputs.Linkerjoystick_x > STICKDRIFT || PS4Inputs.Linkerjoystick_x < -STICKDRIFT)
+  if (PS3inputs.Linkerjoystick_x > STICKDRIFT || PS3inputs.Linkerjoystick_x < -STICKDRIFT)
   {
 
-    PS4Inputs.MotordataLinks -= PS4Inputs.Linkerjoystick_x * 4;
-    PS4Inputs.MotordataRechts += PS4Inputs.Linkerjoystick_x * 4;
+    PS3inputs.MotordataLinks -= PS3inputs.Linkerjoystick_x * 4;
+    PS3inputs.MotordataRechts += PS3inputs.Linkerjoystick_x * 4;
     
   }
   else 
   {
-    PS4Inputs.Linkerjoystick_x = 0;
-    PS4Inputs.Linkerjoystick_y = 0;
+    PS3inputs.Linkerjoystick_x = 0;
+    PS3inputs.Linkerjoystick_y = 0;
   }
 
-  if (PS4Inputs.Rechterjoystick_x > STICKDRIFT || PS4Inputs.Rechterjoystick_x < -STICKDRIFT || PS4Inputs.Rechterjoystick_y > STICKDRIFT || PS4Inputs.Rechterjoystick_y < -STICKDRIFT)
+  if (PS3inputs.Rechterjoystick_x > STICKDRIFT || PS3inputs.Rechterjoystick_x < -STICKDRIFT || PS3inputs.Rechterjoystick_y > STICKDRIFT || PS3inputs.Rechterjoystick_y < -STICKDRIFT)
   {
 
       // ADD features for Turret
@@ -33,11 +71,11 @@ struct PS4 Logiclayer_Besturing_Data(struct PS4 PS4Inputs)
   else 
   {
 
-    PS4Inputs.Rechterjoystick_x = 0;
-    PS4Inputs.Rechterjoystick_y = 0;
+    PS3inputs.Rechterjoystick_x = 0;
+    PS3inputs.Rechterjoystick_y = 0;
   
   }
-  return PS4Inputs; 
+  return PS3inputs; 
 }
 
 byte Logiclayer_Serial_CMD(byte CMD, byte data[5])
@@ -129,14 +167,14 @@ byte Logiclayer_Serial_CMD_NO_DATA(byte CMD)
   return 0;
 }
 
-void Logiclayer_set_colour(byte Color[3])
+void Logiclayer_set_colour(byte Color)
 {
 // functie om ledstrip 
+int teamcolor = (int) Color;
+Ps3.setPlayer(teamcolor);
+//PS3.setLed(Color[0], Color[1], Color[2]);
 
-
-PS4.setLed(Color[0], Color[1], Color[2]);
-
-PS4.sendToController();
+//PS3.sendToController();
 
 
 }
