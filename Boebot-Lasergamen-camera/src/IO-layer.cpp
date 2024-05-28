@@ -85,32 +85,42 @@ esp_err_t non_blocking_queue_transaction_slave_spi(void* TxBuf, void*RxBuf, uint
 #endif
 
 #ifdef USE_WIFI
-const char* ssid     = "Leaphy Lasergame!";
-const char* password = "Leaphydebug1!";
-String serverName    = "192.168.0.102";   
-String serverPath    = "/startup";  // Flask upload route (voor image) (flask library python)
-String serverPath2   = "/gamestate/00:11:22:AA:BB:CC";
-String serverPath3   = "/shoot";
-String MAC           = "00:11:22:AA:BB:CC";
-const char* MAC_str  = "00:11:22:AA:BB:CC";
-const int serverPort = 5000;
+const char* ssid           = "Leaphy Lasergame!";
+const char* password       = "Leaphydebug1!";
+String serverName          = "192.168.0.102";   
+String ServerPathStartup   = "/startup";  // Flask upload route (voor image) (flask library python)
+String ServerPathGamestate = "/gamestate/";
+String ServerPathShoot     = "/shoot";
+String MAC                 = "00:11:22:AA:BB:CC";
+const char* MAC_str        = "00:11:22:AA:BB:CC";
+const int serverPort       = 5000;
 WiFiClient client;
 
-/*===============================================================================*/
-
+/**
+ * @brief game init loop
+ * 
+ * Blijf in deze loop hangen totdat connect_pi 1 returnt. 
+ * 
+ * @see connect_pi() 
+ */
 void init_game(void){
   bool connected = 0;
   Serial.println("Connecting to HTTP server");
   while(!connected){
-    connected = connect_pi();
+    connected = connect_pi(ServerPathStartup, MAC);
     Serial.print(".");
     delay(500);
   }
   Serial.println("Connected");
 }
 
-/* Stuur mac address naar pi. pi stuurt json die uitgelezen word */
-bool connect_pi(void) {
+/**
+ * @brief Connect to the host
+ * 
+ * Het device stuurt een bericht naar de host met het mac-address om zich aan te melden. Zodra het is aangemeld bij de host,
+ * stuurt deze een acknowladgement bericht terug. 
+ */
+bool connect_pi(String server_path,String address) {
   #ifdef DEBUG  
   Serial.println("Connecting to server: " + serverName);
   #endif 
@@ -123,7 +133,7 @@ bool connect_pi(void) {
 
     String head        = "--ESP32\r\nContent-Disposition: form-data; name=\"mac_address\"; filename=\"12345678\"\r\nContent-Type: mac_address\r\n\r\n";
     String tail        = "\r\n--ESP32--\r\n";
-    String mac_address = "00:11:22:AA:BB:CC"; //tijdelijk mac address, mac address nader te bepalen'
+    String mac_address = address; //tijdelijk mac address, mac address nader te bepalen'
 
     uint16_t totalLen  = head.length() + tail.length() + mac_address.length();
 
@@ -132,7 +142,7 @@ bool connect_pi(void) {
     #endif
 
     /* Send HTTP request */ 
-    client.println("POST " + serverPath + " HTTP/1.1");
+    client.println("POST " + server_path + " HTTP/1.1");
     client.println("Host: " + serverName);
     client.println("Content-Length: " + String(totalLen));
     client.println("Content-Type: multipart/form-data; boundary=ESP32");
@@ -188,9 +198,9 @@ bool connect_pi(void) {
     } 
     else {
       /* Access parsed JSON data */ 
-      const char* message = doc["message"]; // "Registered MAC <MAC_ADDRESS> for IP <IP_ADDRESS>."
+      const char* message = doc["message"];         // "Registered MAC <MAC_ADDRESS> for IP <IP_ADDRESS>."
       const char* MAC_ADDRESS = doc["mac_address"]; // "<MAC_ADDRESS>"
-      const char* IP = doc["IP"]; // "<IP_ADDRESS>"
+      const char* IP = doc["IP"];                   // "<IP_ADDRESS>"
 
       /* print json data */
       #ifdef DEBUG
@@ -229,8 +239,12 @@ bool connect_pi(void) {
   }
 }
 
-/* Request game data, receive data in JSON format */
-bool Gamestate(void){
+/**
+ * @brief Request gamestate from host
+ * 
+ * Request the gamestate from the host (raspberry pi). Receive the gamestate data in JSON format. 
+ */
+bool Gamestate(String server_path,String address){
   #ifdef DEBUG  
   Serial.println("Connecting to server: " + serverName);
   #endif 
@@ -249,8 +263,10 @@ bool Gamestate(void){
     Serial.println("Sending HTTP POST request...");
     #endif
 
+    String SERVERPATH = server_path + address;
+
     /* Send HTTP request */ 
-    client.println("GET " + serverPath2 + " HTTP/1.1");
+    client.println("GET " + SERVERPATH + " HTTP/1.1");
     client.println("Host: " + serverName);
     client.println("Content-Length: " + String(totalLen));
     client.println("Content-Type: multipart/form-data; boundary=ESP32");
@@ -337,6 +353,11 @@ bool Gamestate(void){
   } 
 }
 
+/**
+ * @brief Wait for a message
+ * 
+ * Wait to receive a message from the host. If a message is received, return 1. 
+ */
 int WaitForMessage(void){
   while (!client.available()){
     delay(100);
@@ -400,41 +421,10 @@ int WaitForMessage(void){
     #endif
   }
   
-  /* PLEUR HIER IETS VAN EEN SWITCH CASE IN */
-
   client.stop();
 
   return 1;
 }
-
-
-// String WaitForMessage(void){
-//   String message;
-// 
-//   while (!client.available()){
-//     delay(100);
-//     Serial.print(".");
-//   }
-// 
-//   message = client.readString();
-// 
-//   const size_t JSON_CAPACITY = 256;
-//   DynamicJsonDocument doc(JSON_CAPACITY);
-//   DeserializationError error = deserializeJson(doc, message);
-// 
-//   if (error) {
-//     Serial.print(F("deserializeJson() failed: "));
-//     Serial.println(error.f_str());
-//     return String(); // Return empty string if JSON parsing failed
-//   }
-// 
-//   const char* return_string = doc["temp"];
-// 
-//   // return return_string;
-//   return message;
-// }
-
-/*===============================================================================*/
 
 IPAddress init_wifi(){
     Serial.println("going to init wifi");
@@ -494,7 +484,7 @@ String sendPhoto(){
     Serial.println("Sending HTTP POST request...");
     #endif
 
-    client.println("POST " + serverPath3 + " HTTP/1.1");
+    client.println("POST " + ServerPathShoot + " HTTP/1.1");
     client.println("Host: " + serverName);
     client.println("Content-Length: " + String(totalLen));
     client.println("Content-Type: multipart/form-data; boundary=ESP32");

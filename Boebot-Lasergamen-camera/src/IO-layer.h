@@ -27,12 +27,10 @@ extern uint8_t my_post_trans_cb_flag;
 void my_post_trans_cb(spi_slave_transaction_t *trans);
 
 void init_game(void);
-bool connect_pi(void);
+bool connect_pi(String server_path,String address);
 String SendHTTPmessage(String message);
-bool Gamestate(void);
-// String WaitForMessage(void);
+bool Gamestate(String server_path,String address);
 int WaitForMessage(void);
-void FSM(String message);
 
 esp_err_t init_slave_spi();
 
