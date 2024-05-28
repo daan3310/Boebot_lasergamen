@@ -2,10 +2,8 @@
 
 uint currentState = STATE_0; // 4 posible states
 
-void updateFSM()
-{
-    switch(currentState)
-    {
+void updateFSM(){
+    switch(currentState){
         case STATE_0:
             sendbuf[0] = 0;
             sendbuf[1] = 0;
@@ -17,8 +15,7 @@ void updateFSM()
             receivebuf[2] = 0;
             receivebuf[3] = 0;
             blocking_transmit_slave_spi(sendbuf, receivebuf, 8*5);  
-            if(STARTGAME == receivebuf[0])
-            {
+            if(STARTGAME == receivebuf[0]){
                 currentState = STATE_1;
             }
             break;
@@ -34,12 +31,10 @@ void updateFSM()
             receivebuf[2] = 0;
             receivebuf[3] = 0;
             blocking_transmit_slave_spi(sendbuf, receivebuf, 8*5);
-            if(STATUSSLAVE == receivebuf[0])
-            {
+            if(STATUSSLAVE == receivebuf[0]){
                 currentState = STATE_2;
             }
-            else if(STARTGAME == receivebuf[0])
-            {
+            else if(STARTGAME == receivebuf[0]){
                 currentState = STATE_1;
             }
             break;
@@ -55,12 +50,10 @@ void updateFSM()
             receivebuf[2] = 0;
             receivebuf[3] = 0;
             blocking_transmit_slave_spi(sendbuf, receivebuf, 8*5);
-            if(TEAMCOLOUR == receivebuf[0])
-            {
+            if(TEAMCOLOUR == receivebuf[0]){
                 currentState = STATE_3;
             }
-            else if(STARTGAME == receivebuf[0])
-            {
+            else if(STARTGAME == receivebuf[0]){
                 currentState = STATE_1;
             }
             break;
@@ -76,13 +69,11 @@ void updateFSM()
             receivebuf[2] = 0;
             receivebuf[3] = 0;
             blocking_transmit_slave_spi(sendbuf, receivebuf, 8*5);
-            if(PLACEMAKER == receivebuf[0])
-            {
+            if(PLACEMAKER == receivebuf[0]){
                 Serial.print("Hello_Placemaker");
                 currentState = STATE_4;
             }
-            else if(STARTGAME == receivebuf[0])
-            {
+            else if(STARTGAME == receivebuf[0]){
                 Serial.print("Hello_Placemaker 2");
                 currentState = STATE_1;
             }
@@ -98,16 +89,32 @@ void updateFSM()
             receivebuf[2] = 0;
             receivebuf[3] = 0;
             blocking_transmit_slave_spi(sendbuf, receivebuf, 8*5);
-            if(SHOOT == receivebuf[0])
-            {
+            if(SHOOT == receivebuf[0]){
                 Serial.print("Hello_world!");
-                //sendPhoto();
+                // sendPhoto();
             }
-            if(STARTGAME == receivebuf[0])
-            {
+            if(STARTGAME == receivebuf[0]){
                 currentState = STATE_1;
             }
+            break;   
+    }
+}
+
+void MessageFSM(void){
+    int ReceiveMessage = WaitForMessage();
+
+    switch(ReceiveMessage){
+        case 0x01:
+            Serial.println("case 0x01");
             break;
-        
+        case 0x02:
+            Serial.println("case 0x02");
+            break;
+        case 0x03:
+            Serial.println("case 0x03");
+            break;
+        case 0x04:
+            Serial.println("case 0x04");
+            break;
     }
 }

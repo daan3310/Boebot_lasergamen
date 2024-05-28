@@ -9,6 +9,7 @@
 #include "driver/spi_slave.h"
 
 #define MAP_SPI_PINS 1
+
 #ifdef MAP_SPI_PINS
 #define GPIO_MOSI           13
 #define GPIO_MISO           16
@@ -25,6 +26,12 @@ extern uint8_t my_post_trans_cb_flag;
 
 void my_post_trans_cb(spi_slave_transaction_t *trans);
 
+void init_game(void);
+bool connect_pi(String server_path,String address);
+String SendHTTPmessage(String message);
+bool Gamestate(String server_path,String address);
+int WaitForMessage(void);
+
 esp_err_t init_slave_spi();
 
 esp_err_t blocking_transmit_slave_spi(void* TxBuf, void*RxBuf, uint Length_in_bits);
@@ -38,17 +45,14 @@ esp_err_t blocking_transmit_slave_spi(void* TxBuf, void*RxBuf, uint Length_in_bi
 #include <WiFi.h>
 #include "soc/soc.h"
 #include "soc/rtc_cntl_reg.h"
+#include <HTTPClient.h>
 
 // extern const char* ssid;
 // extern const char* password;
-
 // extern String serverName;   
-// // extern String serverName;   
-
+// extern String serverName;   
 // extern String serverPath;  // Flask upload route
-
 // extern const int serverPort;
-
 // extern WiFiClient client;
 
 IPAddress init_wifi();
@@ -81,8 +85,6 @@ IPAddress init_wifi();
 #define VSYNC_GPIO_NUM    25
 #define HREF_GPIO_NUM     23
 #define PCLK_GPIO_NUM     22
-
-
 
 esp_err_t init_camera();
 
