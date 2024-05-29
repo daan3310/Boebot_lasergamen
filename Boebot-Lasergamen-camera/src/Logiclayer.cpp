@@ -42,8 +42,7 @@ void updateFSM()
             {
                 currentState = STATE_2;
             }
-            else if(STARTGAME == receivebuf[0])
-            {
+            else if(STARTGAME == receivebuf[0]){
                 currentState = STATE_1;
             }
             break;
@@ -65,8 +64,7 @@ void updateFSM()
             {
                 currentState = STATE_3;
             }
-            else if(STARTGAME == receivebuf[0])
-            {
+            else if(STARTGAME == receivebuf[0]){
                 currentState = STATE_1;
             }
             break;
@@ -87,8 +85,7 @@ void updateFSM()
                 Serial.print("Hello_Placemaker");
                 currentState = STATE_4;
             }
-            else if(STARTGAME == receivebuf[0])
-            {
+            else if(STARTGAME == receivebuf[0]){
                 Serial.print("Hello_Placemaker 2");
                 currentState = STATE_1;
             }
@@ -110,11 +107,28 @@ void updateFSM()
                 //Serial.write("Helloworldtest");
                 sendPhoto();
             }
-            if(STARTGAME == receivebuf[0])
-            {
+            if(STARTGAME == receivebuf[0]){
                 currentState = STATE_1;
             }
+            break;   
+    }
+}
+
+void MessageFSM(void){
+    int ReceiveMessage = WaitForMessage();
+
+    switch(ReceiveMessage){
+        case 0x01:
+            Serial.println("case 0x01");
             break;
-        
+        case 0x02:
+            Serial.println("case 0x02");
+            break;
+        case 0x03:
+            Serial.println("case 0x03");
+            break;
+        case 0x04:
+            Serial.println("case 0x04");
+            break;
     }
 }

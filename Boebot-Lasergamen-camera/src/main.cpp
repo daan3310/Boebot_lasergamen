@@ -13,6 +13,12 @@ void setup() {
   // init_camera();
   // Serial.println("done init camera");
 
+  /* Connect to http game server pi  */
+  Serial.println("Init game");
+  init_game();
+  Serial.println("Game initialised");
+
+  /* Init SPI ,vervang dit met seriële communicatie UART. */ 
   // Serial.println("going to init slave spi");
   // init_slave_spi();
   // Serial.println("done init slave spi");
@@ -60,3 +66,5 @@ void loop() {
   //Serial.write(54);
   //even denken als hij hieruit komt
 }
+
+
