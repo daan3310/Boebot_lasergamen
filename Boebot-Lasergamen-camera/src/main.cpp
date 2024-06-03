@@ -2,69 +2,56 @@
 
 void setup() {
   Serial.begin(9600);
-  //Serial.begin(115200);
-  //might cause big issue:
-  // Serial.println("going to init wifi");
-  // init_wifi();
-  // Serial.println("done init wifi");
 
   //might cause big issue:
-  // Serial.println("going to init camera");
-  // init_camera();
-  // Serial.println("done init camera");
+  Serial.println("going to init wifi");
+  init_wifi();
+  Serial.println("done init wifi");
+
+  //might cause big issue:
+  Serial.println("going to init camera");
+  init_camera();
+  Serial.println("done init camera");
 
   /* Connect to http game server pi  */
   Serial.println("Init game");
   init_game();
   Serial.println("Game initialised");
 
-  /* Init SPI ,vervang dit met seriële communicatie UART. */ 
-  // Serial.println("going to init slave spi");
-  // init_slave_spi();
-  // Serial.println("done init slave spi");
-  
-  //pinMode(GPIO_CS, INPUT);
+  /* Enter idle mode, wait for wakeup from pi */
+  bool start = 0;
+  Serial.println("Enter idle mode.");
+  while(!start){
+    start = WaitForMessage();
+    Serial.print(".");
+  }
+  Serial.println("Exit idle mode.");
 }
 
-uint8_t pinState = 0;
-uint8_t lastPinState = 0;
-void loop() {
-  // Serial.print("currentState: ");
-  // Serial.println(currentState);
-  
-  // uint8_t counter = 0;
+void loop(){  
 
-  // Serial.print("TxBuffer: 0x");
-  // for(counter = 0; 3 > counter; counter++)
-  // {
-  //   Serial.print(sendbuf[counter], HEX);
-  //   Serial.print("\t0x");
+  // bool done = 0;
+  // while(!done) {
+  //   Serial.println("Send a photo");
+  //   sendPhoto();
+  //   Serial.println("main loop");
+  //   done = Gamestate("/gamestate", "/00:11:22:AA:BB:CC");
+  //   delay(1000);
+  //   // done = 0;
   // }
-  // Serial.println(sendbuf[3], HEX);
-  
-  // Serial.print("RxBuffer: 0x");
-  // for(counter = 0; 3 > counter; counter++)
-  // {
-  //   Serial.print(receivebuf[counter], HEX);
-  //   Serial.print("\t0x");
+  //
+  // while(1) {
+  //   Serial.println("inf loop");
+  //   delay(1000);
+  //   if(WaitForMessage){
+  //     break;
+  //   }
+  //   updateFSM();
   // }
-  // Serial.println(receivebuf[3], HEX);
-  // Serial.println();
 
-  // Serial.println("Begintest");
+  int message = WaitForMessage();
+  MessageFSM(message);
   updateFSM();
-  //sendPhoto();
-  // delay(1000);
-  // byte test1 = 0;
-  // if(Serial.available()>0){
-  //   test1 = Serial.read();
-  //   //while(Serial.available()>0){
-  //   //Serial.read();
-  //   Serial.write(test1);
-  //   //Serial.write("\n");
-  // }
-  //Serial.write(54);
-  //even denken als hij hieruit komt
 }
 
 

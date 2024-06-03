@@ -13,20 +13,12 @@ void my_post_trans_cb()
   my_post_trans_cb_flag = 1;
 }
 
-// void init_slave_serial() {
-//   Serial.begin(SERIAL_BAUD_RATE);  // Initialize serial communication
-// }
-
 esp_err_t blocking_transmit_slave_serial(void* TxBuf, void* RxBuf, uint Length_in_bits)
 {
   // Cast the buffers to char pointers
   char* txBuffer = (char*)TxBuf;
   char* rxBuffer = (char*)RxBuf;
-  //Serial.println("Begin");
-  // Send data out through serial
-  // for(int i1 = 0; i1 < Length_in_bits / 8; i1++){
-  //   Serial.println(txBuffer[i1]);
-  // }
+  
   Serial.write(txBuffer, Length_in_bits / 8);
 
   // Wait for incoming data
@@ -38,7 +30,6 @@ esp_err_t blocking_transmit_slave_serial(void* TxBuf, void* RxBuf, uint Length_i
   }
 
   // Read incoming data
-  //Serial.readBytes(rxBuffer, Length_in_bits / 8);
   for (int i = 0; i <= (Length_in_bits / 8); i++) {
     rxBuffer[i] = Serial.read();
   }
@@ -52,22 +43,6 @@ esp_err_t non_blocking_queue_transaction_slave_serial(void* TxBuf, void* RxBuf, 
   // This function is blocking in the case of Serial communication
   return blocking_transmit_slave_serial(TxBuf, RxBuf, Length_in_bits);
 }
-
-
-// void* poll_transaction_complete();
-// {
-  
-//   if(1 = my_post_trans_cb_flag)
-//   {
-//     spi_slave_transaction_t *pt;
-//     spi_slave_transaction_t **ppt = &pt;
-//     spi_slave_get_trans_result(HSPI_HOST, ppt, portMAX_DELAY);
-    
-//   }
-//   return (void*)NULL;
-// }
-
-//#endif
 
 #ifdef USE_WIFI
 const char* ssid           = "Leaphy Lasergame!";
@@ -355,60 +330,31 @@ int WaitForMessage(void){
   Serial.println(input);
 
   /* remove http overhead from input */
-  int jsonStartIndex = input.indexOf("\r\n\r\n");
+  int MessageIndex = input.indexOf("\r\n\r\n");
 
-  if (jsonStartIndex != -1) {
-    decoded_string = input.substring(jsonStartIndex + 4);
+  if (MessageIndex != -1) {
+    decoded_string = input.substring(MessageIndex + 4);
     decoded_string.trim();
   
-    Serial.println("Extracted JSON content:");
+    Serial.println("Extracted message content:");
     Serial.println(decoded_string);
   } 
   else {
-    Serial.println("JSON content not found in HTTP response.");
+    Serial.println("Error, no message content found.");
     return 0;
-  }
-
-  /* parse JSON */
-  DynamicJsonDocument doc(512);
-  DeserializationError error = deserializeJson(doc, decoded_string);
-
-  if (error) {
-    Serial.print(F("deserializeJson() failed: "));
-    Serial.println(error.f_str());
-  return 0;
-  }   
-  else {
-    /* Access parsed JSON data */ 
-    const char* Mac_address = doc["Mac_address"];
-    const char* IP          = doc["IP"];
-    const char* Team        = doc["Team"]; 
-    const char* Team_color  = doc["Team_color"];
-    int Team_score          = doc["Team_score"];
-    int Enemy_team_score    = doc["Enemy_team_score"]; 
-    int Hit_points          = doc["Hit_points"]; 
-    int Hits                = doc["Hits"]; 
-
-    /* print json data */
-    #ifdef DEBUG
-    Serial.println("Mac address: " + String(Mac_address));
-    Serial.println("IP address: " + String(IP));
-    Serial.println("Team: " + String(Team));
-    Serial.println("Team color: " + String(Team_color));
-    Serial.print("Team score: ");
-    Serial.println(Team_score);
-    Serial.print("Enemy team score: ");
-    Serial.println(Enemy_team_score);
-    Serial.print("Hit points: ");
-    Serial.println(Hit_points);
-    Serial.print("Hits: ");
-    Serial.println(Hits);
-    #endif
   }
   
   client.stop();
 
-  return 1;
+  if        (decoded_string == "Success") {
+    return 1;
+  } else if (decoded_string == "Error") {
+    return 2;
+  } else if (decoded_string.startsWith("Warning")) {
+    return 3;
+  } else {
+    return 0;  // default case for other content
+  }
 }
 
 IPAddress init_wifi(){
@@ -494,33 +440,7 @@ String sendPhoto(){
 
     esp_camera_fb_return(fb);
 
-    //boolean state = false;
-
-    // while ((startTimer + timeoutTimer) > millis()) {
-    //   Serial.print(".");
-    //   delay(10);
-    //   while (client.available()) {
-    //     char c = client.read();
-    //     if (c == '\n') {
-    //       if (getAll.length() == 0) {
-    //         state = true;
-    //       }
-    //       getAll = "";
-    //     } else if (c != '\r') {
-    //       getAll += String(c);
-    //     }
-    //     if (state == true) {
-    //       getBody += String(c);
-    //     }
-    //     startTimer = millis();
-    //   }
-    //   if (getBody.length() > 0) {
-    //     break;
-    //   }
-    // }
-    //Serial.println();
     client.stop();
-    //Serial.println(getBody);
   } 
   else{
 
