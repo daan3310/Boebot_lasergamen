@@ -13,20 +13,12 @@ void my_post_trans_cb()
   my_post_trans_cb_flag = 1;
 }
 
-// void init_slave_serial() {
-//   Serial.begin(SERIAL_BAUD_RATE);  // Initialize serial communication
-// }
-
 esp_err_t blocking_transmit_slave_serial(void* TxBuf, void* RxBuf, uint Length_in_bits)
 {
   // Cast the buffers to char pointers
   char* txBuffer = (char*)TxBuf;
   char* rxBuffer = (char*)RxBuf;
-  //Serial.println("Begin");
-  // Send data out through serial
-  // for(int i1 = 0; i1 < Length_in_bits / 8; i1++){
-  //   Serial.println(txBuffer[i1]);
-  // }
+  
   Serial.write(txBuffer, Length_in_bits / 8);
 
   // Wait for incoming data
@@ -38,7 +30,6 @@ esp_err_t blocking_transmit_slave_serial(void* TxBuf, void* RxBuf, uint Length_i
   }
 
   // Read incoming data
-  //Serial.readBytes(rxBuffer, Length_in_bits / 8);
   for (int i = 0; i <= (Length_in_bits / 8); i++) {
     rxBuffer[i] = Serial.read();
   }
@@ -52,22 +43,6 @@ esp_err_t non_blocking_queue_transaction_slave_serial(void* TxBuf, void* RxBuf, 
   // This function is blocking in the case of Serial communication
   return blocking_transmit_slave_serial(TxBuf, RxBuf, Length_in_bits);
 }
-
-
-// void* poll_transaction_complete();
-// {
-  
-//   if(1 = my_post_trans_cb_flag)
-//   {
-//     spi_slave_transaction_t *pt;
-//     spi_slave_transaction_t **ppt = &pt;
-//     spi_slave_get_trans_result(HSPI_HOST, ppt, portMAX_DELAY);
-    
-//   }
-//   return (void*)NULL;
-// }
-
-//#endif
 
 #ifdef USE_WIFI
 const char* ssid           = "Leaphy Lasergame!";
@@ -494,33 +469,7 @@ String sendPhoto(){
 
     esp_camera_fb_return(fb);
 
-    //boolean state = false;
-
-    // while ((startTimer + timeoutTimer) > millis()) {
-    //   Serial.print(".");
-    //   delay(10);
-    //   while (client.available()) {
-    //     char c = client.read();
-    //     if (c == '\n') {
-    //       if (getAll.length() == 0) {
-    //         state = true;
-    //       }
-    //       getAll = "";
-    //     } else if (c != '\r') {
-    //       getAll += String(c);
-    //     }
-    //     if (state == true) {
-    //       getBody += String(c);
-    //     }
-    //     startTimer = millis();
-    //   }
-    //   if (getBody.length() > 0) {
-    //     break;
-    //   }
-    // }
-    //Serial.println();
     client.stop();
-    //Serial.println(getBody);
   } 
   else{
 

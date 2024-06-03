@@ -24,13 +24,9 @@
 extern DMA_ATTR char sendbuf[4];
 extern DMA_ATTR char receivebuf[4];
 extern spi_slave_transaction_t t;
-// extern uint8_t i;
-// extern uint8_t r;
 extern uint8_t my_post_trans_cb_flag;
 
 void my_post_trans_cb(spi_slave_transaction_t *trans);
-
-//void init_slave_serial();
 
 esp_err_t blocking_transmit_slave_serial(void* TxBuf, void*RxBuf, uint Length_in_bits);
 
