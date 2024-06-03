@@ -85,7 +85,10 @@ IPAddress init_wifi();
 #define PCLK_GPIO_NUM     22
 
 esp_err_t init_camera();
-
+bool connect_pi(String server_path,String address);
+void init_game(void);
+bool Gamestate(String server_path,String address);
+int WaitForMessage(void);
 String sendPhoto();
 
 unsigned long benchMark_sendPhoto();
