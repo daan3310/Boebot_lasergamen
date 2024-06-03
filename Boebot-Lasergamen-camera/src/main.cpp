@@ -28,10 +28,8 @@ void setup() {
   Serial.println("Exit idle mode.");
 }
 
-uint8_t pinState = 0;
-uint8_t lastPinState = 0;
 void loop(){  
-  
+
   // bool done = 0;
   // while(!done) {
   //   Serial.println("Send a photo");
@@ -51,7 +49,8 @@ void loop(){
   //   updateFSM();
   // }
 
-  int error = WaitForMessage();
+  int message = WaitForMessage();
+  MessageFSM(message);
   updateFSM();
 }
 

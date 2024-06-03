@@ -330,60 +330,31 @@ int WaitForMessage(void){
   Serial.println(input);
 
   /* remove http overhead from input */
-  int jsonStartIndex = input.indexOf("\r\n\r\n");
+  int MessageIndex = input.indexOf("\r\n\r\n");
 
-  if (jsonStartIndex != -1) {
-    decoded_string = input.substring(jsonStartIndex + 4);
+  if (MessageIndex != -1) {
+    decoded_string = input.substring(MessageIndex + 4);
     decoded_string.trim();
   
-    Serial.println("Extracted JSON content:");
+    Serial.println("Extracted message content:");
     Serial.println(decoded_string);
   } 
   else {
-    Serial.println("JSON content not found in HTTP response.");
+    Serial.println("Error, no message content found.");
     return 0;
-  }
-
-  /* parse JSON */
-  DynamicJsonDocument doc(512);
-  DeserializationError error = deserializeJson(doc, decoded_string);
-
-  if (error) {
-    Serial.print(F("deserializeJson() failed: "));
-    Serial.println(error.f_str());
-  return 0;
-  }   
-  else {
-    /* Access parsed JSON data */ 
-    const char* Mac_address = doc["Mac_address"];
-    const char* IP          = doc["IP"];
-    const char* Team        = doc["Team"]; 
-    const char* Team_color  = doc["Team_color"];
-    int Team_score          = doc["Team_score"];
-    int Enemy_team_score    = doc["Enemy_team_score"]; 
-    int Hit_points          = doc["Hit_points"]; 
-    int Hits                = doc["Hits"]; 
-
-    /* print json data */
-    #ifdef DEBUG
-    Serial.println("Mac address: " + String(Mac_address));
-    Serial.println("IP address: " + String(IP));
-    Serial.println("Team: " + String(Team));
-    Serial.println("Team color: " + String(Team_color));
-    Serial.print("Team score: ");
-    Serial.println(Team_score);
-    Serial.print("Enemy team score: ");
-    Serial.println(Enemy_team_score);
-    Serial.print("Hit points: ");
-    Serial.println(Hit_points);
-    Serial.print("Hits: ");
-    Serial.println(Hits);
-    #endif
   }
   
   client.stop();
 
-  return 1;
+  if        (decoded_string == "Success") {
+    return 1;
+  } else if (decoded_string == "Error") {
+    return 2;
+  } else if (decoded_string.startsWith("Warning")) {
+    return 3;
+  } else {
+    return 0;  // default case for other content
+  }
 }
 
 IPAddress init_wifi(){

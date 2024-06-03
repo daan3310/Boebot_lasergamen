@@ -37,6 +37,6 @@ enum MY_STATES
 extern uint currentState; // 4 posible states
 
 void updateFSM();
-void MessageFSM(void);
+void MessageFSM(int message);
 
 #endif

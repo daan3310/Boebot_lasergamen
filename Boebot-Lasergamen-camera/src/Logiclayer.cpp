@@ -114,10 +114,8 @@ void updateFSM()
     }
 }
 
-void MessageFSM(void){
-    int ReceiveMessage = WaitForMessage();
-
-    switch(ReceiveMessage){
+void MessageFSM(int message){
+    switch(message){
         case 0x01:
             Serial.println("case 0x01");
             break;
