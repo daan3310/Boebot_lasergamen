@@ -65,7 +65,7 @@ void UI_layer_Shoot()
     // if1 als 100ms nieuwe status van willem
     // if2 als 1s nieuwe status naar willem als de status al terug is gelezen 
 
-    Logiclayer_SPI_CMD_NO_DATA(SHOOT);
+    Logiclayer_Serial_CMD_NO_DATA(SHOOT);
     while (1)
     {
 

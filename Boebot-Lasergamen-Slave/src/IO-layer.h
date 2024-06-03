@@ -3,12 +3,12 @@
 
 #include "main.h"
 #include <ESP32Servo.h>
-
+#include <HardwareSerial.h>
 // any motor added to the system should be added to this enum "motor" and the switch case in the "updateMotor" function in IO-layer.cpp
 enum motor { motorRechts, motorLinks, motorTurret };
 
 
-extern byte My_SPI_dataIn[DATALENGTH];
+extern byte My_Serial_dataIn[DATALENGTH];
 extern byte My_Flag_SPI;
 
 
@@ -18,8 +18,8 @@ extern byte My_Flag_SPI;
 uint initMotors(int timer);
 uint updateMotor(motor currentMotor, int motorPower);
 void InitTimerInterrupt(uint Prescaler, uint TimerTicks);
-byte initSPI();
-byte hspi_send_command(byte cmd, byte data[DATALENGTH-1]);
+//byte initSerial();
+byte serial_send_command(byte cmd, byte data[DATALENGTH-1]);
 
 
 

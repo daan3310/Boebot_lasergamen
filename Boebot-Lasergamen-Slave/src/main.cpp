@@ -10,26 +10,27 @@ TaskHandle_t Task2;
 volatile byte Shoot = 0;
 volatile byte Flag_error_handler = 0;
 volatile byte error = 0;
-
+int valS = 90;
 byte Teamkleur[3];
 
-Stepper myStepper = Stepper(STEPSPERREVOLUTION, Stepper_IN1, Stepper_IN3, Stepper_IN2, Stepper_IN4);
+Servo servoT;
 
-
+int it = 0;
+byte testsarr[10];
 
 void setup() {
   // put your setup code here, to run once:
   int i = 0;
 
-  Serial.begin(115200)
+  Serial.begin(9600);
+  //Serial.setTimeout(2);
   //PS4.begin("5c:96:56:b2:fb:c6");
-  PS4.begin("80:ea:23:1b:fc:e7");
+  //PS4.begin("80:ea:23:1b:fc:e7");
 
   
   PS4.begin(MAC_PS4);
 
-  myStepper.setSpeed(10);
-  //myStepper.step(STEPSPERREVOLUTION);
+  servoT.attach(servopin);
 
   initMotors(0);
 
@@ -37,27 +38,27 @@ void setup() {
   Serial.println("Waiting for controller:");
   #endif
 
-  while(!PS4.isConnected())    
-  { 
-    if (i == 300)
-    {
+  // while(!PS4.isConnected())    
+  // { 
+  //   if (i == 300)
+  //   {
 
-      UI_layer_error_handling(CONTROLLERNOTDETECTED);
-      i = 0;
-    }
-    i++;
+  //     UI_layer_error_handling(CONTROLLERNOTDETECTED);
+  //     i = 0;
+  //   }
+  //   i++;
 
-    delay(100);
-  }
+  //   delay(100);
+  // }
   #if DEBUG > 0
   Serial.println("Controller detected:\n");
   #endif
 
-  initSPI();  // Initialise SPI
+  //initSPI();  // Initialise SPI
   i = 1;
   
   #if DEBUG > 0
-  Serial.println("Starting SPI");
+  Serial.println("Starting Serial");
   #endif
   
   int state = 0;
@@ -69,10 +70,10 @@ void setup() {
   // start a state diagram for start of the SPI communication
   // This can be blocking to allow Willem to start correctly
   //  
-  #if DEBUG < 1
+  #if DEBUG > 0
   while (state != 5)
   {
-    state = Logiclayer_Startup_SPI(state);
+    state = Logiclayer_Startup_Serial(state);
   }
   #endif
   #if DEBUG > 0
@@ -81,7 +82,7 @@ void setup() {
   
   for (i = 0; i<sizeof(Teamkleur); i++)
   {
-    Teamkleur[i] = My_SPI_dataIn[i+1];
+    Teamkleur[i] = My_Serial_dataIn[i+1];
   }
 
   Logiclayer_set_colour(Teamkleur);
@@ -111,6 +112,44 @@ void setup() {
 }
 
 void loop() { 
+  // byte tests = 3;
+  // Serial.write(tests);
+  // byte tests1 = 0;
+  // //byte testsarr[5];
+  // if(Serial.available() > 0){
+  //   tests1 = Serial.read();
+  //   //Serial.println(tests1);
+  //   //Serial.print("\n");
+  //   if(tests1==10){
+  //      //Serial.print("received value: ");
+  //      //Serial.println(testsarr[0]);
+  //      for(int ic = 0;ic<10;ic++){
+  //        testsarr[ic]=0;
+  //      }
+  //      it = 0;
+  //   }
+  //   else{
+  //     //Serial.println(tests1);
+  //     //Serial.print("ontvangen: ");
+  //     //Serial.println(tests1);
+  //     testsarr[it] = tests1;
+  //     //Serial.print("array waarde: ");
+  //     //Serial.println(testsarr[it]);
+  //     //Serial.print("it: ");
+  //     //Serial.println(it);
+  //     //Serial.println(testsarr[it]);
+  //     it = it+1;
+  //   }
+  //   if(testsarr[0]>0){
+  //     Serial.println(testsarr[0]);
+  //   }
+  //   //Serial.print("Receivewaarde: ");
+  //   //char testp = (char) tests1;
+  //   //tests1.trim();
+  //   //int newl = "\n";
+  //   //Serial.println(tests1);
+  //   delay(500);
+  // }
 }
 
 void Task1code( void * parameter) // Taken voor core 0
@@ -143,9 +182,9 @@ void Task1code( void * parameter) // Taken voor core 0
     Flag_SPI = 0;
     Shoot = 0;
    }
-
+  // String testd = Serial.readString();
+  // Serial.print(testd);
     delay(100);
-
   }
 }
 
@@ -167,7 +206,7 @@ void Task2code( void * parameter) // Taken voor core 1
     updateMotor(motorLinks, PS4InputsMain.MotordataLinks);
     updateMotor(motorRechts, PS4InputsMain.MotordataRechts);
 
-    Set_Stepper_direction(PS4InputsMain.Rechterjoystick_x);
+    servodirection(PS4InputsMain.Rechterjoystick_x);
     
 
     // if (PS4.R2Value() > 20)
@@ -181,24 +220,26 @@ void Task2code( void * parameter) // Taken voor core 1
     // Deze functie is om te vragen
     if (PS4InputsMain.Cirkelknop == true) // Zet een timer neer
     {
-      digitalWrite(12, HIGH);
+      //digitalWrite(12, HIGH);
       Shoot = 0xAA;
+      Logiclayer_Serial_CMD_NO_DATA(SHOOT);
+      //UI_layer_Shoot();
     }
     else
     {
-      digitalWrite(12, LOW);
+      //digitalWrite(12, LOW);
     }
     
     delay(50);
   }
 }
 
-void Function_Print_Spi_output(byte CMD, byte data[3] )
+void Function_Print_Serial_output(byte CMD, byte data[5] )
 {
   Serial.println();
   Serial.print("Data out:");
   Serial.print(" ");
-  Serial.print(CMD, HEX);
+  Serial.print(CMD, DEC);
   Serial.print(", ");
   Serial.print(data[0], DEC);
   Serial.print(", ");
@@ -209,38 +250,42 @@ void Function_Print_Spi_output(byte CMD, byte data[3] )
 
 }
 
-void Function_Print_Spi_input(int state)
+void Function_Print_Serial_input(int state)
 {
   Serial.print("Data in:");
   Serial.print("State:");
   Serial.print(state, DEC);
   Serial.print(" \t\t");
-  Serial.print(My_SPI_dataIn[0], HEX);
+  Serial.print(My_Serial_dataIn[0], DEC);
   Serial.print(", ");
-  Serial.print(My_SPI_dataIn[1], HEX);
+  Serial.print(My_Serial_dataIn[1], DEC);
   Serial.print(", ");
-  Serial.print(My_SPI_dataIn[2], HEX);
+  Serial.print(My_Serial_dataIn[2], DEC);
   Serial.print(", ");
-  Serial.print(My_SPI_dataIn[3], HEX);
+  Serial.print(My_Serial_dataIn[3], DEC);
   Serial.println();
-
-
 }
 
-void Set_Stepper_direction(signed char Direction)
+void servodirection(signed char Direction)
 {
-  if (Direction > 0 + STICKDRIFT)
+  if (Direction > 0 + STICKDRIFT && valS<=180)
   {
-    myStepper.step(STEPSPERREVOLUTION/32);
-
+    valS = valS+1;
+    servoT.write(valS);
   }
-  else if (Direction < 0 - STICKDRIFT)
+  else if (Direction < 0 - STICKDRIFT && valS>=0)
   {
-    myStepper.step(-STEPSPERREVOLUTION/32);
-
+    valS = valS-1;
+    servoT.write(valS);
   }
   else if (Direction > 0 - STICKDRIFT && Direction < 0 + STICKDRIFT)
   {
-    myStepper.step(0);
+    valS = valS;
+    servoT.write(valS);
+  }
+  else
+  {
+    valS = valS;
+    servoT.write(valS);
   }
 }

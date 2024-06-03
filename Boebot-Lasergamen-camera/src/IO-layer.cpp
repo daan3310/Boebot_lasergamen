@@ -1,73 +1,58 @@
 #include "IO-layer.h"
 
-DMA_ATTR char sendbuf[6] = {0};
-DMA_ATTR char receivebuf[6] = {0};
-spi_slave_transaction_t t;
-// uint8_t i;
-// uint8_t r;
+#define SERIAL_BAUD_RATE 115200  // Change baud rate as needed
+
+char sendbuf[4] = {0};
+char receivebuf[4] = {0};
+
+// Define callback flag and function
 uint8_t my_post_trans_cb_flag = 0;
 
-
-#ifdef USE_SPI
-
-void my_post_trans_cb(spi_slave_transaction_t *trans){
+void my_post_trans_cb()
+{
   my_post_trans_cb_flag = 1;
-  // Serial.println("my_post_trans_cb");
 }
 
-esp_err_t init_slave_spi(){
-    // Configuration for the SPI bus
-    spi_bus_config_t buscfg={
-        .mosi_io_num=GPIO_MOSI,
-        .miso_io_num=GPIO_MISO,
-        .sclk_io_num=GPIO_SCLK,
-        .quadwp_io_num = -1,
-        .quadhd_io_num = -1,
-    };
+// void init_slave_serial() {
+//   Serial.begin(SERIAL_BAUD_RATE);  // Initialize serial communication
+// }
 
-    // Configuration for the SPI slave interface
-    spi_slave_interface_config_t slvcfg={
-        .spics_io_num=GPIO_CS,
-        .flags=0,
-        .queue_size=5,
-        .mode=3,
-        // .post_setup_cb,
-        .post_trans_cb = my_post_trans_cb,
-        
-    };
+esp_err_t blocking_transmit_slave_serial(void* TxBuf, void* RxBuf, uint Length_in_bits)
+{
+  // Cast the buffers to char pointers
+  char* txBuffer = (char*)TxBuf;
+  char* rxBuffer = (char*)RxBuf;
+  //Serial.println("Begin");
+  // Send data out through serial
+  // for(int i1 = 0; i1 < Length_in_bits / 8; i1++){
+  //   Serial.println(txBuffer[i1]);
+  // }
+  Serial.write(txBuffer, Length_in_bits / 8);
 
-    // Initialize SPI slave interface
-    esp_err_t error = spi_slave_initialize(HSPI_HOST, &buscfg, &slvcfg, SPI_DMA_CH_AUTO);
-    // clear spi_slave_transaction_t
-    memset(&t, 0, sizeof(t));
-    return error;
-}
+  // Wait for incoming data
+  uint32_t start_time = millis();
+  while (Serial.available() <= (Length_in_bits / 8)) {
+    if (millis() - start_time > 2000) {
+      return ESP_ERR_TIMEOUT; // Return timeout error if not enough data received within timeout
+    }
+  }
 
-esp_err_t blocking_transmit_slave_spi(void* TxBuf, void*RxBuf, uint Length_in_bits){
-  t.length = Length_in_bits;
-  // i = 170;
-  t.tx_buffer = TxBuf;
-  // r = 0;
-  t.rx_buffer = RxBuf;
+  // Read incoming data
+  //Serial.readBytes(rxBuffer, Length_in_bits / 8);
+  for (int i = 0; i <= (Length_in_bits / 8); i++) {
+    rxBuffer[i] = Serial.read();
+  }
+
   
-  return spi_slave_transmit(HSPI_HOST, &t, 1000); // portMAX_DELAY
-  
-  // return ESP_OK;
+  return ESP_OK;
 }
 
-esp_err_t non_blocking_queue_transaction_slave_spi(void* TxBuf, void*RxBuf, uint Length_in_bits){
-  t.length = Length_in_bits;
-  t.tx_buffer = TxBuf;
-  t.rx_buffer = RxBuf;
-
-  return spi_slave_queue_trans(HSPI_HOST, &t, portMAX_DELAY);
-  
-  // return spi_slave_get_trans_result(HSPI_HOST, ppt, portMAX_DELAY);
-  // printf("Transmitted: %u\n", i);
-  // printf("Received:    %u\n\n", r);
-  //r = *(pt->rx_buffer);
-  //printf("Received?:   %u\n\n", r);
+esp_err_t non_blocking_queue_transaction_slave_serial(void* TxBuf, void* RxBuf, uint Length_in_bits)
+{
+  // This function is blocking in the case of Serial communication
+  return blocking_transmit_slave_serial(TxBuf, RxBuf, Length_in_bits);
 }
+
 
 // void* poll_transaction_complete();
 // {
@@ -82,7 +67,7 @@ esp_err_t non_blocking_queue_transaction_slave_spi(void* TxBuf, void*RxBuf, uint
 //   return (void*)NULL;
 // }
 
-#endif
+//#endif
 
 #ifdef USE_WIFI
 const char* ssid           = "Leaphy Lasergame!";
