@@ -21,10 +21,11 @@ byte testsarr[10];
 void setup() {
   // put your setup code here, to run once:
   int i = 0;
-
-  Serial.begin(9600);
-  PS4.begin(MAC_PS4);
   servoT.attach(servopin);
+  PS4.begin(MAC_PS4);
+  Serial.begin(9600);
+
+  
 
   initMotors(0);
 
@@ -32,18 +33,18 @@ void setup() {
   Serial.println("Waiting for controller:");
   #endif
 
-  // while(!PS4.isConnected())    
-  // { 
-  //   if (i == 300)
-  //   {
+  while(!PS4.isConnected())    
+  { 
+    if (i == 300)
+    {
 
-  //     UI_layer_error_handling(CONTROLLERNOTDETECTED);
-  //     i = 0;
-  //   }
-  //   i++;
+      UI_layer_error_handling(CONTROLLERNOTDETECTED);
+      i = 0;
+    }
+    i++;
 
-  //   delay(100);
-  // }
+    delay(100);
+  }
   #if DEBUG > 0
   Serial.println("Controller detected:\n");
   #endif
