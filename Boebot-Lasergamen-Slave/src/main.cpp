@@ -23,13 +23,7 @@ void setup() {
   int i = 0;
 
   Serial.begin(9600);
-  //Serial.setTimeout(2);
-  //PS4.begin("5c:96:56:b2:fb:c6");
-  //PS4.begin("80:ea:23:1b:fc:e7");
-
-  
   PS4.begin(MAC_PS4);
-
   servoT.attach(servopin);
 
   initMotors(0);
@@ -54,7 +48,6 @@ void setup() {
   Serial.println("Controller detected:\n");
   #endif
 
-  //initSPI();  // Initialise SPI
   i = 1;
   
   #if DEBUG > 0
@@ -66,10 +59,7 @@ void setup() {
   byte result = 0;
   
   delay(100);
-
-  // start a state diagram for start of the SPI communication
-  // This can be blocking to allow Willem to start correctly
-  //  
+ 
   #if DEBUG > 0
   while (state != 5)
   {
@@ -112,44 +102,6 @@ void setup() {
 }
 
 void loop() { 
-  // byte tests = 3;
-  // Serial.write(tests);
-  // byte tests1 = 0;
-  // //byte testsarr[5];
-  // if(Serial.available() > 0){
-  //   tests1 = Serial.read();
-  //   //Serial.println(tests1);
-  //   //Serial.print("\n");
-  //   if(tests1==10){
-  //      //Serial.print("received value: ");
-  //      //Serial.println(testsarr[0]);
-  //      for(int ic = 0;ic<10;ic++){
-  //        testsarr[ic]=0;
-  //      }
-  //      it = 0;
-  //   }
-  //   else{
-  //     //Serial.println(tests1);
-  //     //Serial.print("ontvangen: ");
-  //     //Serial.println(tests1);
-  //     testsarr[it] = tests1;
-  //     //Serial.print("array waarde: ");
-  //     //Serial.println(testsarr[it]);
-  //     //Serial.print("it: ");
-  //     //Serial.println(it);
-  //     //Serial.println(testsarr[it]);
-  //     it = it+1;
-  //   }
-  //   if(testsarr[0]>0){
-  //     Serial.println(testsarr[0]);
-  //   }
-  //   //Serial.print("Receivewaarde: ");
-  //   //char testp = (char) tests1;
-  //   //tests1.trim();
-  //   //int newl = "\n";
-  //   //Serial.println(tests1);
-  //   delay(500);
-  // }
 }
 
 void Task1code( void * parameter) // Taken voor core 0
@@ -171,8 +123,6 @@ void Task1code( void * parameter) // Taken voor core 0
        Als er gevraagt is wil je ongeveer een seconde wachten?
        Dus eerst kijk je naar de millis nadat het gevraagt is
        en dan om de zoveel tijd vragen hoe lang het nog duurt bijvoorbeeld 100 ms
-
-
     */
 
   // UI_layer_Shoot();
@@ -193,11 +143,8 @@ void Task2code( void * parameter) // Taken voor core 1
   // Setup
   struct PS4 PS4InputsMain;
   
- 
   int i = 5;
-  
-
-  
+   
   while(1)
   {
     PS4InputsMain = IO_Layer_Besturing();
@@ -208,13 +155,11 @@ void Task2code( void * parameter) // Taken voor core 1
 
     servodirection(PS4InputsMain.Rechterjoystick_x);
     
-
     // if (PS4.R2Value() > 20)
     // {
     //   PS4.setRumble(PS4.R2Value(), PS4.R2Value());
     //   PS4.sendToController();
     // }
-
 
     // Gedachte kots
     // Deze functie is om te vragen

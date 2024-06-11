@@ -1,8 +1,10 @@
 #include "Logiclayer.h"
 
 uint currentState = STATE_0; // 4 posible states
+int hitpoints;
+int points;
 
-void updateFSM()
+void updateFSM(void)
 {
     //Serial.println("Logiclayer1");
     switch(currentState)
@@ -114,19 +116,46 @@ void updateFSM()
     }
 }
 
-void MessageFSM(int message){
-    switch(message){
-        case 0x01:
-            Serial.println("case 0x01");
+void MessageFSM(int message) 
+{
+    int msg = 0;
+
+    switch(message) {
+        case 0:
+            // no message.
+            Serial.println(".");
             break;
-        case 0x02:
-            Serial.println("case 0x02");
+        case 1:
+            Serial.println("Start game");
             break;
-        case 0x03:
-            Serial.println("case 0x03");
+        case 2:
+            Serial.println("End game");
+            while(msg != 6)
+            {   
+                /* Game ended. wacht op reset message. */
+                msg = WaitForMessage();
+                // LedBlink(); --> laat leds knipperen?
+            }
+            esp_restart();
             break;
-        case 0x04:
-            Serial.println("case 0x04");
+        case 3:
+            Serial.println("You've been Hit");
+            hitpoints--;
+            // Led hp bar
+            break;
+        case 4:
+            Serial.println("You hit target");
+            points++;
+            break;
+        case 5:
+            Serial.println("gamestate changed");
+            Gamestate("/gamestate", "/00:11:22:AA:BB:CC");
+            break;
+        case 6:
+            Serial.println("reset");
+            esp_restart();
+        default:
+            Serial.println("error");
             break;
     }
 }
