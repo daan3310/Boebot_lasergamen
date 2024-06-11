@@ -1,6 +1,23 @@
+/**
+ * MAC addressen voor ESP-CAM:
+ * A: 00:11:22:AA:BB:CC"
+ * B: 01:11:22:AA:BB:CC"
+ * C: 02:11:22:AA:BB:CC"
+ * D: 03:11:22:AA:BB:CC"
+ * 
+ * controller mac adressen:
+ * A controller    		 1912 = 70:EA:23:1B:FC:FF
+ * B controller 	  	 3913 = 70:EA:24:1B:FC:FF
+ * C controller 		   2811 = 70:EA:25:1B:FC:FF
+ * D controller zonder code = 70:EA:26:1B:FC:FF 
+ */
+
 #include "IO-layer.h"
 
 #define SERIAL_BAUD_RATE 115200  // Change baud rate as needed
+
+extern int hitpoints;
+extern int points;
 
 char sendbuf[4] = {0};
 char receivebuf[4] = {0};
@@ -44,15 +61,15 @@ esp_err_t non_blocking_queue_transaction_slave_serial(void* TxBuf, void* RxBuf, 
   return blocking_transmit_slave_serial(TxBuf, RxBuf, Length_in_bits);
 }
 
-#ifdef USE_WIFI
+#ifdef USE_WIFI 
 const char* ssid           = "Leaphy Lasergame!";
 const char* password       = "Leaphydebug1!";
 String serverName          = "192.168.0.102";   
 String ServerPathStartup   = "/startup";  // Flask upload route (voor image) (flask library python)
 String ServerPathGamestate = "/gamestate/";
 String ServerPathShoot     = "/shoot";
-String MAC                 = "00:11:22:AA:BB:CC";
-const char* MAC_str        = "00:11:22:AA:BB:CC";
+String MAC                 = MAC_ADDRESS_DEF;
+const char* MAC_str        = MAC_ADDRESS_DEF;
 const int serverPort       = 5000;
 WiFiClient client;
 
@@ -282,6 +299,9 @@ bool Gamestate(String server_path,String address){
       int Hit_points          = doc["Hit_points"]; 
       int Hits                = doc["Hits"]; 
 
+      hitpoints = Hit_points;
+      points = Hits;
+
       /* print json data */
       #ifdef DEBUG
       Serial.println("Mac address: " + String(Mac_address));
@@ -346,12 +366,18 @@ int WaitForMessage(void){
   
   client.stop();
 
-  if        (decoded_string == "Success") {
+  if        (decoded_string == "Game started") {
     return 1;
-  } else if (decoded_string == "Error") {
+  } else if (decoded_string == "Game over") {
     return 2;
-  } else if (decoded_string.startsWith("Warning")) {
+  } else if (decoded_string == "You've been hit") {
     return 3;
+  } else if (decoded_string == "You hit the target") {
+    return 4;
+  } else if (decoded_string == "Gamestate has changed") {
+    return 5;
+  } else if (decoded_string == "reset robot") {
+    return 6;
   } else {
     return 0;  // default case for other content
   }

@@ -171,7 +171,7 @@ switch (state)
         }
         else // als het geen ack is, is er iets fout gegaan bij de CAM
         {
-          UI_layer_error_handling (ESPSLAVENOTDETECTED); // Geen CAM gedetecteerd op SPI
+          UI_layer_error_handling (ESPSLAVENOTDETECTED); 
           state = 0;  // Reset de state machine
           delay(TIMEBETWEENCMDS);
         }
