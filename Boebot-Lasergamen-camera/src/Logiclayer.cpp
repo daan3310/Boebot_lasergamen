@@ -149,7 +149,7 @@ void MessageFSM(int message)
             break;
         case 5:
             Serial.println("gamestate changed");
-            Gamestate("/gamestate", MAC_ADDRESS_DEF);
+            Gamestate("/gamestate/", MAC_ADDRESS_DEF);
             break;
         case 6:
             Serial.println("reset");

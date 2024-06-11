@@ -80,7 +80,7 @@ IPAddress init_wifi();
 #define HREF_GPIO_NUM     23
 #define PCLK_GPIO_NUM     22
 
-#define MAC_ADDRESS_DEF "03:11:22:AA:BB:CC"
+#define MAC_ADDRESS_DEF "00:11:22:AA:BB:CC"
 
 esp_err_t init_camera();
 bool connect_pi(String server_path,String address);

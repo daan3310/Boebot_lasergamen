@@ -48,11 +48,15 @@ uint updateMotor(motor currentMotor, int motorPower)
     {
         if(0 == direction)
         {
+            // motorPower = 1024;
+            // delay(1);
             motorPower = -1024;
             //returnValue = updateMotor_exceeded_lower_bound_of_motorPower;
         }
         else
         {
+            // motorPower = -1024;
+            // delay(1);
             motorPower = 1024;
             //returnValue = updateMotor_exceeded_upper_bound_of_motorPower;
         }

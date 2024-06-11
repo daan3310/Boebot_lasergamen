@@ -1,5 +1,7 @@
 #include "main.h"
 
+#include <WiFiUdp.h>
+
 void setup() {
   Serial.begin(9600);
 
@@ -21,16 +23,16 @@ void setup() {
   /* Enter idle mode, wait for wakeup from pi */
   int start = 0;
   Serial.println("Enter idle mode.");
-  while(!start){
-    Serial.print(".");
-    if(WaitForMessage() == 1)
-      start = 1;
-      updateFSM();
-    }
+  while(start != 1)
+  {
+    // Serial.print(".");
+    // updateFSM();
+    start = WaitForMessage();
+  }
   Serial.println("Exit idle mode.");
 
   /* request gamestate */
-  int error = Gamestate("/gamestate", MAC_ADDRESS_DEF);
+  int error = Gamestate("/gamestate/", MAC_ADDRESS_DEF);
 }
 
 void loop() {  
