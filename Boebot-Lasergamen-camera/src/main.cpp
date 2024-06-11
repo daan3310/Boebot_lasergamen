@@ -25,6 +25,7 @@ void setup() {
     Serial.print(".");
     if(WaitForMessage() == 1)
       start = 1;
+      updateFSM();
     }
   Serial.println("Exit idle mode.");
 
