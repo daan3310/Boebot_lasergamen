@@ -21,8 +21,8 @@
 extern int hitpoints;
 extern int points;
 
-char sendbuf[4] = {0};
-char receivebuf[4] = {0};
+// char sendbuf[4] = {0};
+// char receivebuf[4] = {0};
 
 // Define callback flag and function
 uint8_t my_post_trans_cb_flag = 0;

@@ -3,7 +3,8 @@
 uint currentState = STATE_0; // 4 posible states
 int hitpoints;
 int points;
-
+char sendbuf[4] = {0};
+char receivebuf[4] = {0};
 void updateFSM(void)
 {
     //Serial.println("Logiclayer1");
