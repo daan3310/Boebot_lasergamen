@@ -45,5 +45,8 @@
 #define GPIO_RXs 16
 
 #define servopin 2
-
+#define LED_PIN_UNDERGLOW 14
+#define NUM_LEDS_UNDERGLOW 8 
+#define LED_PIN_LEVENS 12
+#define NUM_LEDS_LEVENS 10
 #endif
