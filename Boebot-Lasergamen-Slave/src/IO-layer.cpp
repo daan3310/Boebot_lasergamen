@@ -138,6 +138,8 @@ byte serial_send_command(byte cmd, byte data[DATALENGTH-1]) {
     My_Serial_dataIn[i] = dataIn[i];
   }
 
+  Function_Print_Serial_input(cmd);
+
   return 0;
 }
 

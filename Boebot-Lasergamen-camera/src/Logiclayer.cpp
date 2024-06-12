@@ -10,6 +10,7 @@ void updateFSM(void)
     switch(currentState)
     {
         case STATE_0:
+            Gamestate("/gamestate/", MAC_ADDRESS_DEF);
             //Serial.println("State0");
             sendbuf[0] = 0;
             sendbuf[1] = 0;
@@ -93,7 +94,7 @@ void updateFSM(void)
             }
             break;
         case STATE_4:
-            sendbuf[0] = 0;
+            sendbuf[0] = 2;
             sendbuf[1] = 0;
             sendbuf[2] = 0;
             sendbuf[3] = 0;
@@ -109,7 +110,7 @@ void updateFSM(void)
                 //Serial.write("Helloworldtest");
                 sendPhoto();
             }
-            if(STARTGAME == receivebuf[0]){
+            else if(STARTGAME == receivebuf[0]){
                 currentState = STATE_1;
             }
             break;   

@@ -166,15 +166,18 @@ void Task2code( void * parameter) // Taken voor core 1
     // Deze functie is om te vragen
     if (PS4InputsMain.Cirkelknop == true) // Zet een timer neer
     {
-      //digitalWrite(12, HIGH);
+      Serial.println("KNOP INGEDRUKT.");
+      // digitalWrite(12, HIGH);
       Shoot = 0xAA;
       Logiclayer_Serial_CMD_NO_DATA(SHOOT);
-      //UI_layer_Shoot();
+      // UI_layer_Shoot();
     }
     else
     {
-      //digitalWrite(12, LOW);
+      // digitalWrite(12, LOW);
     }
+
+    Serial.println("UIT KNOP FUNCTIE");
     
     delay(50);
   }
@@ -193,7 +196,6 @@ void Function_Print_Serial_output(byte CMD, byte data[5] )
   Serial.print(", ");
   Serial.print(data[2], DEC);
   Serial.println();
-
 }
 
 void Function_Print_Serial_input(int state)

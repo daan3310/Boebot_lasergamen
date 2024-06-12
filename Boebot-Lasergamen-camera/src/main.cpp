@@ -3,6 +3,7 @@
 #include <WiFiUdp.h>
 
 void setup() {
+  /* setup serial communication */
   Serial.begin(9600);
 
   /* might cause big issue: */
@@ -20,13 +21,14 @@ void setup() {
   init_game();
   Serial.println("Game initialised");
 
+  sendPhoto();
+
   /* Enter idle mode, wait for wakeup from pi */
   int start = 0;
   Serial.println("Enter idle mode.");
   while(start != 1)
   {
-    // Serial.print(".");
-    // updateFSM();
+    updateFSM();
     start = WaitForMessage();
   }
   Serial.println("Exit idle mode.");
@@ -36,10 +38,8 @@ void setup() {
 }
 
 void loop() {  
-
   MessageFSM(WaitForMessage());
   updateFSM();
-
 }
 
 

@@ -96,8 +96,7 @@ void init_game(void){
 /**
  * @brief Connect to the host
  * 
- * Het device stuurt een bericht naar de host met het mac-address om zich aan te melden. Zodra het is aangemeld bij de host,
- * stuurt deze een acknowladgement bericht terug. 
+ * Het device stuurt een bericht naar de host met het mac-address om zich aan te melden.
  */
 bool connect_pi(String server_path,String address) {
   #ifdef DEBUG  
@@ -110,9 +109,10 @@ bool connect_pi(String server_path,String address) {
     Serial.println("Connection successful!");
     #endif
 
+    /* Http route */
     String head        = "--ESP32\r\nContent-Disposition: form-data; name=\"mac_address\"; filename=\"12345678\"\r\nContent-Type: mac_address\r\n\r\n";
     String tail        = "\r\n--ESP32--\r\n";
-    String mac_address = address; //tijdelijk mac address, mac address nader te bepalen'
+    String mac_address = address; 
 
     uint16_t totalLen  = head.length() + tail.length() + mac_address.length();
 
@@ -188,8 +188,8 @@ bool connect_pi(String server_path,String address) {
       Serial.println("Message: " + String(message));
       #endif
 
-      // if (strcmp(MAC_ADDRESS, MAC_str) == 0){
-      if ((String)MAC_ADDRESS != (String)MAC){
+      /* vergelijk ontvangen mac address met eigen mac address */
+      if ((String)MAC_ADDRESS != (String)MAC) {
         #ifdef DEBUG
         Serial.println("Wrong mac address");
         #endif
@@ -343,7 +343,7 @@ char incomingPacket[255];  // Buffer for incoming packets
 /**
  * @brief Wait for a message
  * 
- * Wait to receive a message from the host. If a message is received, return 1. 
+ * Wait to receive a message from the host. 
  */
 int WaitForMessage(void){
   Serial.print(".");
@@ -376,7 +376,7 @@ int WaitForMessage(void){
   } else if (Message == "reset robot") {
     return 6;
   } else {
-    return 0;  // default case for other content
+    return 0;
   }
 }
 
