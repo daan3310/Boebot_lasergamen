@@ -32,35 +32,30 @@ void my_post_trans_cb()
   my_post_trans_cb_flag = 1;
 }
 
-esp_err_t blocking_transmit_slave_serial(void* TxBuf, void* RxBuf, uint Length_in_bits)
+esp_err_t blocking_transmit_slave_serial(char* TxBuf, char* RxBuf)
 {
-  // Cast the buffers to char pointers
-  char* txBuffer = (char*)TxBuf;
-  char* rxBuffer = (char*)RxBuf;
-  
-  Serial.write(txBuffer, Length_in_bits / 8);
+  Serial.write(TxBuf);
 
   // Wait for incoming data
   uint32_t start_time = millis();
-  while (Serial.available() <= (Length_in_bits / 8)) {
+  while (Serial.available()) {
     if (millis() - start_time > 2000) {
       return ESP_ERR_TIMEOUT; // Return timeout error if not enough data received within timeout
     }
   }
 
   // Read incoming data
-  for (int i = 0; i <= (Length_in_bits / 8); i++) {
-    rxBuffer[i] = Serial.read();
-  }
+  String stringrec = Serial.readStringUntil(".");
+  strcpy(RxBuf, stringrec.c_str());
 
   
   return ESP_OK;
 }
 
-esp_err_t non_blocking_queue_transaction_slave_serial(void* TxBuf, void* RxBuf, uint Length_in_bits)
+esp_err_t non_blocking_queue_transaction_slave_serial(char* TxBuf, char* RxBuf)
 {
   // This function is blocking in the case of Serial communication
-  return blocking_transmit_slave_serial(TxBuf, RxBuf, Length_in_bits);
+  return blocking_transmit_slave_serial(TxBuf, RxBuf);
 }
 
 #ifdef USE_WIFI 
