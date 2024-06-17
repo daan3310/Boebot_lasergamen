@@ -10,7 +10,7 @@ void updateFSM(void)
     switch(currentState)
     {
         case STATE_0:
-            Gamestate("/gamestate/", MAC_ADDRESS_DEF);
+            // Gamestate("/gamestate/", MAC_ADDRESS_DEF);
             //Serial.println("State0");
             sendbuf[0] = 0;
             sendbuf[1] = 0;

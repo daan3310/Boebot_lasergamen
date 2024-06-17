@@ -21,8 +21,6 @@ void setup() {
   init_game();
   Serial.println("Game initialised");
 
-  sendPhoto();
-
   /* Enter idle mode, wait for wakeup from pi */
   int start = 0;
   Serial.println("Enter idle mode.");
