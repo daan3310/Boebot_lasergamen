@@ -10,7 +10,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-//#include <Servo.h>
+#include <ESP32Servo.h>
 
 #include <Stepper.h>
 
