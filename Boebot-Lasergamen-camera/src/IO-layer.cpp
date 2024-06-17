@@ -45,7 +45,7 @@ esp_err_t blocking_transmit_slave_serial(char* TxBuf, char* RxBuf)
   }
 
   // Read incoming data
-  String stringrec = Serial.readStringUntil(".");
+  String stringrec = Serial.readStringUntil('.');
   strcpy(RxBuf, stringrec.c_str());
 
   
