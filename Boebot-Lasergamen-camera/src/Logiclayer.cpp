@@ -3,6 +3,27 @@
 uint currentState = STATE_0; // 4 posible states
 int hitpoints;
 int points;
+char receivearg[4][17];
+char startgame[] = "startgame";
+char statusslave[] = "statusslave";
+char teamcolour[] = "teamcolour";
+char placemaker[] = "placemaker";
+char shoot[] = "shoot";
+char arg(char serCom[]){
+	char *token;
+	token = strtok(serCom, ",");
+	int length = strlen(serCom);
+	int i;
+	int p = 0;
+	while(token != NULL){
+		for(i=0; i<strlen(token); i++){
+			receivearg[p][i] = token[i];
+		}
+		p++;
+		token = strtok(NULL, ",");
+	}
+	p = 0;
+}
 
 void updateFSM(void)
 {
@@ -10,108 +31,89 @@ void updateFSM(void)
     switch(currentState)
     {
         case STATE_0:
-            // Gamestate("/gamestate/", MAC_ADDRESS_DEF);
-            //Serial.println("State0");
-            sendbuf[0] = 0;
-            sendbuf[1] = 0;
-            sendbuf[2] = 0;
-            sendbuf[3] = 0;
-
-            receivebuf[0] = 0;
-            receivebuf[1] = 0;
-            receivebuf[2] = 0;
-            receivebuf[3] = 0;
-            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*4);  
-            if(STARTGAME == receivebuf[0])
             {
-                currentState = STATE_1;
+                //Gamestate("/gamestate/", MAC_ADDRESS_DEF);
+                //Serial.println("State0");
+                char sendbuf0[] = "0,0,0,0.";
+                char receivebuf0[16];
+                char receivearg[4][9];
+                blocking_transmit_slave_serial(sendbuf0, receivebuf0);  
+                arg(receivebuf0);
+                if(strcmp(startgame, receivearg[0])==0)
+                {
+                    currentState = STATE_1;
+                }
             }
             break;
         case STATE_1:
-            // ACKNOWLEDGE
-            //Serial.println("State1");
-            //sendbuf[0] = ACKNOWLEDGE;
-            sendbuf[0] = 0;
-            sendbuf[1] = 0;
-            sendbuf[2] = 0;
-            sendbuf[3] = 0;
-
-            receivebuf[0] = 0;
-            receivebuf[1] = 0;
-            receivebuf[2] = 0;
-            receivebuf[3] = 0;
-            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*4);
-            if(STATUSSLAVE == receivebuf[0])
             {
-                currentState = STATE_2;
-            }
-            else if(STARTGAME == receivebuf[0]){
-                currentState = STATE_1;
+                // ACKNOWLEDGE
+                //Serial.println("State1");
+                //sendbuf[0] = ACKNOWLEDGE;
+                char sendbuf1[] = "0,0,0,0.";
+                char receivebuf1[18];
+                blocking_transmit_slave_serial(sendbuf1, receivebuf1);
+                arg(receivebuf1);
+                if(strcmp(statusslave, receivearg[0])==0)
+                {
+                    currentState = STATE_2;
+                }
+                else if(strcmp(startgame, receivearg[0])==0){
+                    currentState = STATE_1;
+                }
             }
             break;
         case STATE_2:
-            // ACKNOWLEDGE
-            //sendbuf[0] = STATUSSLAVE;
-            //sendbuf[0] = ERROR;
-            sendbuf[0] = ACKNOWLEDGE;
-            sendbuf[1] = 0;
-            sendbuf[2] = 0;
-            sendbuf[3] = 0;
-
-            receivebuf[0] = 0;
-            receivebuf[1] = 0;
-            receivebuf[2] = 0;
-            receivebuf[3] = 0;
-            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*4);
-            if(TEAMCOLOUR == receivebuf[0])
             {
-                currentState = STATE_3;
-            }
-            else if(STARTGAME == receivebuf[0]){
-                currentState = STATE_1;
+                // ACKNOWLEDGE
+                //sendbuf[0] = STATUSSLAVE;
+                //sendbuf[0] = ERROR;
+                char sendbuf2[] = "acknowledge,0,0,0.";
+                char receivebuf2[17];
+                blocking_transmit_slave_serial(sendbuf2, receivebuf2);
+                arg(receivebuf2);
+                if(strcmp(teamcolour, receivearg[0])==0)
+                {
+                    currentState = STATE_3;
+                }
+                else if(strcmp(startgame, receivearg[0])==0){
+                    currentState = STATE_1;
+                }
             }
             break;
         case STATE_3:
-            // TEAMCOLOUR
-            sendbuf[0] = TEAMCOLOUR;
-            sendbuf[1] = 255;
-            sendbuf[2] = 0;
-            sendbuf[3] = 255;
-
-            receivebuf[0] = 0;
-            receivebuf[1] = 0;
-            receivebuf[2] = 0;
-            receivebuf[3] = 0;
-            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*4);
-            if(PLACEMAKER == receivebuf[0])
             {
-                Serial.print("Hello_Placemaker");
-                currentState = STATE_4;
-            }
-            else if(STARTGAME == receivebuf[0]){
-                Serial.print("Hello_Placemaker 2");
-                currentState = STATE_1;
+                // TEAMCOLOUR
+                char sendbuf3[] = "teamcolour,255,0,255.";
+                char receivebuf3[17];
+                blocking_transmit_slave_serial(sendbuf3, receivebuf3);
+                arg(receivebuf3);
+                if(strcmp(placemaker, receivearg[0])==0)
+                {
+                    Serial.print("Hello_Placemaker");
+                    currentState = STATE_4;
+                }
+                else if(strcmp(startgame, receivearg[0])==0){
+                    Serial.print("Hello_Placemaker 2");
+                    currentState = STATE_1;
+                }
             }
             break;
         case STATE_4:
-            sendbuf[0] = 2;
-            sendbuf[1] = 0;
-            sendbuf[2] = 0;
-            sendbuf[3] = 0;
-
-            receivebuf[0] = 0;
-            receivebuf[1] = 0;
-            receivebuf[2] = 0;
-            receivebuf[3] = 0;
-            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*4);
-            if(SHOOT == receivebuf[0])
             {
-                //Serial.print("Hello_world!");
-                //Serial.write("Helloworldtest");
-                sendPhoto();
-            }
-            else if(STARTGAME == receivebuf[0]){
-                currentState = STATE_1;
+                char sendbuf4[] = "0,0,0,0.";
+                char receivebuf4[12];
+                blocking_transmit_slave_serial(sendbuf4, receivebuf4);
+                arg(receivebuf4);
+                if(strcmp(shoot, receivearg[0])==0)
+                {
+                    //Serial.print("Hello_world!");
+                    //Serial.write("Helloworldtest");
+                    sendPhoto();
+                }
+                else if(strcmp(startgame, receivearg[0])==0){
+                    currentState = STATE_1;
+                }
             }
             break;   
     }

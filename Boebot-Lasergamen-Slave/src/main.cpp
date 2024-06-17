@@ -71,12 +71,14 @@ void setup() {
   Serial.println("State machine done!");
   #endif
   
-  for (i = 0; i<sizeof(Teamkleur); i++)
-  {
-    Teamkleur[i] = My_Serial_dataIn[i+1];
-  }
-
-  Logiclayer_set_colour(Teamkleur);
+  // for (i = 0; i<sizeof(Teamkleur); i++)
+  // {
+  //   int colT = atoi(My_Serial_dataIn[i+1]);
+  //   unsigned char temp = (unsigned char)colT;
+  //   // Teamkleur[i] = (byte)My_Serial_dataIn[i+1];
+  //   Teamkleur[i] = temp;
+  // }
+  // Logiclayer_set_colour(Teamkleur);
   // Functie om de kleur van de esp32 te veranderen naar de corresponderende kleur
 
   xTaskCreatePinnedToCore
@@ -108,7 +110,7 @@ void loop() {
 void Task1code( void * parameter) // Taken voor core 0
 {
   // Setup
-  byte* Flag_SPI = nullptr; 
+  byte* Flag_SER = nullptr; 
   byte data[3] = {0,0,0};
 
   
@@ -130,7 +132,7 @@ void Task1code( void * parameter) // Taken voor core 0
    if (My_Flag_SPI != 0 && Shoot == 0xAA)
    {
     Serial.println("Bang!");
-    Flag_SPI = 0;
+    Flag_SER = 0;
     Shoot = 0;
    }
   // String testd = Serial.readString();
@@ -183,19 +185,14 @@ void Task2code( void * parameter) // Taken voor core 1
   }
 }
 
-void Function_Print_Serial_output(byte CMD, byte data[5] )
+void Function_Print_Serial_output(char* CMD)
 {
   Serial.println();
   Serial.print("Data out:");
   Serial.print(" ");
-  Serial.print(CMD, DEC);
-  Serial.print(", ");
-  Serial.print(data[0], DEC);
-  Serial.print(", ");
-  Serial.print(data[1], DEC);
-  Serial.print(", ");
-  Serial.print(data[2], DEC);
+  Serial.print(CMD);
   Serial.println();
+
 }
 
 void Function_Print_Serial_input(int state)
@@ -204,13 +201,13 @@ void Function_Print_Serial_input(int state)
   Serial.print("State:");
   Serial.print(state, DEC);
   Serial.print(" \t\t");
-  Serial.print(My_Serial_dataIn[0], DEC);
+  Serial.print(My_Serial_dataIn[0]);
   Serial.print(", ");
-  Serial.print(My_Serial_dataIn[1], DEC);
+  Serial.print(My_Serial_dataIn[1]);
   Serial.print(", ");
-  Serial.print(My_Serial_dataIn[2], DEC);
+  Serial.print(My_Serial_dataIn[2]);
   Serial.print(", ");
-  Serial.print(My_Serial_dataIn[3], DEC);
+  Serial.print(My_Serial_dataIn[3]);
   Serial.println();
 }
 

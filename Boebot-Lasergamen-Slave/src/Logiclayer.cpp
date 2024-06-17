@@ -1,6 +1,14 @@
 #include "Logiclayer.h"
 
-
+char shutdown[] = "shutdown,0,0,0.";
+char startgame[] = "startgame,0,0,0.";
+char placemaker[] = "placemaker,0,0,0.";
+char statusslave[] = "statusslave,0,0,0.";
+char teamcolour[] = "teamcolour,0,0,0.";
+char errorc[] = "error,0,0,0.";
+char shoot[] = "shoot,0,0,0.";
+char acknowledge[] = "acknowledge";
+char** Serial_Data_In;
 struct PS4 Logiclayer_Besturing_Data(struct PS4 PS4Inputs)
 {
   uint ServoHoek = 0;
@@ -40,22 +48,21 @@ struct PS4 Logiclayer_Besturing_Data(struct PS4 PS4Inputs)
   return PS4Inputs; 
 }
 
-byte Logiclayer_Serial_CMD(byte CMD, byte data[5])
+byte Logiclayer_Serial_CMD(byte CMD)
 {
-  byte* datain;
   switch (CMD)
   {
     case SHUTDOWN:
     {
-      return serial_send_command(SHUTDOWN, data);
+      return serial_send_command(shutdown, Serial_Data_In);
     }
     case PLACEMAKER:
     {
-      return serial_send_command(PLACEMAKER, data);
+      return serial_send_command(placemaker, Serial_Data_In);
     }
     case STARTGAME:
     {
-      return serial_send_command(STARTGAME, data);
+      return serial_send_command(startgame, Serial_Data_In);
     }
     case ACKNOWLEDGE:
     {
@@ -63,19 +70,19 @@ byte Logiclayer_Serial_CMD(byte CMD, byte data[5])
     }
     case STATUSSLAVE:
     {
-      return serial_send_command(STATUSSLAVE, data);
+      return serial_send_command(statusslave, Serial_Data_In);
     }
     case SHOOT:
     {
-      return serial_send_command(SHOOT, data);
+      return serial_send_command(shoot, Serial_Data_In);
     }
     case ERROR:
     {
-      return serial_send_command(ERROR, data);
+      return serial_send_command(errorc, Serial_Data_In);
     }
     case TEAMCOLOUR:
     {
-      return serial_send_command(TEAMCOLOUR, data);
+      return serial_send_command(teamcolour, Serial_Data_In);
     }
     default:
     {
@@ -94,15 +101,15 @@ byte Logiclayer_Serial_CMD_NO_DATA(byte CMD)
   {
     case SHUTDOWN:
     {
-      return serial_send_command(SHUTDOWN, data);
+      return serial_send_command(shutdown, Serial_Data_In);
     }
     case PLACEMAKER:
     {
-      return serial_send_command(PLACEMAKER, data);
+      return serial_send_command(placemaker, Serial_Data_In);
     }
     case STARTGAME:
     {
-      return serial_send_command(STARTGAME, data);
+      return serial_send_command(startgame, Serial_Data_In);
     }
     case ACKNOWLEDGE:
     {
@@ -110,20 +117,20 @@ byte Logiclayer_Serial_CMD_NO_DATA(byte CMD)
     }
     case STATUSSLAVE:
     {
-      return serial_send_command(STATUSSLAVE, data);
+      return serial_send_command(statusslave, Serial_Data_In);
     }
     case SHOOT:
     {
       Serial.println("Shoot CASE.");
-      return serial_send_command(SHOOT, data);
+      return serial_send_command(shoot, Serial_Data_In);
     }
     case ERROR:
     {
-      return serial_send_command(ERROR, data);
+      return serial_send_command(errorc, Serial_Data_In);
     }
     case TEAMCOLOUR:
     {
-      return serial_send_command(TEAMCOLOUR, data);
+      return serial_send_command(teamcolour, Serial_Data_In);
     }
     
   }
@@ -151,7 +158,7 @@ switch (state)
       case 0: // Ask the ESPCAM for a start
       {
        
-        Logiclayer_Serial_CMD(STARTGAME, data); // Verwacht hier geen echte data uit
+        Logiclayer_Serial_CMD(STARTGAME); // Verwacht hier geen echte data uit
         Function_Print_Serial_input(state);
         //Function_Print_Spi_input(state);
         delay(TIMEBETWEENCMDS);
@@ -161,33 +168,33 @@ switch (state)
       }
       case 1: // Vraag om de status voor evt errors
       {
-        Logiclayer_Serial_CMD(STATUSSLAVE, data); // Hier krijg je een ack
+        Logiclayer_Serial_CMD(STATUSSLAVE); // Hier krijg je een ack
         Function_Print_Serial_input(state);
         //Function_Print_Spi_input(state);
 
-        // if (My_Serial_dataIn[0] == ACKNOWLEDGE) 
-        // {
-        //   delay(TIMEBETWEENCMDS);
-        //   state = 2;
-        // }
-        // else // als het geen ack is, is er iets fout gegaan bij de CAM
-        // {
-        //   UI_layer_error_handling (ESPSLAVENOTDETECTED); 
-        //   state = 0;  // Reset de state machine
-        //   delay(TIMEBETWEENCMDS);
-        // }
+        if (Serial_Data_In[0] == acknowledge) 
+        {
+          delay(TIMEBETWEENCMDS);
+          state = 2;
+        }
+        else // als het geen ack is, is er iets fout gegaan bij de CAM
+        {
+          UI_layer_error_handling (ESPSLAVENOTDETECTED); 
+          state = 0;  // Reset de state machine
+          delay(TIMEBETWEENCMDS);
+        }
         delay(TIMEBETWEENCMDS);
         state = 2;
         break;
       }
       case 2: // Hier stuur je de vraag welk team wij zijn
       {
-        Logiclayer_Serial_CMD(TEAMCOLOUR, data); // verwacht hier de status van 
+        Logiclayer_Serial_CMD(TEAMCOLOUR); // verwacht hier de status van 
         // Doe hier wat met de data uit de cam!
 
         Function_Print_Serial_input(state);
 
-        if (My_Serial_dataIn[0] == ERROR)
+        if (Serial_Data_In[0] == errorc)
         {
            //UI_layer_error_handling (result[1]);
         }
@@ -201,7 +208,7 @@ switch (state)
       }
       case 3: // Placemaker om te vragen welke kleur/team wij zijn
       {
-        Logiclayer_Serial_CMD(PLACEMAKER, data);
+        Logiclayer_Serial_CMD(PLACEMAKER);
         
         //Function_Print_Spi_input(state);
 
