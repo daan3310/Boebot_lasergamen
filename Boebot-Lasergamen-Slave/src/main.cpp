@@ -177,7 +177,7 @@ void Task2code( void * parameter) // Taken voor core 1
       // digitalWrite(12, LOW);
     }
 
-    Serial.println("UIT KNOP FUNCTIE");
+    // Serial.println("UIT KNOP FUNCTIE");
     
     delay(50);
   }
