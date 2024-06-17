@@ -14,6 +14,8 @@
 
 #include "IO-layer.h"
 
+#include <WiFiUdp.h>
+
 #define SERIAL_BAUD_RATE 115200  // Change baud rate as needed
 
 extern int hitpoints;
@@ -94,8 +96,7 @@ void init_game(void){
 /**
  * @brief Connect to the host
  * 
- * Het device stuurt een bericht naar de host met het mac-address om zich aan te melden. Zodra het is aangemeld bij de host,
- * stuurt deze een acknowladgement bericht terug. 
+ * Het device stuurt een bericht naar de host met het mac-address om zich aan te melden.
  */
 bool connect_pi(String server_path,String address) {
   #ifdef DEBUG  
@@ -108,9 +109,10 @@ bool connect_pi(String server_path,String address) {
     Serial.println("Connection successful!");
     #endif
 
+    /* Http route */
     String head        = "--ESP32\r\nContent-Disposition: form-data; name=\"mac_address\"; filename=\"12345678\"\r\nContent-Type: mac_address\r\n\r\n";
     String tail        = "\r\n--ESP32--\r\n";
-    String mac_address = address; //tijdelijk mac address, mac address nader te bepalen'
+    String mac_address = address; 
 
     uint16_t totalLen  = head.length() + tail.length() + mac_address.length();
 
@@ -186,8 +188,8 @@ bool connect_pi(String server_path,String address) {
       Serial.println("Message: " + String(message));
       #endif
 
-      // if (strcmp(MAC_ADDRESS, MAC_str) == 0){
-      if ((String)MAC_ADDRESS != (String)MAC){
+      /* vergelijk ontvangen mac address met eigen mac address */
+      if ((String)MAC_ADDRESS != (String)MAC) {
         #ifdef DEBUG
         Serial.println("Wrong mac address");
         #endif
@@ -223,6 +225,7 @@ bool connect_pi(String server_path,String address) {
  */
 bool Gamestate(String server_path,String address){
   #ifdef DEBUG  
+  Serial.println("REQUEST GAMESTATE");
   Serial.println("Connecting to server: " + serverName);
   #endif 
 
@@ -333,53 +336,47 @@ bool Gamestate(String server_path,String address){
   } 
 }
 
+WiFiUDP udp;
+unsigned int localUdpPort = 5005;  // Local port to listen on
+char incomingPacket[255];  // Buffer for incoming packets
+
 /**
  * @brief Wait for a message
  * 
- * Wait to receive a message from the host. If a message is received, return 1. 
+ * Wait to receive a message from the host. 
  */
 int WaitForMessage(void){
-  while (!client.available()){
-    delay(100);
-    Serial.print(".");
+  Serial.print(".");
+  String Message;
+
+  int packetSize = udp.parsePacket();
+  if (packetSize) {
+    int len = udp.read(incomingPacket, 255);
+    if (len > 0) {
+      incomingPacket[len] = '\0';
+      Message = incomingPacket;
+    }
+    Serial.printf("Received packet of size %d from %s:%d\n", packetSize, udp.remoteIP().toString().c_str(), udp.remotePort());
+    Serial.printf("Packet contents: %s\n", incomingPacket);
   }
 
-  /* read response */
-  String decoded_string;
-  String input = client.readString();
-  Serial.println(input);
-
-  /* remove http overhead from input */
-  int MessageIndex = input.indexOf("\r\n\r\n");
-
-  if (MessageIndex != -1) {
-    decoded_string = input.substring(MessageIndex + 4);
-    decoded_string.trim();
-  
-    Serial.println("Extracted message content:");
-    Serial.println(decoded_string);
-  } 
-  else {
-    Serial.println("Error, no message content found.");
-    return 0;
-  }
-  
+  delay(10);
   client.stop();
 
-  if        (decoded_string == "Game started") {
+  if        (Message == "Game started") {
     return 1;
-  } else if (decoded_string == "Game over") {
+  } else if (Message == "Game over") {
     return 2;
-  } else if (decoded_string == "You've been hit") {
+  } else if (Message == "You've been hit") {
     return 3;
-  } else if (decoded_string == "You hit the target") {
+  } else if (Message == "You hit the target") {
     return 4;
-  } else if (decoded_string == "Gamestate has changed") {
+  } else if (Message == "Gamestate has changed") {
     return 5;
-  } else if (decoded_string == "reset robot") {
+  } else if (Message == "reset robot") {
     return 6;
   } else {
-    return 0;  // default case for other content
+    return 0;
   }
 }
 
@@ -393,14 +390,17 @@ IPAddress init_wifi(){
     Serial.println(ssid);
     WiFi.begin(ssid, password); 
     while (WiFi.status() != WL_CONNECTED){
-    Serial.print(".");
-    delay(500);
+      Serial.print(".");
+      delay(500);
     }
     Serial.println();
     Serial.print("ESP32-CAM IP Address: ");
     Serial.println(WiFi.localIP());
 
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 1); // enable brownout
+
+    udp.begin(localUdpPort);
+    Serial.printf("Now listening on UDP port %d\n", localUdpPort);
 
     Serial.println("done init wifi");
     return WiFi.localIP();

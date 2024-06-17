@@ -48,11 +48,15 @@ uint updateMotor(motor currentMotor, int motorPower)
     {
         if(0 == direction)
         {
+            // motorPower = 1024;
+            // delay(1);
             motorPower = -1024;
             //returnValue = updateMotor_exceeded_lower_bound_of_motorPower;
         }
         else
         {
+            // motorPower = -1024;
+            // delay(1);
             motorPower = 1024;
             //returnValue = updateMotor_exceeded_upper_bound_of_motorPower;
         }
@@ -133,6 +137,8 @@ byte serial_send_command(byte cmd, byte data[DATALENGTH-1]) {
   for (int i = 0; i < DATALENGTH; i++) {
     My_Serial_dataIn[i] = dataIn[i];
   }
+
+  Function_Print_Serial_input(cmd);
 
   return 0;
 }

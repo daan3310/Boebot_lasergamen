@@ -114,6 +114,7 @@ byte Logiclayer_Serial_CMD_NO_DATA(byte CMD)
     }
     case SHOOT:
     {
+      Serial.println("Shoot CASE.");
       return serial_send_command(SHOOT, data);
     }
     case ERROR:
@@ -164,17 +165,19 @@ switch (state)
         Function_Print_Serial_input(state);
         //Function_Print_Spi_input(state);
 
-        if (My_Serial_dataIn[0] == ACKNOWLEDGE) 
-        {
-          delay(TIMEBETWEENCMDS);
-          state = 2;
-        }
-        else // als het geen ack is, is er iets fout gegaan bij de CAM
-        {
-          UI_layer_error_handling (ESPSLAVENOTDETECTED); 
-          state = 0;  // Reset de state machine
-          delay(TIMEBETWEENCMDS);
-        }
+        // if (My_Serial_dataIn[0] == ACKNOWLEDGE) 
+        // {
+        //   delay(TIMEBETWEENCMDS);
+        //   state = 2;
+        // }
+        // else // als het geen ack is, is er iets fout gegaan bij de CAM
+        // {
+        //   UI_layer_error_handling (ESPSLAVENOTDETECTED); 
+        //   state = 0;  // Reset de state machine
+        //   delay(TIMEBETWEENCMDS);
+        // }
+        delay(TIMEBETWEENCMDS);
+        state = 2;
         break;
       }
       case 2: // Hier stuur je de vraag welk team wij zijn
