@@ -185,7 +185,7 @@ void Task2code( void * parameter) // Taken voor core 1
   }
 }
 
-void Function_Print_Serial_output(char* CMD)
+void Function_Print_Serial_output(byte CMD)
 {
   Serial.println();
   Serial.print("Data out:");
@@ -201,13 +201,7 @@ void Function_Print_Serial_input(int state)
   Serial.print("State:");
   Serial.print(state, DEC);
   Serial.print(" \t\t");
-  Serial.print(My_Serial_dataIn[0]);
-  Serial.print(", ");
-  Serial.print(My_Serial_dataIn[1]);
-  Serial.print(", ");
-  Serial.print(My_Serial_dataIn[2]);
-  Serial.print(", ");
-  Serial.print(My_Serial_dataIn[3]);
+  Serial.print(My_Serial_dataIn);
   Serial.println();
 }
 

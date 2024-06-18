@@ -7,7 +7,7 @@ SPIClass * vspi = NULL;
 
 byte My_Flag_SPI;
 
-char** My_Serial_dataIn;
+byte My_Serial_dataIn;
 
 
 
@@ -106,9 +106,9 @@ struct PS4 IO_Layer_Besturing()
 //   Serial.begin(9600);
 // }
 
-byte serial_send_command(char* cmd, char** inputArr) {
+byte serial_send_command(byte cmd) {
   #if DEBUG > 0
-  Function_Print_Serial_output(cmd);
+  //Function_Print_Serial_output(cmd);
   #endif
 
   char* dataIn;
@@ -116,34 +116,12 @@ byte serial_send_command(char* cmd, char** inputArr) {
   Serial.write(cmd);
 
   // Read incoming data if needed
-  if (Serial.available()) {
-    for (int i = 0; i < 4; i++) {
-      String dataRec = Serial.readStringUntil('.'); 
-      strcpy(dataIn, dataRec.c_str());
-      Serial.print(dataIn[i]);
-      Serial.print(", ");
-    }
-    char *token;
-	  token = strtok(dataIn, ",");
-	  int i;
-	  int p = 0;
-	  while(token != NULL){
-		  for(i=0; i<strlen(token); i++){
-			  inputArr[p][i] = token[i];
-		  }
-		  p++;
-		  token = strtok(NULL, ",");
-	  }
-	  p = 0;
+  if (Serial.available() > 0) {
+      int dataRec = Serial.read() - '0'; 
+      My_Serial_dataIn = (byte)dataRec;
   }
-  // Copy received data to your buffer
-  for (int i = 0; i < 4; i++) {
-    strcpy(My_Serial_dataIn[i], inputArr[i]);
-    //My_Serial_dataIn[i] = inputArr[i];
-  }
-
-  //Function_Print_Serial_input(state);
-
+  Serial.print("De receive data: ");
+  Serial.println(My_Serial_dataIn);
   return 0;
 }
 

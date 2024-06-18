@@ -13,7 +13,7 @@ void setup() {
 
   /* might cause big issue:*/
   Serial.println("going to init camera");
-  init_camera();
+  //init_camera();
   Serial.println("done init camera");
 
   /* Connect to http game server pi  */

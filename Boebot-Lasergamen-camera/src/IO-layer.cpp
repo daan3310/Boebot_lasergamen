@@ -20,6 +20,7 @@
 
 extern int hitpoints;
 extern int points;
+byte RxB;
 
 //char sendbuf[4] = {0};
 //char receivebuf[4] = {0};
@@ -32,7 +33,7 @@ void my_post_trans_cb()
   my_post_trans_cb_flag = 1;
 }
 
-esp_err_t blocking_transmit_slave_serial(char* TxBuf, char* RxBuf)
+esp_err_t blocking_transmit_slave_serial(byte TxBuf)
 {
   Serial.write(TxBuf);
 
@@ -45,17 +46,18 @@ esp_err_t blocking_transmit_slave_serial(char* TxBuf, char* RxBuf)
   }
 
   // Read incoming data
-  String stringrec = Serial.readStringUntil('.');
-  strcpy(RxBuf, stringrec.c_str());
+  int datarec = Serial.read() - '0';
+  RxB = (byte)datarec;
+  //strcpy(RxBuf, stringrec.c_str());
 
   
   return ESP_OK;
 }
 
-esp_err_t non_blocking_queue_transaction_slave_serial(char* TxBuf, char* RxBuf)
+esp_err_t non_blocking_queue_transaction_slave_serial(byte TxBuf)
 {
   // This function is blocking in the case of Serial communication
-  return blocking_transmit_slave_serial(TxBuf, RxBuf);
+  return blocking_transmit_slave_serial(TxBuf);
 }
 
 #ifdef USE_WIFI 

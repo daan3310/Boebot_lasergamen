@@ -1,13 +1,23 @@
 #include "Logiclayer.h"
 
-char shutdown[] = "shutdown,0,0,0.";
-char startgame[] = "startgame,0,0,0.";
-char placemaker[] = "placemaker,0,0,0.";
-char statusslave[] = "statusslave,0,0,0.";
-char teamcolour[] = "teamcolour,0,0,0.";
-char errorc[] = "error,0,0,0.";
-char shoot[] = "shoot,0,0,0.";
-char acknowledge[] = "acknowledge";
+// char* shutdown = "shutdown.";
+// char* startgame = "startgame.";
+// char* placemaker = "placemaker.";
+// char* statusslave = "statusslave.";
+// char* teamcolour = "teamcolour.";
+// char* errorc = "error.";
+// char* shoot = "shoot.";
+// char* errorc1 = "error";
+// char* acknowledge = "acknowledge";
+byte shutdown = 1;
+byte placemaker = 2;
+byte startgame = 3;
+byte statusslave = 4;
+byte shoot =  5;
+byte errorc = 6;
+byte teamcolour = 7;
+byte acknowledge = 8;
+byte error1 = 9;
 char** Serial_Data_In;
 struct PS4 Logiclayer_Besturing_Data(struct PS4 PS4Inputs)
 {
@@ -52,17 +62,20 @@ byte Logiclayer_Serial_CMD(byte CMD)
 {
   switch (CMD)
   {
-    case SHUTDOWN:
+    case SHUTDOWN: //1
     {
-      return serial_send_command(shutdown, Serial_Data_In);
+      
+      return serial_send_command(shutdown);
     }
-    case PLACEMAKER:
+    case PLACEMAKER: //2
     {
-      return serial_send_command(placemaker, Serial_Data_In);
+      
+      return serial_send_command(placemaker);
     }
-    case STARTGAME:
+    case STARTGAME: //3
     {
-      return serial_send_command(startgame, Serial_Data_In);
+      
+      return serial_send_command(startgame);
     }
     case ACKNOWLEDGE:
     {
@@ -70,19 +83,23 @@ byte Logiclayer_Serial_CMD(byte CMD)
     }
     case STATUSSLAVE:
     {
-      return serial_send_command(statusslave, Serial_Data_In);
+      
+      return serial_send_command(statusslave);
     }
     case SHOOT:
     {
-      return serial_send_command(shoot, Serial_Data_In);
+      
+      return serial_send_command(shoot);
     }
     case ERROR:
     {
-      return serial_send_command(errorc, Serial_Data_In);
+      
+      return serial_send_command(errorc);
     }
     case TEAMCOLOUR:
     {
-      return serial_send_command(teamcolour, Serial_Data_In);
+      
+      return serial_send_command(teamcolour);
     }
     default:
     {
@@ -101,15 +118,15 @@ byte Logiclayer_Serial_CMD_NO_DATA(byte CMD)
   {
     case SHUTDOWN:
     {
-      return serial_send_command(shutdown, Serial_Data_In);
+      return serial_send_command(shutdown);
     }
     case PLACEMAKER:
     {
-      return serial_send_command(placemaker, Serial_Data_In);
+      return serial_send_command(placemaker);
     }
     case STARTGAME:
     {
-      return serial_send_command(startgame, Serial_Data_In);
+      return serial_send_command(startgame);
     }
     case ACKNOWLEDGE:
     {
@@ -117,20 +134,20 @@ byte Logiclayer_Serial_CMD_NO_DATA(byte CMD)
     }
     case STATUSSLAVE:
     {
-      return serial_send_command(statusslave, Serial_Data_In);
+      return serial_send_command(statusslave);
     }
     case SHOOT:
     {
       Serial.println("Shoot CASE.");
-      return serial_send_command(shoot, Serial_Data_In);
+      return serial_send_command(shoot);
     }
     case ERROR:
     {
-      return serial_send_command(errorc, Serial_Data_In);
+      return serial_send_command(errorc);
     }
     case TEAMCOLOUR:
     {
-      return serial_send_command(teamcolour, Serial_Data_In);
+      return serial_send_command(teamcolour);
     }
     
   }
@@ -172,7 +189,7 @@ switch (state)
         Function_Print_Serial_input(state);
         //Function_Print_Spi_input(state);
 
-        if (Serial_Data_In[0] == acknowledge) 
+        if (My_Serial_dataIn == acknowledge) 
         {
           delay(TIMEBETWEENCMDS);
           state = 2;
@@ -184,7 +201,6 @@ switch (state)
           delay(TIMEBETWEENCMDS);
         }
         delay(TIMEBETWEENCMDS);
-        state = 2;
         break;
       }
       case 2: // Hier stuur je de vraag welk team wij zijn
@@ -194,7 +210,7 @@ switch (state)
 
         Function_Print_Serial_input(state);
 
-        if (Serial_Data_In[0] == errorc)
+        if (My_Serial_dataIn == error1)
         {
            //UI_layer_error_handling (result[1]);
         }

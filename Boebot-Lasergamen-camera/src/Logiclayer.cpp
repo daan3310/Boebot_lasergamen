@@ -4,26 +4,30 @@ uint currentState = STATE_0; // 4 posible states
 int hitpoints;
 int points;
 char receivearg[4][17];
-char startgame[] = "startgame";
-char statusslave[] = "statusslave";
-char teamcolour[] = "teamcolour";
-char placemaker[] = "placemaker";
-char shoot[] = "shoot";
-char arg(char serCom[]){
-	char *token;
-	token = strtok(serCom, ",");
-	int length = strlen(serCom);
-	int i;
-	int p = 0;
-	while(token != NULL){
-		for(i=0; i<strlen(token); i++){
-			receivearg[p][i] = token[i];
-		}
-		p++;
-		token = strtok(NULL, ",");
-	}
-	p = 0;
-}
+byte placemaker = 2;
+byte startgame = 3;
+byte statusslave = 4;
+byte shoot =  5;
+byte errorc = 6;
+byte teamcolour = 7;
+byte acknowledge = 8;
+byte error1 = 9;
+byte nul = 0;
+// char arg(char serCom[]){
+// 	char *token;
+// 	token = strtok(serCom, ",");
+// 	int length = strlen(serCom);
+// 	int i;
+// 	int p = 0;
+// 	while(token != NULL){
+// 		for(i=0; i<strlen(token); i++){
+// 			receivearg[p][i] = token[i];
+// 		}
+// 		p++;
+// 		token = strtok(NULL, ",");
+// 	}
+// 	p = 0;
+// }
 
 void updateFSM(void)
 {
@@ -34,13 +38,14 @@ void updateFSM(void)
             {
                 //Gamestate("/gamestate/", MAC_ADDRESS_DEF);
                 //Serial.println("State0");
-                char sendbuf0[] = "0,0,0,0.";
-                char receivebuf0[16];
-                char receivearg[4][9];
-                blocking_transmit_slave_serial(sendbuf0, receivebuf0);  
-                arg(receivebuf0);
-                if(strcmp(startgame, receivearg[0])==0)
+                //char* sendbuf0 = "0.";
+                //char receivebuf0[16];
+                //char receivearg[4][9];
+                blocking_transmit_slave_serial(nul);  
+                //arg(receivebuf0);
+                if(startgame == RxB)
                 {
+                    Gamestate("/gamestate/", MAC_ADDRESS_DEF);
                     currentState = STATE_1;
                 }
             }
@@ -50,15 +55,16 @@ void updateFSM(void)
                 // ACKNOWLEDGE
                 //Serial.println("State1");
                 //sendbuf[0] = ACKNOWLEDGE;
-                char sendbuf1[] = "0,0,0,0.";
-                char receivebuf1[18];
-                blocking_transmit_slave_serial(sendbuf1, receivebuf1);
-                arg(receivebuf1);
-                if(strcmp(statusslave, receivearg[0])==0)
+                //char* sendbuf1 = "0.";
+                //char receivebuf1[18];
+                blocking_transmit_slave_serial(acknowledge);
+                //arg(receivebuf1);
+                if(statusslave == RxB)
                 {
+                    Gamestate("/gamestate/", MAC_ADDRESS_DEF);
                     currentState = STATE_2;
                 }
-                else if(strcmp(startgame, receivearg[0])==0){
+                else if(startgame == RxB){
                     currentState = STATE_1;
                 }
             }
@@ -68,15 +74,16 @@ void updateFSM(void)
                 // ACKNOWLEDGE
                 //sendbuf[0] = STATUSSLAVE;
                 //sendbuf[0] = ERROR;
-                char sendbuf2[] = "acknowledge,0,0,0.";
-                char receivebuf2[17];
-                blocking_transmit_slave_serial(sendbuf2, receivebuf2);
-                arg(receivebuf2);
-                if(strcmp(teamcolour, receivearg[0])==0)
+                //char* sendbuf2 = "acknowledge.";
+                //char receivebuf2[17];
+                blocking_transmit_slave_serial(acknowledge);
+                //arg(receivebuf2);
+                if(teamcolour == RxB)
                 {
+                    Gamestate("/gamestate/", MAC_ADDRESS_DEF);
                     currentState = STATE_3;
                 }
-                else if(strcmp(startgame, receivearg[0])==0){
+                else if(startgame == RxB){
                     currentState = STATE_1;
                 }
             }
@@ -84,16 +91,17 @@ void updateFSM(void)
         case STATE_3:
             {
                 // TEAMCOLOUR
-                char sendbuf3[] = "teamcolour,255,0,255.";
-                char receivebuf3[17];
-                blocking_transmit_slave_serial(sendbuf3, receivebuf3);
-                arg(receivebuf3);
-                if(strcmp(placemaker, receivearg[0])==0)
+                //char* sendbuf3 = "teamcolour.";
+                //char receivebuf3[17];
+                blocking_transmit_slave_serial(teamcolour);
+                //arg(receivebuf3);
+                if(placemaker == RxB)
                 {
+                    Gamestate("/gamestate/", MAC_ADDRESS_DEF);
                     Serial.print("Hello_Placemaker");
                     currentState = STATE_4;
                 }
-                else if(strcmp(startgame, receivearg[0])==0){
+                else if(startgame == RxB){
                     Serial.print("Hello_Placemaker 2");
                     currentState = STATE_1;
                 }
@@ -101,17 +109,19 @@ void updateFSM(void)
             break;
         case STATE_4:
             {
-                char sendbuf4[] = "0,0,0,0.";
-                char receivebuf4[12];
-                blocking_transmit_slave_serial(sendbuf4, receivebuf4);
-                arg(receivebuf4);
-                if(strcmp(shoot, receivearg[0])==0)
+                //char* sendbuf4 = "geraakt.";
+                //char receivebuf4[12];
+                blocking_transmit_slave_serial(nul);
+                //arg(receivebuf4);
+                if(shoot == RxB)
                 {
                     //Serial.print("Hello_world!");
                     //Serial.write("Helloworldtest");
-                    sendPhoto();
+                    Gamestate("/gamestate/", MAC_ADDRESS_DEF);
+                    //sendPhoto();
+
                 }
-                else if(strcmp(startgame, receivearg[0])==0){
+                else if(startgame == RxB){
                     currentState = STATE_1;
                 }
             }
