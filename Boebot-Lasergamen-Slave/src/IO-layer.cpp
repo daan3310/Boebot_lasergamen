@@ -116,15 +116,15 @@ byte serial_send_command(byte cmd) {
   Serial.write(cmd);
 
   // Read incoming data if needed
-  if (Serial.available() >= 0) {
+  if (Serial.available() > 0) {
       byte dataRec = Serial.read(); 
     //   int dataRec1 = (int)dataRec;
     //   Serial.print("De receive data: ");
     //   Serial.println(dataRec1);
       My_Serial_dataIn = dataRec;
   }
-  Serial.print("De receive data: ");
-  Serial.println(My_Serial_dataIn);
+  //Serial.print("De receive data: ");
+  //Serial.println(My_Serial_dataIn);
   return 0;
 }
 

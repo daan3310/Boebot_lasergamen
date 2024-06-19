@@ -10,6 +10,7 @@
 #include <HardwareSerial.h>
 
 #define MAP_SPI_PINS 1
+#define DEBUG 0
 
 #ifdef MAP_SPI_PINS
 #define GPIO_MOSI           13
@@ -88,6 +89,7 @@ bool connect_pi(String server_path,String address);
 void init_game(void);
 bool Gamestate(String server_path,String address);
 int WaitForMessage(void);
+void SendMessage(String server_path, String debug_message);
 String sendPhoto();
 
 unsigned long benchMark_sendPhoto();

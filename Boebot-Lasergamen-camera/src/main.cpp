@@ -20,7 +20,7 @@ void setup() {
   // Serial.println("Init game");
   init_game();
   // Serial.println("Game initialised");
-
+  SendMessage("/ESP_DEBUG","shoot");
   /* Enter idle mode, wait for wakeup from pi */
   int start = 0;
   // Serial.println("Enter idle mode.");

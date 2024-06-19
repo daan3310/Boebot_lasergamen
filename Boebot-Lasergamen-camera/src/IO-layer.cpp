@@ -18,6 +18,7 @@
 
 #define SERIAL_BAUD_RATE 115200  // Change baud rate as needed
 
+
 extern int hitpoints;
 extern int points;
 byte RxB;
@@ -39,10 +40,10 @@ esp_err_t blocking_transmit_slave_serial(byte TxBuf)
 
   // Wait for incoming data
   uint32_t start_time = millis();
-  while (Serial.available()) {
-    if (millis() - start_time > 2000) {
-      return ESP_ERR_TIMEOUT; // Return timeout error if not enough data received within timeout
-    }
+  while (Serial.available()>0) {
+    // if (millis() - start_time > 2000) {
+    //   return ESP_ERR_TIMEOUT; // Return timeout error if not enough data received within timeout
+    // }
     byte datarec = Serial.read();
     RxB = datarec;
   }
@@ -69,6 +70,7 @@ String serverName          = "192.168.0.102";
 String ServerPathStartup   = "/startup";  // Flask upload route (voor image) (flask library python)
 String ServerPathGamestate = "/gamestate/";
 String ServerPathShoot     = "/shoot";
+String ServerPathDebug     = "/ESP_DEBUG";
 String MAC                 = MAC_ADDRESS_DEF;
 const char* MAC_str        = MAC_ADDRESS_DEF;
 const int serverPort       = 5000;
@@ -228,6 +230,63 @@ bool connect_pi(String server_path,String address) {
 }
 
 /**
+ * @brief stuur debug message
+ */
+void SendMessage(String server_path, String debug_message){
+  #ifdef DEBUG  
+  Serial.println("Connecting to server: " + serverName);
+  #endif 
+
+  if (client.connect(serverName.c_str(), serverPort)) {
+
+    #ifdef DEBUG
+    Serial.println("Connection successful!");
+    #endif
+
+    /* Http route */
+    String head        = "--ESP32\r\nContent-Disposition: form-data; name=\"message\"; filename=\"12345678\"\r\nContent-Type: message\r\n\r\n";
+    String tail        = "\r\n--ESP32--\r\n";
+    uint16_t totalLen  = head.length() + tail.length() + debug_message.length();
+
+    #ifdef DEBUG
+    Serial.println("Sending HTTP POST request...");
+    #endif
+
+    /* Send HTTP request */ 
+    client.println("POST " + server_path + " HTTP/1.1");
+    client.println("Host: " + serverName);
+    client.println("Content-Length: " + String(totalLen));
+    client.println("Content-Type: multipart/form-data; boundary=ESP32");
+    client.println();
+    client.print(head);
+    client.print(debug_message);
+    client.print(tail);
+
+    #ifdef DEBUG
+    Serial.println("Waiting for server response...");
+    #endif
+
+    /* wait for response */ 
+    while (!client.available()) {
+      delay(100);
+      Serial.print(".");
+    }
+
+    /* read response */
+    String input = client.readString();
+    // Serial.println(input);
+  } 
+
+  else {
+    #ifdef DEBUG
+    Serial.print("Connection to ");
+    Serial.print(serverName);
+    Serial.println("Connection failed.");
+    #endif
+  }
+}
+
+/**
  * @brief Request gamestate from host
  * 
  * Request the gamestate from the host (raspberry pi). Receive the gamestate data in JSON format. 
@@ -366,7 +425,7 @@ char incomingPacket[255];  // Buffer for incoming packets
  */
 int WaitForMessage(void){
   #ifdef DEBUG
-  Serial.print(".");
+  //Serial.print(".");
   #endif
   String Message;
 

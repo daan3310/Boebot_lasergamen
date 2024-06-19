@@ -11,37 +11,37 @@ byte UI_layer_error_handling(byte error)
         case CONTROLLERNOTDETECTED:
         {
             
-            Serial.println("Error: Controller not detected in the correct time frame, try charging the controller");
+            //Serial.println("Error: Controller not detected in the correct time frame, try charging the controller");
             return 0;
         }
         case ESPSLAVENOTDETECTED:
         {
-            Serial.println("Error: ESPCAM not detected, look if its connected to power else try resetting the ESP");
+            //Serial.println("Error: ESPCAM not detected, look if its connected to power else try resetting the ESP");
             return 0;
         }
         case NOCMD:
         {
-            Serial.println("Error: Internal error in esp32 cmd not recognised");
+            //Serial.println("Error: Internal error in esp32 cmd not recognised");
             return 0;
         }
         case CONTROLLERLOWPOWER:
         {
-            Serial.println("Warning: Controller low battery, put the controller on the charger");
+            //Serial.println("Warning: Controller low battery, put the controller on the charger");
             return 0;
         }
         case HOSTNOTDETECTED:
         {
-            Serial.println("Error: No Raspberry pi found on local network");
+            //Serial.println("Error: No Raspberry pi found on local network");
             return 0;
         }
         case NOINTERNET:
         {
-            Serial.println("Error: No connection with the internet made");
+            //Serial.println("Error: No connection with the internet made");
             return 0;
         }
         default:
         {
-            Serial.println("Error: Error not recognised");
+            //Serial.println("Error: Error not recognised");
             return 0;
         }
     }
@@ -73,18 +73,18 @@ void UI_layer_Shoot()
 
     if (CurrentMillis >= Millis_Per_Timer)
     {
-        Serial.println("Getting current status");
+        //Serial.println("Getting current status");
         Millis_Per_Timer = CurrentMillis + TIMERSTATUS;
     }
     
     if (CurrentMillis >= Millis_Per_Shoot && status != ERROR)
     {
-        Serial.println("Reloaded");
+        //Serial.println("Reloaded");
         Millis_Per_Shoot = CurrentMillis + TIMERSHOOT;
     }
     else if (CurrentMillis >= Millis_Per_Shoot)
     {
-        Serial.println("Error: Geen reactie van CAM");
+        //Serial.println("Error: Geen reactie van CAM");
         Millis_Per_Shoot = CurrentMillis + TIMERSHOOT;
     }
 

@@ -2,7 +2,7 @@
 #define CONFIG_H
 
 // debug = 0 is off || 1 is on 
-#define DEBUG 1
+#define DEBUG 0
 
 // SPI interrupt timer
 #define PRESCALER 16000  

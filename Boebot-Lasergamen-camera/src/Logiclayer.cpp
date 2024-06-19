@@ -119,7 +119,7 @@ void updateFSM(void)
                     //Serial.write("Helloworldtest");
                     //Gamestate("/gamestate/", MAC_ADDRESS_DEF);
                     //sendPhoto();
-
+                    //SendMessage("/esp_debug","shoot");
                 }
                 else if(startgame == RxB){
                     currentState = STATE_1;

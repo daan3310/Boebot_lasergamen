@@ -131,7 +131,7 @@ void Task1code( void * parameter) // Taken voor core 0
   // UI_layer_Shoot();
    if (My_Flag_SPI != 0 && Shoot == 0xAA)
    {
-    Serial.println("Bang!");
+    //Serial.println("Bang!");
     Flag_SER = 0;
     Shoot = 0;
    }
@@ -168,7 +168,7 @@ void Task2code( void * parameter) // Taken voor core 1
     // Deze functie is om te vragen
     if (PS4InputsMain.Cirkelknop == true) // Zet een timer neer
     {
-      Serial.println("KNOP INGEDRUKT.");
+      //Serial.println("KNOP INGEDRUKT.");
       // digitalWrite(12, HIGH);
       Shoot = 0xAA;
       Logiclayer_Serial_CMD_NO_DATA(SHOOT);
@@ -187,22 +187,22 @@ void Task2code( void * parameter) // Taken voor core 1
 
 void Function_Print_Serial_output(byte CMD)
 {
-  Serial.println();
-  Serial.print("Data out:");
-  Serial.print(" ");
-  Serial.print(CMD);
-  Serial.println();
+  // Serial.println();
+  // Serial.print("Data out:");
+  // Serial.print(" ");
+  // Serial.print(CMD);
+  // Serial.println();
 
 }
 
 void Function_Print_Serial_input(int state)
 {
-  Serial.print("Data in:");
-  Serial.print("State:");
-  Serial.print(state, DEC);
-  Serial.print(" \t\t");
-  Serial.print(My_Serial_dataIn);
-  Serial.println();
+  // Serial.print("Data in:");
+  // Serial.print("State:");
+  // Serial.print(state, DEC);
+  // Serial.print(" \t\t");
+  // Serial.print(My_Serial_dataIn);
+  // Serial.println();
 }
 
 void servodirection(signed char Direction)
