@@ -83,13 +83,19 @@ WiFiClient client;
  */
 void init_game(void){
   bool connected = 0;
+  #ifdef DEBUG
   Serial.println("Connecting to HTTP server");
+  #endif
   while(!connected){
     connected = connect_pi(ServerPathStartup, MAC);
+    #ifdef DEBUG
     Serial.print(".");
+    #endif
     delay(500);
   }
+  #ifdef DEBUG
   Serial.println("Connected");
+  #endif
 }
 
 /**
@@ -136,13 +142,17 @@ bool connect_pi(String server_path,String address) {
     /* wait for response */ 
     while (!client.available()) {
       delay(100);
+      #ifdef DEBUG
       Serial.print(".");
+      #endif
     }
 
     /* read response */
     String decoded_string;
     String input = client.readString();
+    #ifdef DEBUG
     Serial.println(input);
+    #endif
 
     /* remove http overhead from input */
     int jsonStartIndex = input.indexOf("\r\n\r\n");
@@ -252,19 +262,24 @@ bool Gamestate(String server_path,String address){
     client.println();
     client.print(head);
     client.print(tail);
-
+    #ifdef DEBUG
     Serial.println("Waiting for server response...");
+    #endif
 
     /* wait for response */ 
     while (!client.available()) {
       delay(100);
+      #ifdef DEBUG
       Serial.print(".");
+      #endif
     }
 
     /* read response */
     String decoded_string;
     String input = client.readString();
+    #ifdef DEBUG
     Serial.println(input);
+    #endif
 
     /* remove http overhead from input */
     int jsonStartIndex = input.indexOf("\r\n\r\n");
@@ -272,12 +287,15 @@ bool Gamestate(String server_path,String address){
     if (jsonStartIndex != -1) {
       decoded_string = input.substring(jsonStartIndex + 4);
       decoded_string.trim();
-  
+      #ifdef DEBUG
       Serial.println("Extracted JSON content:");
       Serial.println(decoded_string);
+      #endif
     } 
     else {
+      #ifdef DEBUG
       Serial.println("JSON content not found in HTTP response.");
+      #endif
       return 0;
     }
 
@@ -286,8 +304,10 @@ bool Gamestate(String server_path,String address){
     DeserializationError error = deserializeJson(doc, decoded_string);
 
     if (error) {
+      #ifdef DEBUG
       Serial.print(F("deserializeJson() failed: "));
       Serial.println(error.f_str());
+      #endif
     return 0;
     }   
     else {
@@ -345,7 +365,9 @@ char incomingPacket[255];  // Buffer for incoming packets
  * Wait to receive a message from the host. 
  */
 int WaitForMessage(void){
+  #ifdef DEBUG
   Serial.print(".");
+  #endif
   String Message;
 
   int packetSize = udp.parsePacket();
@@ -355,8 +377,10 @@ int WaitForMessage(void){
       incomingPacket[len] = '\0';
       Message = incomingPacket;
     }
+    #ifdef DEBUG
     Serial.printf("Received packet of size %d from %s:%d\n", packetSize, udp.remoteIP().toString().c_str(), udp.remotePort());
     Serial.printf("Packet contents: %s\n", incomingPacket);
+    #endif
   }
 
   delay(10);
@@ -380,28 +404,38 @@ int WaitForMessage(void){
 }
 
 IPAddress init_wifi(){
+    #ifdef DEBUG
     Serial.println("going to init wifi");
+    #endif
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // disable brownout
 
     WiFi.mode(WIFI_STA);
+    #ifdef DEBUG
     Serial.println();
     Serial.print("Connecting to ");
     Serial.println(ssid);
+    #endif
     WiFi.begin(ssid, password); 
     while (WiFi.status() != WL_CONNECTED){
+      #ifdef DEBUG
       Serial.print(".");
+      #endif
       delay(500);
     }
+    #ifdef DEBUG
     Serial.println();
     Serial.print("ESP32-CAM IP Address: ");
     Serial.println(WiFi.localIP());
+    #endif
 
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 1); // enable brownout
 
     udp.begin(localUdpPort);
+    #ifdef DEBUG
     Serial.printf("Now listening on UDP port %d\n", localUdpPort);
 
     Serial.println("done init wifi");
+    #endif
     return WiFi.localIP();
 }
 
@@ -415,7 +449,9 @@ String sendPhoto(){
   camera_fb_t *fb = NULL;
   fb = esp_camera_fb_get();
   if (!fb){
+    #ifdef DEBUG
     Serial.println("Camera capture failed");
+    #endif
     delay(1000);
     ESP.restart();
   }
@@ -460,8 +496,9 @@ String sendPhoto(){
       }
     }
     client.print(tail);
-
+    #ifdef DEBUG
     Serial.println("Waiting for server response...");
+    #endif
 
     esp_camera_fb_return(fb);
 
@@ -532,7 +569,9 @@ esp_err_t init_camera(){
     // camera init
     esp_err_t err = esp_camera_init(&config);
     if (err != ESP_OK){
+    #ifdef DEBUG
     Serial.printf("Camera init failed with error 0x%x", err);
+    #endif
     }
     return err;
 }

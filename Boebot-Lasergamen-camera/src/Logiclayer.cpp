@@ -98,11 +98,11 @@ void updateFSM(void)
                 if(placemaker == RxB)
                 {
                     //Gamestate("/gamestate/", MAC_ADDRESS_DEF);
-                    Serial.print("Hello_Placemaker");
+                    //Serial.print("Hello_Placemaker");
                     currentState = STATE_4;
                 }
                 else if(startgame == RxB){
-                    Serial.print("Hello_Placemaker 2");
+                    //Serial.print("Hello_Placemaker 2");
                     currentState = STATE_1;
                 }
             }
@@ -136,13 +136,19 @@ void MessageFSM(int message)
     switch(message) {
         case 0:
             // no message.
+            #ifdef DEBUG
             Serial.println(".");
+            #endif
             break;
         case 1:
+            #ifdef DEBUG
             Serial.println("Start game");
+            #endif
             break;
         case 2:
+            #ifdef DEBUG
             Serial.println("End game");
+            #endif
             while(msg != 6)
             {   
                 /* Game ended. wacht op reset message. */
@@ -152,23 +158,33 @@ void MessageFSM(int message)
             esp_restart();
             break;
         case 3:
+            #ifdef DEBUG
             Serial.println("You've been Hit");
+            #endif
             hitpoints--;
             // Led hp bar
             break;
         case 4:
+            #ifdef DEBUG
             Serial.println("You hit target");
+            #endif
             points++;
             break;
         case 5:
+            #ifdef DEBUG
             Serial.println("gamestate changed");
+            #endif
             Gamestate("/gamestate/", MAC_ADDRESS_DEF);
             break;
         case 6:
+            #ifdef DEBUG
             Serial.println("reset");
+            #endif
             esp_restart();
         default:
+            #ifdef DEBUG
             Serial.println("error");
+            #endif
             break;
     }
 }
