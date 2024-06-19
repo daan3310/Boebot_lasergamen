@@ -45,7 +45,7 @@ void updateFSM(void)
                 //arg(receivebuf0);
                 if(startgame == RxB)
                 {
-                    Gamestate("/gamestate/", MAC_ADDRESS_DEF);
+                    //Gamestate("/gamestate/", MAC_ADDRESS_DEF);
                     currentState = STATE_1;
                 }
             }
@@ -61,7 +61,7 @@ void updateFSM(void)
                 //arg(receivebuf1);
                 if(statusslave == RxB)
                 {
-                    Gamestate("/gamestate/", MAC_ADDRESS_DEF);
+                    //Gamestate("/gamestate/", MAC_ADDRESS_DEF);
                     currentState = STATE_2;
                 }
                 else if(startgame == RxB){
@@ -80,7 +80,7 @@ void updateFSM(void)
                 //arg(receivebuf2);
                 if(teamcolour == RxB)
                 {
-                    Gamestate("/gamestate/", MAC_ADDRESS_DEF);
+                    //Gamestate("/gamestate/", MAC_ADDRESS_DEF);
                     currentState = STATE_3;
                 }
                 else if(startgame == RxB){
@@ -97,7 +97,7 @@ void updateFSM(void)
                 //arg(receivebuf3);
                 if(placemaker == RxB)
                 {
-                    Gamestate("/gamestate/", MAC_ADDRESS_DEF);
+                    //Gamestate("/gamestate/", MAC_ADDRESS_DEF);
                     Serial.print("Hello_Placemaker");
                     currentState = STATE_4;
                 }
@@ -117,7 +117,7 @@ void updateFSM(void)
                 {
                     //Serial.print("Hello_world!");
                     //Serial.write("Helloworldtest");
-                    Gamestate("/gamestate/", MAC_ADDRESS_DEF);
+                    //Gamestate("/gamestate/", MAC_ADDRESS_DEF);
                     //sendPhoto();
 
                 }

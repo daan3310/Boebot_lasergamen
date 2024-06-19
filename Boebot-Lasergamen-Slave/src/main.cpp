@@ -23,7 +23,7 @@ void setup() {
   int i = 0;
   servoT.attach(servopin);
   PS4.begin(MAC_PS4);
-  Serial.begin(9600);
+  Serial.begin(9600, SERIAL_8N1, GPIO_RXs, GPIO_TXs);
 
   
 

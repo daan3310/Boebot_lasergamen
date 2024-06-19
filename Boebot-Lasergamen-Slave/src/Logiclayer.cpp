@@ -138,7 +138,7 @@ byte Logiclayer_Serial_CMD_NO_DATA(byte CMD)
     }
     case SHOOT:
     {
-      Serial.println("Shoot CASE.");
+      //Serial.println("Shoot CASE.");
       return serial_send_command(shoot);
     }
     case ERROR:
