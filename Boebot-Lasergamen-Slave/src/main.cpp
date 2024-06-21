@@ -21,9 +21,12 @@ byte testsarr[10];
 void setup() {
   // put your setup code here, to run once:
   int i = 0;
+  HardwareSerial Serial2(2);
   servoT.attach(servopin);
   PS4.begin(MAC_PS4);
   Serial.begin(9600);
+  Serial2.setRxBufferSize(DATALENGTH);
+  Serial2.begin(9600, SERIAL_8N1, GPIO_RX, GPIO_TX);
 
   
 
@@ -61,12 +64,12 @@ void setup() {
   
   delay(100);
  
-  #if DEBUG > 0
+  //#if DEBUG > 0
   while (state != 5)
   {
     state = Logiclayer_Startup_Serial(state);
   }
-  #endif
+  //#endif
   #if DEBUG > 0
   Serial.println("State machine done!");
   #endif
@@ -129,7 +132,7 @@ void Task1code( void * parameter) // Taken voor core 0
     */
 
   // UI_layer_Shoot();
-   if (My_Flag_SPI != 0 && Shoot == 0xAA)
+   if (Flag_SER != 0 && Shoot == 0xAA)
    {
     //Serial.println("Bang!");
     Flag_SER = 0;
@@ -197,12 +200,12 @@ void Function_Print_Serial_output(byte CMD)
 
 void Function_Print_Serial_input(int state)
 {
-  // Serial.print("Data in:");
-  // Serial.print("State:");
-  // Serial.print(state, DEC);
-  // Serial.print(" \t\t");
-  // Serial.print(My_Serial_dataIn);
-  // Serial.println();
+  Serial.print("Data in:");
+  Serial.print("State:");
+  Serial.print(state, DEC);
+  Serial.print(" \t\t");
+  Serial.print(My_Serial_dataIn);
+  Serial.println();
 }
 
 void servodirection(signed char Direction)

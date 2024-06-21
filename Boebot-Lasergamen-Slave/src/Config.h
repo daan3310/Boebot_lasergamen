@@ -2,7 +2,7 @@
 #define CONFIG_H
 
 // debug = 0 is off || 1 is on 
-#define DEBUG 0
+#define DEBUG 1
 
 // SPI interrupt timer
 #define PRESCALER 16000  
@@ -41,8 +41,8 @@
 #define HSPI_SCLK   25
 #define HSPI_SS     14
 
-#define GPIO_TXs 41
-#define GPIO_RXs 40
+#define GPIO_TX 1
+#define GPIO_RX 3
 
 #define servopin 2
 
