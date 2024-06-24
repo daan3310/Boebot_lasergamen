@@ -39,8 +39,8 @@ esp_err_t blocking_transmit_slave_serial(byte TxBuf)
   Serial.write(TxBuf);
 
   // Wait for incoming data
-  uint32_t start_time = millis();
-  while (Serial.available()>0) {
+  //uint32_t start_time = millis();
+  if (Serial.available()>0) {
     // if (millis() - start_time > 2000) {
     //   return ESP_ERR_TIMEOUT; // Return timeout error if not enough data received within timeout
     // }
@@ -54,7 +54,7 @@ esp_err_t blocking_transmit_slave_serial(byte TxBuf)
   //strcpy(RxBuf, stringrec.c_str());
 
   
-  return ESP_OK;
+  //return ESP_OK;
 }
 
 esp_err_t non_blocking_queue_transaction_slave_serial(byte TxBuf)

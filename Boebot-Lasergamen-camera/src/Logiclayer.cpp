@@ -41,7 +41,7 @@ void updateFSM(void)
                 //char* sendbuf0 = "0.";
                 //char receivebuf0[16];
                 //char receivearg[4][9];
-                blocking_transmit_slave_serial(nul);  
+                blocking_transmit_slave_serial(acknowledge);  
                 //arg(receivebuf0);
                 if(startgame == RxB)
                 {

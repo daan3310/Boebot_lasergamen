@@ -41,8 +41,8 @@
 #define HSPI_SCLK   25
 #define HSPI_SS     14
 
-#define GPIO_TX 1
-#define GPIO_RX 3
+#define GPIO_TX 25
+#define GPIO_RX 26
 
 #define servopin 2
 

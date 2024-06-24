@@ -108,7 +108,7 @@ struct PS4 IO_Layer_Besturing()
 
 byte serial_send_command(byte cmd) {
   #if DEBUG > 0
-  //Function_Print_Serial_output(cmd);
+  Function_Print_Serial_output(cmd);
   #endif
 
   char* dataIn;
