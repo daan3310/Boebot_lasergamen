@@ -4,7 +4,8 @@
 
 void setup() {
   /* setup serial communication */
-  Serial.begin(9600);
+  Serial.begin(115200);
+  Serial2.begin(9600, SERIAL_8N1, GPIO_RX, GPIO_TX);
 
   /* might cause big issue: */
   //Serial.println("going to init wifi");
@@ -20,13 +21,13 @@ void setup() {
   // Serial.println("Init game");
   init_game();
   // Serial.println("Game initialised");
-  SendMessage("/ESP_DEBUG","shoot");
+  SendMessage("/ESP_DEBUG","Start setup");
   /* Enter idle mode, wait for wakeup from pi */
   int start = 0;
   // Serial.println("Enter idle mode.");
   while(start != 1)
   {
-    //updateFSM();
+    updateFSM();
     start = WaitForMessage();
   }
   // Serial.println("Exit idle mode.");

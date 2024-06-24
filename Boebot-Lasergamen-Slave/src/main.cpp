@@ -24,9 +24,9 @@ void setup() {
   HardwareSerial Serial2(2);
   servoT.attach(servopin);
   PS4.begin(MAC_PS4);
-  Serial.begin(9600);
-  Serial2.setRxBufferSize(DATALENGTH);
-  Serial2.begin(9600, SERIAL_8N1, GPIO_RX, GPIO_TX);
+  Serial.begin(115200);
+  Serial1.setRxBufferSize(DATALENGTH);
+  Serial1.begin(9600, SERIAL_8N1, GPIO_RX, GPIO_TX);
 
   
 
