@@ -33,6 +33,20 @@ void updateFSM(void)
     switch(currentState)
     {
         case STATE_0:
+
+            // Gamestate("/gamestate/", MAC_ADDRESS_DEF);
+            //Serial.println("State0");
+            sendbuf[0] = 0;
+            sendbuf[1] = 0;
+            sendbuf[2] = 0;
+            sendbuf[3] = 0;
+
+            receivebuf[0] = 0;
+            receivebuf[1] = 0;
+            receivebuf[2] = 0;
+            receivebuf[3] = 0;
+            blocking_transmit_slave_serial(sendbuf, receivebuf, 8*4);  
+            if(STARTGAME == receivebuf[0])
             {
                 //Gamestate("/gamestate/", MAC_ADDRESS_DEF);
                 //Serial.println("State0");
