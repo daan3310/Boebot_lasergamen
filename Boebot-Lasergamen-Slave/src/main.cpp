@@ -175,6 +175,7 @@ void Task2code( void * parameter) // Taken voor core 1
       // digitalWrite(12, HIGH);
       Shoot = 0xAA;
       Logiclayer_Serial_CMD_NO_DATA(SHOOT);
+      PS4InputsMain.Cirkelknop = false;
       // UI_layer_Shoot();
     }
     else
@@ -184,7 +185,7 @@ void Task2code( void * parameter) // Taken voor core 1
 
     // Serial.println("UIT KNOP FUNCTIE");
     
-    delay(50);
+    delay(500);
   }
 }
 

@@ -32,7 +32,7 @@ byte nul = 0;
 void updateFSM(void)
 {
     //Serial.println("Logiclayer1");
-    SendMessage("/ESP_DEBUG","updateFSM");
+    // SendMessage("/ESP_DEBUG","updateFSM");
     switch(currentState)
     {
         case STATE_0:
@@ -42,7 +42,7 @@ void updateFSM(void)
                 //char* sendbuf0 = "0.";
                 //char receivebuf0[16];
                 //char receivearg[4][9];
-                SendMessage("/ESP_DEBUG","State0");
+                // SendMessage("/ESP_DEBUG","State0");
                 byte RxBuf = blocking_transmit_slave_serial(acknowledge);  
                 //arg(receivebuf0);
                 if(startgame == RxBuf)
@@ -59,7 +59,7 @@ void updateFSM(void)
                 //sendbuf[0] = ACKNOWLEDGE;
                 //char* sendbuf1 = "0.";
                 //char receivebuf1[18];
-                SendMessage("/ESP_DEBUG","State1");
+                // SendMessage("/ESP_DEBUG","State1");
                 byte RxBuf1 = blocking_transmit_slave_serial(acknowledge);
                 //arg(receivebuf1);
                 if(statusslave == RxBuf1)
@@ -79,7 +79,7 @@ void updateFSM(void)
                 //sendbuf[0] = ERROR;
                 //char* sendbuf2 = "acknowledge.";
                 //char receivebuf2[17];
-                SendMessage("/ESP_DEBUG","State2");
+                // SendMessage("/ESP_DEBUG","State2");
                 byte RxBuf2 = blocking_transmit_slave_serial(acknowledge);
                 //arg(receivebuf2);
                 if(teamcolour == RxBuf2)
@@ -97,7 +97,7 @@ void updateFSM(void)
                 // TEAMCOLOUR
                 //char* sendbuf3 = "teamcolour.";
                 //char receivebuf3[17];
-                SendMessage("/ESP_DEBUG","State3");
+                // SendMessage("/ESP_DEBUG","State3");
                 byte RxBuf3 = blocking_transmit_slave_serial(teamcolour);
                 //arg(receivebuf3);
                 if(placemaker == RxBuf3)
@@ -116,7 +116,7 @@ void updateFSM(void)
             {
                 //char* sendbuf4 = "geraakt.";
                 //char receivebuf4[12];
-                SendMessage("/ESP_DEBUG","State4");
+                // SendMessage("/ESP_DEBUG","State4");
                 byte RxBuf4 = blocking_transmit_slave_serial(nul);
                 //arg(receivebuf4);
                 if(shoot == RxBuf4)
@@ -124,7 +124,7 @@ void updateFSM(void)
                     //Serial.print("Hello_world!");
                     //Serial.write("Helloworldtest");
                     //Gamestate("/gamestate/", MAC_ADDRESS_DEF);
-                    //sendPhoto();
+                    sendPhoto();
                     //SendMessage("/esp_debug","shoot");
                 }
                 else if(startgame == RxBuf4){

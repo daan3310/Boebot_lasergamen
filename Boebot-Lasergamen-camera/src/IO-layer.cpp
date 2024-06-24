@@ -49,7 +49,7 @@ esp_err_t blocking_transmit_slave_serial(byte TxBuf)
   }
   String RecVal = (String) RxB;
   // Read incoming data
-  SendMessage("/ESP_DEBUG",RecVal);
+  // SendMessage("/ESP_DEBUG",RecVal);
   // int datarec = Serial.read() - '0';
   // RxB = datarec;
   //strcpy(RxBuf, stringrec.c_str());
