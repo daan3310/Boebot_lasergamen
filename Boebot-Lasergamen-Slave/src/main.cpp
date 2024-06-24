@@ -150,7 +150,7 @@ void Task2code( void * parameter) // Taken voor core 1
   struct PS4 PS4InputsMain;
   
   int i = 5;
-   
+  int knopfunc = 0;
   while(1)
   {
     PS4InputsMain = IO_Layer_Besturing();
@@ -169,23 +169,28 @@ void Task2code( void * parameter) // Taken voor core 1
 
     // Gedachte kots
     // Deze functie is om te vragen
-    if (PS4InputsMain.Cirkelknop == true) // Zet een timer neer
+    if (PS4InputsMain.Cirkelknop == true && knopfunc == 0) // Zet een timer neer
     {
       //Serial.println("KNOP INGEDRUKT.");
       // digitalWrite(12, HIGH);
+      //knopfunc = 1;
       Shoot = 0xAA;
       Logiclayer_Serial_CMD_NO_DATA(SHOOT);
-      PS4InputsMain.Cirkelknop = false;
+      knopfunc = 1;
+      //PS4InputsMain.Cirkelknop = false;
       // UI_layer_Shoot();
+    }
+    else if(PS4InputsMain.Cirkelknop == false)
+    {
+      knopfunc = 0;
+      // digitalWrite(12, LOW);
     }
     else
     {
-      // digitalWrite(12, LOW);
     }
-
     // Serial.println("UIT KNOP FUNCTIE");
     
-    delay(500);
+    //delay(1);
   }
 }
 
