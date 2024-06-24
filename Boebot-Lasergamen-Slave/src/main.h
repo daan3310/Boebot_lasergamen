@@ -7,7 +7,11 @@
 #include <math.h>
 #include <SPI.h>
 #include "Config.h"
-//#include <Servo.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+#include <ESP32Servo.h>
 
 #include <Stepper.h>
 
@@ -19,7 +23,7 @@
 #include <Wireless_Communication/Wireless_Communication.h>
 
 
-void Function_Print_Serial_output(byte CMD, byte data[5] );
+void Function_Print_Serial_output(char* CMD);
 
 void Function_Print_Serial_input(int state);
 
