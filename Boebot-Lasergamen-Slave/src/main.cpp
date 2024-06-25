@@ -28,27 +28,12 @@ void setup() {
   Serial1.setRxBufferSize(DATALENGTH);
   Serial1.begin(9600, SERIAL_8N1, GPIO_RX, GPIO_TX);
 
-
-  
-
   initMotors(0);
 
   #if DEBUG > 0
   Serial.println("Waiting for controller:");
   #endif
 
-  // while(!PS4.isConnected())    
-  // { 
-  //   if (i == 300)
-  //   {
-
-  //     UI_layer_error_handling(CONTROLLERNOTDETECTED);
-  //     i = 0;
-  //   }
-  //   i++;
-
-  //   delay(100);
-  // }
   #if DEBUG > 0
   Serial.println("Controller detected:\n");
   #endif
@@ -65,12 +50,11 @@ void setup() {
   
   delay(100);
  
-  //#if DEBUG > 0
   while (state != 5)
   {
     state = Logiclayer_Startup_Serial(state);
   }
-  //#endif
+
   #if DEBUG > 0
   Serial.println("State machine done!");
   #endif
@@ -111,20 +95,10 @@ void Task1code( void * parameter) // Taken voor core 0
 
   
   InitTimerInterrupt(PRESCALER, TIMERTICKS); // Init Timer interrupt returns a flag pointer 
-  InitLedStrip();
   byte junk = 0;
 
   while(1) 
   {
-    /*
-       Gedachte kots
-       Deze functie is om te vragen voor het schieten
-       Als er gevraagt is wil je ongeveer een seconde wachten?
-       Dus eerst kijk je naar de millis nadat het gevraagt is
-       en dan om de zoveel tijd vragen hoe lang het nog duurt bijvoorbeeld 100 ms
-    */
-
-  // UI_layer_Shoot();
    if (Flag_SER != 0 && Shoot == 0xAA)
    {
     //Serial.println("Bang!");
@@ -132,8 +106,7 @@ void Task1code( void * parameter) // Taken voor core 0
     Flag_SER = 0;
     Shoot = 0;
    }
-  // String testd = Serial.readString();
-  // Serial.print(testd);
+
     delay(100);
   }
 }
@@ -153,15 +126,7 @@ void Task2code( void * parameter) // Taken voor core 1
     updateMotor(motorRechts, PS4InputsMain.MotordataRechts);
 
     servodirection(PS4InputsMain.Rechterjoystick_x);
-    
-    // if (PS4.R2Value() > 20)
-    // {
-    //   PS4.setRumble(PS4.R2Value(), PS4.R2Value());
-    //   PS4.sendToController();
-    // }
 
-    // Gedachte kots
-    // Deze functie is om te vragen
     if (PS4InputsMain.Cirkelknop == true && knopfunc == 0) // Zet een timer neer
     {
 
@@ -175,13 +140,6 @@ void Task2code( void * parameter) // Taken voor core 1
       knopfunc = 0;
       // digitalWrite(12, LOW);
     }
-    else
-    {
-    }
-    // Serial.println("UIT KNOP FUNCTIE");
-
-    
-    //delay(1);
   }
 }
 

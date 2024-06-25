@@ -88,5 +88,5 @@ void UI_layer_Shoot()
         Millis_Per_Shoot = CurrentMillis + TIMERSHOOT;
     }
 
-    }
+  }
 }
