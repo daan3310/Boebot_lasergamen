@@ -111,13 +111,13 @@ byte serial_send_command(byte cmd) {
   Function_Print_Serial_output(cmd);
   #endif
 
-  char* dataIn;
+  //char* dataIn;
   // Send data out through serial
-  Serial2.write(cmd);
+  Serial1.write(cmd);
 
   // Read incoming data if needed
-  if (Serial2.available() > 0) {
-      byte dataRec = Serial2.read(); 
+  if (Serial1.available() > 0) {
+      byte dataRec = Serial1.read(); 
     //   int dataRec1 = (int)dataRec;
     //   Serial.print("De receive data: ");
     //   Serial.println(dataRec);

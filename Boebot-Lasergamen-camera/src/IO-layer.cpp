@@ -21,7 +21,7 @@
 
 extern int hitpoints;
 extern int points;
-byte RxB;
+
 
 //char sendbuf[4] = {0};
 //char receivebuf[4] = {0};
@@ -36,23 +36,24 @@ void my_post_trans_cb()
 
 esp_err_t blocking_transmit_slave_serial(byte TxBuf)
 {
-  Serial.write(TxBuf);
-
+  Serial2.write(TxBuf);
+  byte RxB;
   // Wait for incoming data
   //uint32_t start_time = millis();
-  if (Serial.available()>0) {
+  if (Serial2.available()>0) {
     // if (millis() - start_time > 2000) {
     //   return ESP_ERR_TIMEOUT; // Return timeout error if not enough data received within timeout
     // }
-    byte datarec = Serial.read();
+    byte datarec = Serial2.read();
     RxB = datarec;
   }
-
+  String RecVal = (String) RxB;
   // Read incoming data
+  // SendMessage("/ESP_DEBUG",RecVal);
   // int datarec = Serial.read() - '0';
   // RxB = datarec;
   //strcpy(RxBuf, stringrec.c_str());
-
+  return RxB;
   
   //return ESP_OK;
 }
