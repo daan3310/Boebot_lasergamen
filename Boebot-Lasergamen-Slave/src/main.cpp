@@ -28,27 +28,12 @@ void setup() {
   Serial1.setRxBufferSize(DATALENGTH);
   Serial1.begin(9600, SERIAL_8N1, GPIO_RX, GPIO_TX);
 
-
-  
-
   initMotors(0);
 
   #if DEBUG > 0
   Serial.println("Waiting for controller:");
   #endif
 
-  // while(!PS4.isConnected())    
-  // { 
-  //   if (i == 300)
-  //   {
-
-  //     UI_layer_error_handling(CONTROLLERNOTDETECTED);
-  //     i = 0;
-  //   }
-  //   i++;
-
-  //   delay(100);
-  // }
   #if DEBUG > 0
   Serial.println("Controller detected:\n");
   #endif
@@ -65,12 +50,11 @@ void setup() {
   
   delay(100);
  
-  //#if DEBUG > 0
   while (state != 5)
   {
     state = Logiclayer_Startup_Serial(state);
   }
-  //#endif
+
   #if DEBUG > 0
   Serial.println("State machine done!");
   #endif
@@ -115,7 +99,6 @@ void Task1code( void * parameter) // Taken voor core 0
 
   while(1) 
   {
-  // UI_layer_Shoot();
    if (Flag_SER != 0 && Shoot == 0xAA)
    {
     //Serial.println("Bang!");
@@ -123,6 +106,7 @@ void Task1code( void * parameter) // Taken voor core 0
     Flag_SER = 0;
     Shoot = 0;
    }
+
     delay(100);
   }
 }
@@ -154,7 +138,8 @@ void Task2code( void * parameter) // Taken voor core 1
     else if(PS4InputsMain.Cirkelknop == false)
     {
       knopfunc = 0;
-    } 
+      // digitalWrite(12, LOW);
+    }
   }
 }
 
@@ -166,6 +151,7 @@ void Function_Print_Serial_output(byte CMD)
   Serial.print(" ");
   Serial.print(CMD);
   Serial.println();
+
 }
 
 void Function_Print_Serial_input(int state)

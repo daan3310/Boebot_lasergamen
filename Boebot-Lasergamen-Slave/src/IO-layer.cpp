@@ -6,7 +6,6 @@ Servo myMotorTurret;
 SPIClass * vspi = NULL;
 
 byte My_Flag_SPI;
-
 byte My_Serial_dataIn;
 
 void IRAM_ATTR Timer0_ISR()
@@ -37,45 +36,45 @@ uint initMotors(int timer)
 
 uint updateMotor(motor currentMotor, int motorPower)
 {
-    uint returnValue = 0;
-    bool direction = (0 <= motorPower);
+  uint returnValue = 0;
+  bool direction = (0 <= motorPower);
 
-    // check if motorPower exceeds it's bounds of 1000 to -1000, if so change returnValue accordingly
-    if(-1024 > motorPower || 1024 < motorPower)
+  // check if motorPower exceeds it's bounds of 1000 to -1000, if so change returnValue accordingly
+  if(-1024 > motorPower || 1024 < motorPower)
+  {
+    if(0 == direction)
     {
-      if(0 == direction)
-      {
-          motorPower = -1024;
-      }
-      else
-      {
-          motorPower = 1024;
-      }
+      motorPower = -1024;
     }
+    else
+    {
+      motorPower = 1024;
+    }
+  }
 
-    // any motor added to this switch case should also be added to the enum "motor in IO-layer.h"
-    switch(currentMotor)
-    {
-        case motorRechts:
-            analogWrite(motorRechtsPWM, abs(motorPower) / 4);
-            digitalWrite(motorRechtsDIR, direction); // might need to add ! to invert the direction
-            break;
-        case motorLinks:
-            analogWrite(motorLinksPWM, abs(motorPower) / 4);
-            digitalWrite(motorLinksDIR, direction); // might need to add ! to invert the direction
-            break;
-        case motorTurret:
-            myMotorTurret.write(1500 + (motorPower));
-            break;
-        default:
-            break;
-    }
-    return returnValue;
+  // any motor added to this switch case should also be added to the enum "motor in IO-layer.h"
+  switch(currentMotor)
+  {
+    case motorRechts:
+      analogWrite(motorRechtsPWM, abs(motorPower) / 4);
+      digitalWrite(motorRechtsDIR, direction); // might need to add ! to invert the direction
+      break;
+    case motorLinks:
+      analogWrite(motorLinksPWM, abs(motorPower) / 4);
+      digitalWrite(motorLinksDIR, direction); // might need to add ! to invert the direction
+      break;
+    case motorTurret:
+      myMotorTurret.write(1500 + (motorPower));
+      break;
+    default:
+      break;
+  }
+  return returnValue;
 }
 
 struct PS4 IO_Layer_Besturing()
 {
-    struct PS4 PS4Inputs;
+  struct PS4 PS4Inputs;
   if (PS4.isConnected()) 
   {
     PS4Inputs.Cirkelknop = PS4.Circle();
@@ -87,7 +86,6 @@ struct PS4 IO_Layer_Besturing()
     PS4Inputs.Rechterjoystick_y = PS4.RStickY();
     return PS4Inputs;
    }       
-
     return PS4Inputs; 
 }
 
@@ -96,6 +94,7 @@ byte serial_send_command(byte cmd) {
   Function_Print_Serial_output(cmd);
   #endif
 
+  // Send data out through serial
   Serial1.write(cmd);
 
   // Read incoming data if needed
@@ -118,4 +117,5 @@ void InitTimerInterrupt(uint Prescaler, uint TimerTicks)
     timerAlarmWrite(Timer0_Cfg, TimerTicks, true); 
     timerAlarmEnable(Timer0_Cfg);
 }
+
 

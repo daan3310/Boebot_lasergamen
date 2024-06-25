@@ -5,6 +5,7 @@
 #include "IO-layer.h"
 
 struct PS4 Logiclayer_Besturing_Data(struct PS4 PS4Inputs);
+
 byte Logiclayer_Serial_CMD(byte cmd);
 byte Logiclayer_Serial_CMD_NO_DATA(byte CMD);
 void Logiclayer_set_colour(byte Color[3]);
