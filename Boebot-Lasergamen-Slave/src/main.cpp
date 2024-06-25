@@ -214,26 +214,28 @@ void Function_Print_Serial_input(int state)
   Serial.println();
 }
 
+unsigned long previousMillis = 0;  // stores the last time the servo was updated
+const long interval = 5;           // interval at which to move the servo (milliseconds)
+int valS = 90;                     // initial position of the servo
+
 void servodirection(signed char Direction)
 {
-  if (Direction > 0 + STICKDRIFT && valS<=180)
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - previousMillis >= interval)
   {
-    valS = valS+1;
-    servoT.write(valS);
-  }
-  else if (Direction < 0 - STICKDRIFT && valS>=0)
-  {
-    valS = valS-1;
-    servoT.write(valS);
-  }
-  else if (Direction > 0 - STICKDRIFT && Direction < 0 + STICKDRIFT)
-  {
-    valS = valS;
-    servoT.write(valS);
-  }
-  else
-  {
-    valS = valS;
+    // save the last time you moved the servo
+    previousMillis = currentMillis;
+
+    if (Direction > 0 + STICKDRIFT && valS <= 180)
+    {
+      valS = valS + 1;
+    }
+    else if (Direction < 0 - STICKDRIFT && valS >= 0)
+    {
+      valS = valS - 1;
+    }
+
     servoT.write(valS);
   }
 }
