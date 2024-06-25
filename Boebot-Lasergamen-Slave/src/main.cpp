@@ -70,14 +70,22 @@ void setup() {
   Serial.println("State machine done!");
   #endif
   
-  // for (i = 0; i<sizeof(Teamkleur); i++)
-  // {
-  //   int colT = atoi(My_Serial_dataIn[i+1]);
-  //   unsigned char temp = (unsigned char)colT;
-  //   // Teamkleur[i] = (byte)My_Serial_dataIn[i+1];
-  //   Teamkleur[i] = temp;
-  // }
-  // Logiclayer_set_colour(Teamkleur);
+  for (i = 0; i<sizeof(Teamkleur); i++)
+  {
+    Teamkleur[i] = My_Serial_dataIn[i+1];
+  }
+
+  Logiclayer_set_colour(Teamkleur);
+  byte data[DATALENGTH - 1] = {0};  // Initialize the data array with 0s
+  CRGB leds[NUM_LEDS];
+  FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
+  //serial_send_command(TEAMCOLOUR, data);
+
+  //CRGB Teamkleur = CRGB(My_Serial_dataIn[0], My_Serial_dataIn[1], My_Serial_dataIn[2]);
+  CRGB Teamkleur = CRGB(255,0,0);
+  fill_solid(leds, NUM_LEDS, Teamkleur);
+  FastLED.show();  
+
   // Functie om de kleur van de esp32 te veranderen naar de corresponderende kleur
 
   xTaskCreatePinnedToCore
@@ -114,7 +122,7 @@ void Task1code( void * parameter) // Taken voor core 0
 
   
   InitTimerInterrupt(PRESCALER, TIMERTICKS); // Init Timer interrupt returns a flag pointer 
-
+  InitLedStrip();
   byte junk = 0;
 
   while(1) 
@@ -151,7 +159,6 @@ void Task2code( void * parameter) // Taken voor core 1
   {
     PS4InputsMain = IO_Layer_Besturing();
     PS4InputsMain = Logiclayer_Besturing_Data(PS4InputsMain);
-    
     updateMotor(motorLinks, PS4InputsMain.MotordataLinks);
     updateMotor(motorRechts, PS4InputsMain.MotordataRechts);
 

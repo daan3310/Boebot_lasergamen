@@ -138,7 +138,6 @@ byte Logiclayer_Serial_CMD_NO_DATA(byte CMD)
 
 void Logiclayer_set_colour(byte Color[3])
 {
-// functie om ledstrip 
 
 
 PS4.setLed(Color[0], Color[1], Color[2]);
