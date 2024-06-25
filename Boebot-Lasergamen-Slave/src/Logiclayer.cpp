@@ -1,14 +1,5 @@
 #include "Logiclayer.h"
 
-// char* shutdown = "shutdown.";
-// char* startgame = "startgame.";
-// char* placemaker = "placemaker.";
-// char* statusslave = "statusslave.";
-// char* teamcolour = "teamcolour.";
-// char* errorc = "error.";
-// char* shoot = "shoot.";
-// char* errorc1 = "error";
-// char* acknowledge = "acknowledge";
 byte shutdown = 1;
 byte placemaker = 2;
 byte startgame = 3;
@@ -140,7 +131,6 @@ byte Logiclayer_Serial_CMD_NO_DATA(byte CMD)
     }
     case SHOOT:
     {
-      //Serial.println("Shoot CASE.");
       return serial_send_command(shoot);
     }
     case ERROR:
@@ -228,16 +218,8 @@ switch (state)
       case 3: // Placemaker om te vragen welke kleur/team wij zijn
       {
         Logiclayer_Serial_CMD(PLACEMAKER);
-        
-        //Function_Print_Spi_input(state);
-
-
-        
         state = 5; // Eindig de while loop
-
       }
-
-
     }
   return state;
-  }
+}

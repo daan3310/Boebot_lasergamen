@@ -9,13 +9,10 @@ byte My_Flag_SPI;
 
 byte My_Serial_dataIn;
 
-
-
 void IRAM_ATTR Timer0_ISR()
 {
   My_Flag_SPI = 1;
 }
-
 
 uint initMotors(int timer)
 {
@@ -46,20 +43,14 @@ uint updateMotor(motor currentMotor, int motorPower)
     // check if motorPower exceeds it's bounds of 1000 to -1000, if so change returnValue accordingly
     if(-1024 > motorPower || 1024 < motorPower)
     {
-        if(0 == direction)
-        {
-            // motorPower = 1024;
-            // delay(1);
-            motorPower = -1024;
-            //returnValue = updateMotor_exceeded_lower_bound_of_motorPower;
-        }
-        else
-        {
-            // motorPower = -1024;
-            // delay(1);
-            motorPower = 1024;
-            //returnValue = updateMotor_exceeded_upper_bound_of_motorPower;
-        }
+      if(0 == direction)
+      {
+          motorPower = -1024;
+      }
+      else
+      {
+          motorPower = 1024;
+      }
     }
 
     // any motor added to this switch case should also be added to the enum "motor in IO-layer.h"
@@ -77,7 +68,6 @@ uint updateMotor(motor currentMotor, int motorPower)
             myMotorTurret.write(1500 + (motorPower));
             break;
         default:
-            //returnValue = updateMotor_invalid_value_for_currentMotor;
             break;
     }
     return returnValue;
@@ -101,26 +91,16 @@ struct PS4 IO_Layer_Besturing()
     return PS4Inputs; 
 }
 
-// byte initSerial() {
-//   //Serial.begin(SERIAL_BAUD_RATE);  // Initialize serial communication
-//   Serial.begin(9600);
-// }
-
 byte serial_send_command(byte cmd) {
   #if DEBUG > 0
   Function_Print_Serial_output(cmd);
   #endif
 
-  //char* dataIn;
-  // Send data out through serial
   Serial1.write(cmd);
 
   // Read incoming data if needed
   if (Serial1.available() > 0) {
       byte dataRec = Serial1.read(); 
-    //   int dataRec1 = (int)dataRec;
-    //   Serial.print("De receive data: ");
-    //   Serial.println(dataRec);
       My_Serial_dataIn = dataRec;
   }
   Serial.print("De receive data: ");
@@ -128,30 +108,6 @@ byte serial_send_command(byte cmd) {
 
   return 0;
 }
-
-void LedLevens(){
-  byte data[DATALENGTH - 1] = {0};  // Initialize the data array with 0s
-  //serial_send_command(GAMESTATE, data);
-  CRGB leds_levens[NUM_LEDS_LEVENS];
-  FastLED.addLeds<WS2812, LED_PIN_LEVENS, GRB>(leds_levens, NUM_LEDS_LEVENS);
-  int lives = My_Serial_dataIn[0];
-   if (lives > NUM_LEDS_LEVENS) {
-        lives = NUM_LEDS_LEVENS;
-    }
-    
-    // Turn on LEDs for the lives
-    for (int i = 0; i < lives; i++) {
-        leds_levens[i] = CRGB::Red; // Set the color of the lives LEDs, e.g., red
-    }
-    
-    // Turn off remaining LEDs
-    for (int i = lives; i < NUM_LEDS_UNDERGLOW; i++) {
-        leds_levens[i] = CRGB::Black; // Set the color to black (off)
-    }
-    
-    FastLED.show(); // Update the LED strip to display changes
-}
-
 
 void InitTimerInterrupt(uint Prescaler, uint TimerTicks)
 {
@@ -161,21 +117,5 @@ void InitTimerInterrupt(uint Prescaler, uint TimerTicks)
     timerAttachInterrupt(Timer0_Cfg, &Timer0_ISR, true);
     timerAlarmWrite(Timer0_Cfg, TimerTicks, true); 
     timerAlarmEnable(Timer0_Cfg);
-}
-void InitLedStrip(){
- byte data[DATALENGTH - 1] = {0};  // Initialize the data array with 0s
-  CRGB leds_underglow[NUM_LEDS_UNDERGLOW];
-  
-  FastLED.addLeds<WS2812, LED_PIN_UNDERGLOW, GRB>(leds_underglow, NUM_LEDS_UNDERGLOW  );
-  serial_send_command(TEAMCOLOUR, data);
-  CRGB Teamkleur = CRGB(My_Serial_dataIn[0], My_Serial_dataIn[1], My_Serial_dataIn[2]);
-  fill_solid(leds_underglow, NUM_LEDS_UNDERGLOW, Teamkleur);
-  FastLED.show();  
-}
-
-
-void InitStepperMotor()
-{
-    
 }
 
