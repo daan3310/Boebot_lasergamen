@@ -3,7 +3,7 @@
 #include <WiFiUdp.h>
 
 void setup() {
-  /* setup serial communication */
+  /* setup serial communication  */
   Serial.begin(9600);
 
   /* might cause big issue: */
