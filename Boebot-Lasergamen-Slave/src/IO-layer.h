@@ -11,7 +11,11 @@
 enum motor { motorRechts, motorLinks, motorTurret };
 
 
+<<<<<<< HEAD
 extern char** My_Serial_dataIn;
+=======
+extern byte My_Serial_dataIn;
+>>>>>>> a6b1aecb72dac8391c9fd676f784815e02872f72
 extern byte My_Flag_SPI;
 
 
@@ -23,8 +27,12 @@ uint updateMotor(motor currentMotor, int motorPower);
 void InitTimerInterrupt(uint Prescaler, uint TimerTicks);
 void InitLedStrip();
 //byte initSerial();
+<<<<<<< HEAD
 byte serial_send_command(char* cmd);
 
+=======
+byte serial_send_command(byte cmd);
+>>>>>>> a6b1aecb72dac8391c9fd676f784815e02872f72
 
 
 

@@ -18,11 +18,18 @@
 
 #define SERIAL_BAUD_RATE 115200  // Change baud rate as needed
 
+
 extern int hitpoints;
 extern int points;
 
+<<<<<<< HEAD
 // char sendbuf[4] = {0};
 // char receivebuf[4] = {0};
+=======
+
+//char sendbuf[4] = {0};
+//char receivebuf[4] = {0};
+>>>>>>> a6b1aecb72dac8391c9fd676f784815e02872f72
 
 // Define callback flag and function
 uint8_t my_post_trans_cb_flag = 0;
@@ -32,6 +39,7 @@ void my_post_trans_cb()
   my_post_trans_cb_flag = 1;
 }
 
+<<<<<<< HEAD
 esp_err_t blocking_transmit_slave_serial(char* TxBuf, char* RxBuf)
 {
   Serial.write(TxBuf);
@@ -42,20 +50,49 @@ esp_err_t blocking_transmit_slave_serial(char* TxBuf, char* RxBuf)
     if (millis() - start_time > 2000) {
       return ESP_ERR_TIMEOUT; // Return timeout error if not enough data received within timeout
     }
+=======
+esp_err_t blocking_transmit_slave_serial(byte TxBuf)
+{
+  Serial2.write(TxBuf);
+  byte RxB;
+  // Wait for incoming data
+  //uint32_t start_time = millis();
+  if (Serial2.available()>0) {
+    // if (millis() - start_time > 2000) {
+    //   return ESP_ERR_TIMEOUT; // Return timeout error if not enough data received within timeout
+    // }
+    byte datarec = Serial2.read();
+    RxB = datarec;
+>>>>>>> a6b1aecb72dac8391c9fd676f784815e02872f72
   }
-
+  String RecVal = (String) RxB;
   // Read incoming data
+<<<<<<< HEAD
   String stringrec = Serial.readStringUntil('.');
   strcpy(RxBuf, stringrec.c_str());
 
+=======
+  // SendMessage("/ESP_DEBUG",RecVal);
+  // int datarec = Serial.read() - '0';
+  // RxB = datarec;
+  //strcpy(RxBuf, stringrec.c_str());
+  return RxB;
+>>>>>>> a6b1aecb72dac8391c9fd676f784815e02872f72
   
-  return ESP_OK;
+  //return ESP_OK;
 }
 
+<<<<<<< HEAD
 esp_err_t non_blocking_queue_transaction_slave_serial(char* TxBuf, char* RxBuf)
 {
   // This function is blocking in the case of Serial communication
   return blocking_transmit_slave_serial(TxBuf, RxBuf);
+=======
+esp_err_t non_blocking_queue_transaction_slave_serial(byte TxBuf)
+{
+  // This function is blocking in the case of Serial communication
+  return blocking_transmit_slave_serial(TxBuf);
+>>>>>>> a6b1aecb72dac8391c9fd676f784815e02872f72
 }
 
 #ifdef USE_WIFI 
@@ -65,6 +102,7 @@ String serverName          = "192.168.0.102";
 String ServerPathStartup   = "/startup";  // Flask upload route (voor image) (flask library python)
 String ServerPathGamestate = "/gamestate/";
 String ServerPathShoot     = "/shoot";
+String ServerPathDebug     = "/ESP_DEBUG";
 String MAC                 = MAC_ADDRESS_DEF;
 const char* MAC_str        = MAC_ADDRESS_DEF;
 const int serverPort       = 5000;
@@ -79,13 +117,19 @@ WiFiClient client;
  */
 void init_game(void){
   bool connected = 0;
+  #ifdef DEBUG
   Serial.println("Connecting to HTTP server");
+  #endif
   while(!connected){
     connected = connect_pi(ServerPathStartup, MAC);
+    #ifdef DEBUG
     Serial.print(".");
+    #endif
     delay(500);
   }
+  #ifdef DEBUG
   Serial.println("Connected");
+  #endif
 }
 
 /**
@@ -132,13 +176,17 @@ bool connect_pi(String server_path,String address) {
     /* wait for response */ 
     while (!client.available()) {
       delay(100);
+      #ifdef DEBUG
       Serial.print(".");
+      #endif
     }
 
     /* read response */
     String decoded_string;
     String input = client.readString();
+    #ifdef DEBUG
     Serial.println(input);
+    #endif
 
     /* remove http overhead from input */
     int jsonStartIndex = input.indexOf("\r\n\r\n");
@@ -214,6 +262,63 @@ bool connect_pi(String server_path,String address) {
 }
 
 /**
+ * @brief stuur debug message
+ */
+void SendMessage(String server_path, String debug_message){
+  #ifdef DEBUG  
+  Serial.println("Connecting to server: " + serverName);
+  #endif 
+
+  if (client.connect(serverName.c_str(), serverPort)) {
+
+    #ifdef DEBUG
+    Serial.println("Connection successful!");
+    #endif
+
+    /* Http route */
+    String head        = "--ESP32\r\nContent-Disposition: form-data; name=\"message\"; filename=\"12345678\"\r\nContent-Type: message\r\n\r\n";
+    String tail        = "\r\n--ESP32--\r\n";
+    uint16_t totalLen  = head.length() + tail.length() + debug_message.length();
+
+    #ifdef DEBUG
+    Serial.println("Sending HTTP POST request...");
+    #endif
+
+    /* Send HTTP request */ 
+    client.println("POST " + server_path + " HTTP/1.1");
+    client.println("Host: " + serverName);
+    client.println("Content-Length: " + String(totalLen));
+    client.println("Content-Type: multipart/form-data; boundary=ESP32");
+    client.println();
+    client.print(head);
+    client.print(debug_message);
+    client.print(tail);
+
+    #ifdef DEBUG
+    Serial.println("Waiting for server response...");
+    #endif
+
+    /* wait for response */ 
+    while (!client.available()) {
+      delay(100);
+      Serial.print(".");
+    }
+
+    /* read response */
+    String input = client.readString();
+    // Serial.println(input);
+  } 
+
+  else {
+    #ifdef DEBUG
+    Serial.print("Connection to ");
+    Serial.print(serverName);
+    Serial.println("Connection failed.");
+    #endif
+  }
+}
+
+/**
  * @brief Request gamestate from host
  * 
  * Request the gamestate from the host (raspberry pi). Receive the gamestate data in JSON format. 
@@ -248,19 +353,24 @@ bool Gamestate(String server_path,String address){
     client.println();
     client.print(head);
     client.print(tail);
-
+    #ifdef DEBUG
     Serial.println("Waiting for server response...");
+    #endif
 
     /* wait for response */ 
     while (!client.available()) {
       delay(100);
+      #ifdef DEBUG
       Serial.print(".");
+      #endif
     }
 
     /* read response */
     String decoded_string;
     String input = client.readString();
+    #ifdef DEBUG
     Serial.println(input);
+    #endif
 
     /* remove http overhead from input */
     int jsonStartIndex = input.indexOf("\r\n\r\n");
@@ -268,12 +378,15 @@ bool Gamestate(String server_path,String address){
     if (jsonStartIndex != -1) {
       decoded_string = input.substring(jsonStartIndex + 4);
       decoded_string.trim();
-  
+      #ifdef DEBUG
       Serial.println("Extracted JSON content:");
       Serial.println(decoded_string);
+      #endif
     } 
     else {
+      #ifdef DEBUG
       Serial.println("JSON content not found in HTTP response.");
+      #endif
       return 0;
     }
 
@@ -282,8 +395,10 @@ bool Gamestate(String server_path,String address){
     DeserializationError error = deserializeJson(doc, decoded_string);
 
     if (error) {
+      #ifdef DEBUG
       Serial.print(F("deserializeJson() failed: "));
       Serial.println(error.f_str());
+      #endif
     return 0;
     }   
     else {
@@ -341,7 +456,9 @@ char incomingPacket[255];  // Buffer for incoming packets
  * Wait to receive a message from the host. 
  */
 int WaitForMessage(void){
-  Serial.print(".");
+  #ifdef DEBUG
+  //Serial.print(".");
+  #endif
   String Message;
 
   int packetSize = udp.parsePacket();
@@ -351,8 +468,10 @@ int WaitForMessage(void){
       incomingPacket[len] = '\0';
       Message = incomingPacket;
     }
+    #ifdef DEBUG
     Serial.printf("Received packet of size %d from %s:%d\n", packetSize, udp.remoteIP().toString().c_str(), udp.remotePort());
     Serial.printf("Packet contents: %s\n", incomingPacket);
+    #endif
   }
 
   delay(10);
@@ -376,28 +495,38 @@ int WaitForMessage(void){
 }
 
 IPAddress init_wifi(){
+    #ifdef DEBUG
     Serial.println("going to init wifi");
+    #endif
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // disable brownout
 
     WiFi.mode(WIFI_STA);
+    #ifdef DEBUG
     Serial.println();
     Serial.print("Connecting to ");
     Serial.println(ssid);
+    #endif
     WiFi.begin(ssid, password); 
     while (WiFi.status() != WL_CONNECTED){
+      #ifdef DEBUG
       Serial.print(".");
+      #endif
       delay(500);
     }
+    #ifdef DEBUG
     Serial.println();
     Serial.print("ESP32-CAM IP Address: ");
     Serial.println(WiFi.localIP());
+    #endif
 
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 1); // enable brownout
 
     udp.begin(localUdpPort);
+    #ifdef DEBUG
     Serial.printf("Now listening on UDP port %d\n", localUdpPort);
 
     Serial.println("done init wifi");
+    #endif
     return WiFi.localIP();
 }
 
@@ -411,7 +540,9 @@ String sendPhoto(){
   camera_fb_t *fb = NULL;
   fb = esp_camera_fb_get();
   if (!fb){
+    #ifdef DEBUG
     Serial.println("Camera capture failed");
+    #endif
     delay(1000);
     ESP.restart();
   }
@@ -456,8 +587,9 @@ String sendPhoto(){
       }
     }
     client.print(tail);
-
+    #ifdef DEBUG
     Serial.println("Waiting for server response...");
+    #endif
 
     esp_camera_fb_return(fb);
 
@@ -528,7 +660,9 @@ esp_err_t init_camera(){
     // camera init
     esp_err_t err = esp_camera_init(&config);
     if (err != ESP_OK){
+    #ifdef DEBUG
     Serial.printf("Camera init failed with error 0x%x", err);
+    #endif
     }
     return err;
 }

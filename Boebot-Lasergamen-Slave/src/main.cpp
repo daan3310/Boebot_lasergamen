@@ -21,6 +21,15 @@ byte testsarr[10];
 void setup() {
   // put your setup code here, to run once:
   int i = 0;
+<<<<<<< HEAD
+=======
+  HardwareSerial Serial2(2);
+  servoT.attach(servopin);
+  PS4.begin(MAC_PS4);
+  Serial.begin(115200);
+  Serial1.setRxBufferSize(DATALENGTH);
+  Serial1.begin(9600, SERIAL_8N1, GPIO_RX, GPIO_TX);
+>>>>>>> a6b1aecb72dac8391c9fd676f784815e02872f72
 
   Serial.begin(9600);
   PS4.begin(MAC_PS4);
@@ -60,12 +69,12 @@ void setup() {
   
   delay(100);
  
-  #if DEBUG > 0
+  //#if DEBUG > 0
   while (state != 5)
   {
     state = Logiclayer_Startup_Serial(state);
   }
-  #endif
+  //#endif
   #if DEBUG > 0
   Serial.println("State machine done!");
   #endif
@@ -86,6 +95,14 @@ void setup() {
   fill_solid(leds, NUM_LEDS, Teamkleur);
   FastLED.show();  
 
+  // for (i = 0; i<sizeof(Teamkleur); i++)
+  // {
+  //   int colT = atoi(My_Serial_dataIn[i+1]);
+  //   unsigned char temp = (unsigned char)colT;
+  //   // Teamkleur[i] = (byte)My_Serial_dataIn[i+1];
+  //   Teamkleur[i] = temp;
+  // }
+  // Logiclayer_set_colour(Teamkleur);
   // Functie om de kleur van de esp32 te veranderen naar de corresponderende kleur
 
   xTaskCreatePinnedToCore
@@ -135,10 +152,10 @@ void Task1code( void * parameter) // Taken voor core 0
        en dan om de zoveel tijd vragen hoe lang het nog duurt bijvoorbeeld 100 ms
     */
 
-   UI_layer_Shoot();
-   if (My_Flag_SPI != 0 && Shoot == 0xAA)
+  // UI_layer_Shoot();
+   if (Flag_SER != 0 && Shoot == 0xAA)
    {
-    Serial.println("Bang!");
+    //Serial.println("Bang!");
     Flag_SER = 0;
     Shoot = 0;
    }
@@ -154,7 +171,7 @@ void Task2code( void * parameter) // Taken voor core 1
   struct PS4 PS4InputsMain;
   
   int i = 5;
-   
+  int knopfunc = 0;
   while(1)
   {
     PS4InputsMain = IO_Layer_Besturing();
@@ -163,32 +180,21 @@ void Task2code( void * parameter) // Taken voor core 1
     updateMotor(motorRechts, PS4InputsMain.MotordataRechts);
 
     servodirection(PS4InputsMain.Rechterjoystick_x);
-    
-    // if (PS4.R2Value() > 20)
-    // {
-    //   PS4.setRumble(PS4.R2Value(), PS4.R2Value());
-    //   PS4.sendToController();
-    // }
 
-    // Gedachte kots
-    // Deze functie is om te vragen
-    if (PS4InputsMain.Cirkelknop == true) // Zet een timer neer
+    if (PS4InputsMain.Cirkelknop == true && knopfunc == 0) // Zet een timer neer
     {
-      //digitalWrite(12, HIGH);
       Shoot = 0xAA;
       Logiclayer_Serial_CMD_NO_DATA(SHOOT);
-      //UI_layer_Shoot();
+      knopfunc = 1;
     }
-    else
+    else if(PS4InputsMain.Cirkelknop == false)
     {
-      //digitalWrite(12, LOW);
+      knopfunc = 0;
     }
-    
-    delay(50);
   }
 }
 
-void Function_Print_Serial_output(char* CMD)
+void Function_Print_Serial_output(byte CMD)
 {
   Serial.println();
   Serial.print("Data out:");
@@ -204,36 +210,32 @@ void Function_Print_Serial_input(int state)
   Serial.print("State:");
   Serial.print(state, DEC);
   Serial.print(" \t\t");
-  Serial.print(My_Serial_dataIn[0]);
-  Serial.print(", ");
-  Serial.print(My_Serial_dataIn[1]);
-  Serial.print(", ");
-  Serial.print(My_Serial_dataIn[2]);
-  Serial.print(", ");
-  Serial.print(My_Serial_dataIn[3]);
+  Serial.print(My_Serial_dataIn);
   Serial.println();
 }
 
+unsigned long previousMillis = 0;  // stores the last time the servo was updated
+const long interval = 5;           // interval at which to move the servo (milliseconds)
+int valS = 90;                     // initial position of the servo
+
 void servodirection(signed char Direction)
 {
-  if (Direction > 0 + STICKDRIFT && valS<=180)
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - previousMillis >= interval)
   {
-    valS = valS+1;
-    servoT.write(valS);
-  }
-  else if (Direction < 0 - STICKDRIFT && valS>=0)
-  {
-    valS = valS-1;
-    servoT.write(valS);
-  }
-  else if (Direction > 0 - STICKDRIFT && Direction < 0 + STICKDRIFT)
-  {
-    valS = valS;
-    servoT.write(valS);
-  }
-  else
-  {
-    valS = valS;
+    // save the last time you moved the servo
+    previousMillis = currentMillis;
+
+    if (Direction > 0 + STICKDRIFT && valS <= 180)
+    {
+      valS = valS + 1;
+    }
+    else if (Direction < 0 - STICKDRIFT && valS >= 0)
+    {
+      valS = valS - 1;
+    }
+
     servoT.write(valS);
   }
 }

@@ -37,7 +37,11 @@ enum MY_STATES
 extern uint currentState; // 4 posible states
 extern DMA_ATTR char sendbuf[4];
 extern DMA_ATTR char receivebuf[4];
+<<<<<<< HEAD
 char arg(char serCom[], char ser[4][17]);
+=======
+//char arg(char serCom[], char ser[4][17]);
+>>>>>>> a6b1aecb72dac8391c9fd676f784815e02872f72
 void updateFSM(void);
 void MessageFSM(int message);
 

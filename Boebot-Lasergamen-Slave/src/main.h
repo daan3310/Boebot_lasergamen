@@ -23,7 +23,8 @@
 #include <Wireless_Communication/Wireless_Communication.h>
 
 
-void Function_Print_Serial_output(char* CMD);
+void Function_Print_Serial_output(byte CMD);
+
 
 void Function_Print_Serial_input(int state);
 

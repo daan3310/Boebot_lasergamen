@@ -8,6 +8,7 @@ SPIClass * vspi = NULL;
 byte My_Flag_SPI;
 
 char** My_Serial_dataIn;
+byte My_Serial_dataIn;
 
 
 
@@ -107,13 +108,17 @@ struct PS4 IO_Layer_Besturing()
 // }
 
 byte serial_send_command(char* cmd, char** inputArr) {
+byte serial_send_command(byte cmd) {
   #if DEBUG > 0
+  Function_Print_Serial_output(cmd);
   Function_Print_Serial_output(cmd);
   #endif
 
   char* dataIn;
+  //char* dataIn;
   // Send data out through serial
   Serial.write(cmd);
+  Serial1.write(cmd);
 
   // Read incoming data if needed
   if (Serial.available()) {
@@ -140,10 +145,18 @@ byte serial_send_command(char* cmd, char** inputArr) {
   for (int i = 0; i < 4; i++) {
     strcpy(My_Serial_dataIn[i], inputArr[i]);
     //My_Serial_dataIn[i] = inputArr[i];
+  if (Serial1.available() > 0) {
+      byte dataRec = Serial1.read(); 
+    //   int dataRec1 = (int)dataRec;
+    //   Serial.print("De receive data: ");
+    //   Serial.println(dataRec);
+      My_Serial_dataIn = dataRec;
   }
 
   //Function_Print_Serial_input(state);
 
+  Serial.print("De receive data: ");
+  Serial.println(My_Serial_dataIn);
   return 0;
 }
 
