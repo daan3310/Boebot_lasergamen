@@ -160,37 +160,17 @@ void Task2code( void * parameter) // Taken voor core 1
     updateMotor(motorRechts, PS4InputsMain.MotordataRechts);
 
     servodirection(PS4InputsMain.Rechterjoystick_x);
-    
-    // if (PS4.R2Value() > 20)
-    // {
-    //   PS4.setRumble(PS4.R2Value(), PS4.R2Value());
-    //   PS4.sendToController();
-    // }
 
-    // Gedachte kots
-    // Deze functie is om te vragen
     if (PS4InputsMain.Cirkelknop == true && knopfunc == 0) // Zet een timer neer
     {
-      //Serial.println("KNOP INGEDRUKT.");
-      // digitalWrite(12, HIGH);
-      //knopfunc = 1;
       Shoot = 0xAA;
       Logiclayer_Serial_CMD_NO_DATA(SHOOT);
       knopfunc = 1;
-      //PS4InputsMain.Cirkelknop = false;
-      // UI_layer_Shoot();
     }
     else if(PS4InputsMain.Cirkelknop == false)
     {
       knopfunc = 0;
-      // digitalWrite(12, LOW);
     }
-    else
-    {
-    }
-    // Serial.println("UIT KNOP FUNCTIE");
-    
-    //delay(1);
   }
 }
 
@@ -201,7 +181,6 @@ void Function_Print_Serial_output(byte CMD)
   Serial.print(" ");
   Serial.print(CMD);
   Serial.println();
-
 }
 
 void Function_Print_Serial_input(int state)
