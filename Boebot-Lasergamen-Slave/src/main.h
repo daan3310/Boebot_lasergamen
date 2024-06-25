@@ -7,9 +7,6 @@
 #include <math.h>
 #include <SPI.h>
 #include "Config.h"
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
 
 #include <ESP32Servo.h>
 
@@ -23,12 +20,9 @@
 #include <Wireless_Communication/Wireless_Communication.h>
 
 
-void Function_Print_Serial_output(char* CMD);
-
+void Function_Print_Serial_output(byte CMD);
 void Function_Print_Serial_input(int state);
-
 void servodirection(signed char Direction);
-
 void Task1code( void * parameter);
 void Task2code( void * parameter);
 

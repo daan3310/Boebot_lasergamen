@@ -11,6 +11,7 @@
 #include <string.h>
 
 #define MAP_SPI_PINS 1
+#define DEBUG 0
 
 #ifdef MAP_SPI_PINS
 #define GPIO_MOSI           13
@@ -22,14 +23,16 @@
 #define GPIO_TX 1
 #define GPIO_RX 3
 
-// extern DMA_ATTR char sendbuf[4];
-// extern DMA_ATTR char receivebuf[4];
+extern DMA_ATTR char sendbuf[4];
+extern DMA_ATTR char receivebuf[4];
+
 extern spi_slave_transaction_t t;
 extern uint8_t my_post_trans_cb_flag;
 
 void my_post_trans_cb(spi_slave_transaction_t *trans);
 
-esp_err_t blocking_transmit_slave_serial(char* TxBuf, char*RxBuf);
+esp_err_t blocking_transmit_slave_serial(byte TxBuf);
+
 
 #endif
 
@@ -81,13 +84,14 @@ IPAddress init_wifi();
 #define HREF_GPIO_NUM     23
 #define PCLK_GPIO_NUM     22
 
-#define MAC_ADDRESS_DEF "03:11:22:AA:BB:CC"
+#define MAC_ADDRESS_DEF "02:11:22:AA:BB:CC"
 
 esp_err_t init_camera();
 bool connect_pi(String server_path,String address);
 void init_game(void);
 bool Gamestate(String server_path,String address);
 int WaitForMessage(void);
+void SendMessage(String server_path, String debug_message);
 String sendPhoto();
 
 unsigned long benchMark_sendPhoto();

@@ -13,6 +13,6 @@
 #include "Logiclayer.h"
 #include "UI-layer.h"
 
-#define DEBUG 1
+#define DEBUG 0
 
 #endif

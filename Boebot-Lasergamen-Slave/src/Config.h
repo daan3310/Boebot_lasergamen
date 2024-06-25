@@ -27,7 +27,7 @@
 #define SSPINTIME   1 // time for the cs pin to go low
 
 //PS4 controller
-#define MAC_PS4 "70:EA:26:1B:FC:FF"
+#define MAC_PS4 "70:EA:25:1B:FC:FF"
 
 // Pin definitions:
 #define motorRechtsPWM 5
@@ -41,8 +41,8 @@
 #define HSPI_SCLK   25
 #define HSPI_SS     14
 
-#define GPIO_TXs 17
-#define GPIO_RXs 16
+#define GPIO_TX 25
+#define GPIO_RX 26
 
 #define servopin 2
 #define LED_PIN_UNDERGLOW 14
