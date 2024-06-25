@@ -7,7 +7,7 @@ SPIClass * vspi = NULL;
 
 byte My_Flag_SPI;
 
-byte My_Serial_dataIn[4] = {0,0,0,0};
+char** My_Serial_dataIn;
 
 
 
@@ -48,11 +48,15 @@ uint updateMotor(motor currentMotor, int motorPower)
     {
         if(0 == direction)
         {
+            // motorPower = 1024;
+            // delay(1);
             motorPower = -1024;
             //returnValue = updateMotor_exceeded_lower_bound_of_motorPower;
         }
         else
         {
+            // motorPower = -1024;
+            // delay(1);
             motorPower = 1024;
             //returnValue = updateMotor_exceeded_upper_bound_of_motorPower;
         }
@@ -102,37 +106,43 @@ struct PS4 IO_Layer_Besturing()
 //   Serial.begin(9600);
 // }
 
-byte serial_send_command(byte cmd, byte data[DATALENGTH-1]) {
+byte serial_send_command(char* cmd, char** inputArr) {
   #if DEBUG > 0
-  Function_Print_Serial_output(cmd, data);
+  Function_Print_Serial_output(cmd);
   #endif
 
-  byte dataOut[DATALENGTH];
-  byte dataIn[DATALENGTH];
-
-  dataOut[0] = cmd;
-  for (int i = 0; i < DATALENGTH - 1; i++) {
-    dataOut[i + 1] = data[i];
-  }
-
+  char* dataIn;
   // Send data out through serial
-  Serial.write(dataOut, DATALENGTH);
+  Serial.write(cmd);
 
   // Read incoming data if needed
-  if (Serial.available() >= DATALENGTH) {
-    //Serial.println("Datatest:");
-    //Serial.readBytes(dataIn, DATALENGTH);
-    for (int i = 0; i < DATALENGTH; i++) {
-      dataIn[i] = Serial.read(); 
+  if (Serial.available()) {
+    for (int i = 0; i < 4; i++) {
+      String dataRec = Serial.readStringUntil('.'); 
+      strcpy(dataIn, dataRec.c_str());
       Serial.print(dataIn[i]);
       Serial.print(", ");
     }
-    
+    char *token;
+	  token = strtok(dataIn, ",");
+	  int i;
+	  int p = 0;
+	  while(token != NULL){
+		  for(i=0; i<strlen(token); i++){
+			  inputArr[p][i] = token[i];
+		  }
+		  p++;
+		  token = strtok(NULL, ",");
+	  }
+	  p = 0;
   }
   // Copy received data to your buffer
-  for (int i = 0; i < DATALENGTH; i++) {
-    My_Serial_dataIn[i] = dataIn[i];
+  for (int i = 0; i < 4; i++) {
+    strcpy(My_Serial_dataIn[i], inputArr[i]);
+    //My_Serial_dataIn[i] = inputArr[i];
   }
+
+  //Function_Print_Serial_input(state);
 
   return 0;
 }

@@ -1,5 +1,5 @@
 #include "main.h"
-#include "esp32-hal-spi.h"
+//#include "esp32-hal-spi.h"
 
 void Task1code(void* parameter);
 void Task2code(void* parameter);
@@ -23,13 +23,7 @@ void setup() {
   int i = 0;
 
   Serial.begin(9600);
-  //Serial.setTimeout(2);
-  //PS4.begin("5c:96:56:b2:fb:c6");
-  //PS4.begin("80:ea:23:1b:fc:e7");
-
-  
   PS4.begin(MAC_PS4);
-
   servoT.attach(servopin);
 
   initMotors(0);
@@ -54,7 +48,6 @@ void setup() {
   Serial.println("Controller detected:\n");
   #endif
 
-  //initSPI();  // Initialise SPI
   i = 1;
   
   #if DEBUG > 0
@@ -66,10 +59,7 @@ void setup() {
   byte result = 0;
   
   delay(100);
-
-  // start a state diagram for start of the SPI communication
-  // This can be blocking to allow Willem to start correctly
-  //  
+ 
   #if DEBUG > 0
   while (state != 5)
   {
@@ -95,6 +85,7 @@ void setup() {
   CRGB Teamkleur = CRGB(255,0,0);
   fill_solid(leds, NUM_LEDS, Teamkleur);
   FastLED.show();  
+
   // Functie om de kleur van de esp32 te veranderen naar de corresponderende kleur
 
   xTaskCreatePinnedToCore
@@ -121,50 +112,12 @@ void setup() {
 }
 
 void loop() { 
-  // byte tests = 3;
-  // Serial.write(tests);
-  // byte tests1 = 0;
-  // //byte testsarr[5];
-  // if(Serial.available() > 0){
-  //   tests1 = Serial.read();
-  //   //Serial.println(tests1);
-  //   //Serial.print("\n");
-  //   if(tests1==10){
-  //      //Serial.print("received value: ");
-  //      //Serial.println(testsarr[0]);
-  //      for(int ic = 0;ic<10;ic++){
-  //        testsarr[ic]=0;
-  //      }
-  //      it = 0;
-  //   }
-  //   else{
-  //     //Serial.println(tests1);
-  //     //Serial.print("ontvangen: ");
-  //     //Serial.println(tests1);
-  //     testsarr[it] = tests1;
-  //     //Serial.print("array waarde: ");
-  //     //Serial.println(testsarr[it]);
-  //     //Serial.print("it: ");
-  //     //Serial.println(it);
-  //     //Serial.println(testsarr[it]);
-  //     it = it+1;
-  //   }
-  //   if(testsarr[0]>0){
-  //     Serial.println(testsarr[0]);
-  //   }
-  //   //Serial.print("Receivewaarde: ");
-  //   //char testp = (char) tests1;
-  //   //tests1.trim();
-  //   //int newl = "\n";
-  //   //Serial.println(tests1);
-  //   delay(500);
-  // }
 }
 
 void Task1code( void * parameter) // Taken voor core 0
 {
   // Setup
-  byte* Flag_SPI = nullptr; 
+  byte* Flag_SER = nullptr; 
   byte data[3] = {0,0,0};
 
   
@@ -180,15 +133,13 @@ void Task1code( void * parameter) // Taken voor core 0
        Als er gevraagt is wil je ongeveer een seconde wachten?
        Dus eerst kijk je naar de millis nadat het gevraagt is
        en dan om de zoveel tijd vragen hoe lang het nog duurt bijvoorbeeld 100 ms
-
-
     */
 
-  // UI_layer_Shoot();
+   UI_layer_Shoot();
    if (My_Flag_SPI != 0 && Shoot == 0xAA)
    {
     Serial.println("Bang!");
-    Flag_SPI = 0;
+    Flag_SER = 0;
     Shoot = 0;
    }
   // String testd = Serial.readString();
@@ -202,11 +153,8 @@ void Task2code( void * parameter) // Taken voor core 1
   // Setup
   struct PS4 PS4InputsMain;
   
- 
   int i = 5;
-  
-
-  
+   
   while(1)
   {
     PS4InputsMain = IO_Layer_Besturing();
@@ -216,13 +164,11 @@ void Task2code( void * parameter) // Taken voor core 1
 
     servodirection(PS4InputsMain.Rechterjoystick_x);
     
-
     // if (PS4.R2Value() > 20)
     // {
     //   PS4.setRumble(PS4.R2Value(), PS4.R2Value());
     //   PS4.sendToController();
     // }
-
 
     // Gedachte kots
     // Deze functie is om te vragen
@@ -242,18 +188,12 @@ void Task2code( void * parameter) // Taken voor core 1
   }
 }
 
-void Function_Print_Serial_output(byte CMD, byte data[5] )
+void Function_Print_Serial_output(char* CMD)
 {
   Serial.println();
   Serial.print("Data out:");
   Serial.print(" ");
-  Serial.print(CMD, DEC);
-  Serial.print(", ");
-  Serial.print(data[0], DEC);
-  Serial.print(", ");
-  Serial.print(data[1], DEC);
-  Serial.print(", ");
-  Serial.print(data[2], DEC);
+  Serial.print(CMD);
   Serial.println();
 
 }
@@ -264,13 +204,13 @@ void Function_Print_Serial_input(int state)
   Serial.print("State:");
   Serial.print(state, DEC);
   Serial.print(" \t\t");
-  Serial.print(My_Serial_dataIn[0], DEC);
+  Serial.print(My_Serial_dataIn[0]);
   Serial.print(", ");
-  Serial.print(My_Serial_dataIn[1], DEC);
+  Serial.print(My_Serial_dataIn[1]);
   Serial.print(", ");
-  Serial.print(My_Serial_dataIn[2], DEC);
+  Serial.print(My_Serial_dataIn[2]);
   Serial.print(", ");
-  Serial.print(My_Serial_dataIn[3], DEC);
+  Serial.print(My_Serial_dataIn[3]);
   Serial.println();
 }
 

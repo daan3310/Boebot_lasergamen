@@ -1,9 +1,28 @@
+/**
+ * MAC addressen voor ESP-CAM:
+ * A: 00:11:22:AA:BB:CC"
+ * B: 01:11:22:AA:BB:CC"
+ * C: 02:11:22:AA:BB:CC"
+ * D: 03:11:22:AA:BB:CC"
+ * 
+ * controller mac adressen:
+ * A controller    		 1912 = 70:EA:23:1B:FC:FF
+ * B controller 	  	 3913 = 70:EA:24:1B:FC:FF
+ * C controller 		   2811 = 70:EA:25:1B:FC:FF
+ * D controller zonder code = 70:EA:26:1B:FC:FF 
+ */
+
 #include "IO-layer.h"
+
+#include <WiFiUdp.h>
 
 #define SERIAL_BAUD_RATE 115200  // Change baud rate as needed
 
-char sendbuf[4] = {0};
-char receivebuf[4] = {0};
+extern int hitpoints;
+extern int points;
+
+// char sendbuf[4] = {0};
+// char receivebuf[4] = {0};
 
 // Define callback flag and function
 uint8_t my_post_trans_cb_flag = 0;
@@ -13,46 +32,41 @@ void my_post_trans_cb()
   my_post_trans_cb_flag = 1;
 }
 
-esp_err_t blocking_transmit_slave_serial(void* TxBuf, void* RxBuf, uint Length_in_bits)
+esp_err_t blocking_transmit_slave_serial(char* TxBuf, char* RxBuf)
 {
-  // Cast the buffers to char pointers
-  char* txBuffer = (char*)TxBuf;
-  char* rxBuffer = (char*)RxBuf;
-  
-  Serial.write(txBuffer, Length_in_bits / 8);
+  Serial.write(TxBuf);
 
   // Wait for incoming data
   uint32_t start_time = millis();
-  while (Serial.available() <= (Length_in_bits / 8)) {
+  while (Serial.available()) {
     if (millis() - start_time > 2000) {
       return ESP_ERR_TIMEOUT; // Return timeout error if not enough data received within timeout
     }
   }
 
   // Read incoming data
-  for (int i = 0; i <= (Length_in_bits / 8); i++) {
-    rxBuffer[i] = Serial.read();
-  }
+  String stringrec = Serial.readStringUntil('.');
+  strcpy(RxBuf, stringrec.c_str());
 
   
   return ESP_OK;
 }
 
-esp_err_t non_blocking_queue_transaction_slave_serial(void* TxBuf, void* RxBuf, uint Length_in_bits)
+esp_err_t non_blocking_queue_transaction_slave_serial(char* TxBuf, char* RxBuf)
 {
   // This function is blocking in the case of Serial communication
-  return blocking_transmit_slave_serial(TxBuf, RxBuf, Length_in_bits);
+  return blocking_transmit_slave_serial(TxBuf, RxBuf);
 }
 
-#ifdef USE_WIFI
+#ifdef USE_WIFI 
 const char* ssid           = "Leaphy Lasergame!";
 const char* password       = "Leaphydebug1!";
 String serverName          = "192.168.0.102";   
 String ServerPathStartup   = "/startup";  // Flask upload route (voor image) (flask library python)
 String ServerPathGamestate = "/gamestate/";
 String ServerPathShoot     = "/shoot";
-String MAC                 = "00:11:22:AA:BB:CC";
-const char* MAC_str        = "00:11:22:AA:BB:CC";
+String MAC                 = MAC_ADDRESS_DEF;
+const char* MAC_str        = MAC_ADDRESS_DEF;
 const int serverPort       = 5000;
 WiFiClient client;
 
@@ -77,8 +91,7 @@ void init_game(void){
 /**
  * @brief Connect to the host
  * 
- * Het device stuurt een bericht naar de host met het mac-address om zich aan te melden. Zodra het is aangemeld bij de host,
- * stuurt deze een acknowladgement bericht terug. 
+ * Het device stuurt een bericht naar de host met het mac-address om zich aan te melden.
  */
 bool connect_pi(String server_path,String address) {
   #ifdef DEBUG  
@@ -91,9 +104,10 @@ bool connect_pi(String server_path,String address) {
     Serial.println("Connection successful!");
     #endif
 
+    /* Http route */
     String head        = "--ESP32\r\nContent-Disposition: form-data; name=\"mac_address\"; filename=\"12345678\"\r\nContent-Type: mac_address\r\n\r\n";
     String tail        = "\r\n--ESP32--\r\n";
-    String mac_address = address; //tijdelijk mac address, mac address nader te bepalen'
+    String mac_address = address; 
 
     uint16_t totalLen  = head.length() + tail.length() + mac_address.length();
 
@@ -169,8 +183,8 @@ bool connect_pi(String server_path,String address) {
       Serial.println("Message: " + String(message));
       #endif
 
-      // if (strcmp(MAC_ADDRESS, MAC_str) == 0){
-      if ((String)MAC_ADDRESS != (String)MAC){
+      /* vergelijk ontvangen mac address met eigen mac address */
+      if ((String)MAC_ADDRESS != (String)MAC) {
         #ifdef DEBUG
         Serial.println("Wrong mac address");
         #endif
@@ -206,6 +220,7 @@ bool connect_pi(String server_path,String address) {
  */
 bool Gamestate(String server_path,String address){
   #ifdef DEBUG  
+  Serial.println("REQUEST GAMESTATE");
   Serial.println("Connecting to server: " + serverName);
   #endif 
 
@@ -282,6 +297,9 @@ bool Gamestate(String server_path,String address){
       int Hit_points          = doc["Hit_points"]; 
       int Hits                = doc["Hits"]; 
 
+      hitpoints = Hit_points;
+      points = Hits;
+
       /* print json data */
       #ifdef DEBUG
       Serial.println("Mac address: " + String(Mac_address));
@@ -313,47 +331,47 @@ bool Gamestate(String server_path,String address){
   } 
 }
 
+WiFiUDP udp;
+unsigned int localUdpPort = 5005;  // Local port to listen on
+char incomingPacket[255];  // Buffer for incoming packets
+
 /**
  * @brief Wait for a message
  * 
- * Wait to receive a message from the host. If a message is received, return 1. 
+ * Wait to receive a message from the host. 
  */
 int WaitForMessage(void){
-  while (!client.available()){
-    delay(100);
-    Serial.print(".");
+  Serial.print(".");
+  String Message;
+
+  int packetSize = udp.parsePacket();
+  if (packetSize) {
+    int len = udp.read(incomingPacket, 255);
+    if (len > 0) {
+      incomingPacket[len] = '\0';
+      Message = incomingPacket;
+    }
+    Serial.printf("Received packet of size %d from %s:%d\n", packetSize, udp.remoteIP().toString().c_str(), udp.remotePort());
+    Serial.printf("Packet contents: %s\n", incomingPacket);
   }
 
-  /* read response */
-  String decoded_string;
-  String input = client.readString();
-  Serial.println(input);
-
-  /* remove http overhead from input */
-  int MessageIndex = input.indexOf("\r\n\r\n");
-
-  if (MessageIndex != -1) {
-    decoded_string = input.substring(MessageIndex + 4);
-    decoded_string.trim();
-  
-    Serial.println("Extracted message content:");
-    Serial.println(decoded_string);
-  } 
-  else {
-    Serial.println("Error, no message content found.");
-    return 0;
-  }
-  
+  delay(10);
   client.stop();
 
-  if        (decoded_string == "Success") {
+  if        (Message == "Game started") {
     return 1;
-  } else if (decoded_string == "Error") {
+  } else if (Message == "Game over") {
     return 2;
-  } else if (decoded_string.startsWith("Warning")) {
+  } else if (Message == "You've been hit") {
     return 3;
+  } else if (Message == "You hit the target") {
+    return 4;
+  } else if (Message == "Gamestate has changed") {
+    return 5;
+  } else if (Message == "reset robot") {
+    return 6;
   } else {
-    return 0;  // default case for other content
+    return 0;
   }
 }
 
@@ -367,14 +385,17 @@ IPAddress init_wifi(){
     Serial.println(ssid);
     WiFi.begin(ssid, password); 
     while (WiFi.status() != WL_CONNECTED){
-    Serial.print(".");
-    delay(500);
+      Serial.print(".");
+      delay(500);
     }
     Serial.println();
     Serial.print("ESP32-CAM IP Address: ");
     Serial.println(WiFi.localIP());
 
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 1); // enable brownout
+
+    udp.begin(localUdpPort);
+    Serial.printf("Now listening on UDP port %d\n", localUdpPort);
 
     Serial.println("done init wifi");
     return WiFi.localIP();

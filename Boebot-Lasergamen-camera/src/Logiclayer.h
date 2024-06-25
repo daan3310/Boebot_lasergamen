@@ -2,7 +2,7 @@
 #define LOGICLAYER_H
 
 #include "main.h"
-
+#include "string.h"
 enum SPICMD
 {
   // Definition for SPI Commands from master to slave
@@ -35,8 +35,10 @@ enum MY_STATES
 };
 
 extern uint currentState; // 4 posible states
-
-void updateFSM();
+extern DMA_ATTR char sendbuf[4];
+extern DMA_ATTR char receivebuf[4];
+char arg(char serCom[], char ser[4][17]);
+void updateFSM(void);
 void MessageFSM(int message);
 
 #endif

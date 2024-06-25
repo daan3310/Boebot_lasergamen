@@ -59,7 +59,7 @@ void UI_layer_Shoot()
     unsigned long Millis_Per_Timer = CurrentMillis + TIMERSTATUS;
     unsigned long Millis_Per_Shoot = CurrentMillis + TIMERSHOOT; // reloading time
 
-    byte status =0;
+    byte status = 0;
     // eerst een functie om te schieten
     // daarna een functie om de huidige tijd te checken
     // if1 als 100ms nieuwe status van willem
