@@ -111,19 +111,10 @@ void Task1code( void * parameter) // Taken voor core 0
 
   
   InitTimerInterrupt(PRESCALER, TIMERTICKS); // Init Timer interrupt returns a flag pointer 
-  InitLedStrip();
   byte junk = 0;
 
   while(1) 
   {
-    /*
-       Gedachte kots
-       Deze functie is om te vragen voor het schieten
-       Als er gevraagt is wil je ongeveer een seconde wachten?
-       Dus eerst kijk je naar de millis nadat het gevraagt is
-       en dan om de zoveel tijd vragen hoe lang het nog duurt bijvoorbeeld 100 ms
-    */
-
   // UI_layer_Shoot();
    if (Flag_SER != 0 && Shoot == 0xAA)
    {
@@ -132,8 +123,6 @@ void Task1code( void * parameter) // Taken voor core 0
     Flag_SER = 0;
     Shoot = 0;
    }
-  // String testd = Serial.readString();
-  // Serial.print(testd);
     delay(100);
   }
 }
@@ -153,15 +142,7 @@ void Task2code( void * parameter) // Taken voor core 1
     updateMotor(motorRechts, PS4InputsMain.MotordataRechts);
 
     servodirection(PS4InputsMain.Rechterjoystick_x);
-    
-    // if (PS4.R2Value() > 20)
-    // {
-    //   PS4.setRumble(PS4.R2Value(), PS4.R2Value());
-    //   PS4.sendToController();
-    // }
 
-    // Gedachte kots
-    // Deze functie is om te vragen
     if (PS4InputsMain.Cirkelknop == true && knopfunc == 0) // Zet een timer neer
     {
 
@@ -173,15 +154,7 @@ void Task2code( void * parameter) // Taken voor core 1
     else if(PS4InputsMain.Cirkelknop == false)
     {
       knopfunc = 0;
-      // digitalWrite(12, LOW);
-    }
-    else
-    {
-    }
-    // Serial.println("UIT KNOP FUNCTIE");
-
-    
-    //delay(1);
+    } 
   }
 }
 
@@ -193,7 +166,6 @@ void Function_Print_Serial_output(byte CMD)
   Serial.print(" ");
   Serial.print(CMD);
   Serial.println();
-
 }
 
 void Function_Print_Serial_input(int state)

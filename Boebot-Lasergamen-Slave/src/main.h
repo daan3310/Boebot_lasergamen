@@ -12,13 +12,11 @@
 
 #include <Stepper.h>
 
-
 // User Libraries
 #include "IO-layer.h"
 #include "Logiclayer.h"
 #include "UI-layer.h"
 #include <Wireless_Communication/Wireless_Communication.h>
-
 
 void Function_Print_Serial_output(byte CMD);
 void Function_Print_Serial_input(int state);

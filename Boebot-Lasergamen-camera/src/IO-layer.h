@@ -28,14 +28,10 @@ extern DMA_ATTR char receivebuf[4];
 
 extern spi_slave_transaction_t t;
 extern uint8_t my_post_trans_cb_flag;
-
 void my_post_trans_cb(spi_slave_transaction_t *trans);
-
 esp_err_t blocking_transmit_slave_serial(byte TxBuf);
 
-
 #endif
-
 
 #define USE_WIFI 1
 #ifdef USE_WIFI
@@ -45,20 +41,10 @@ esp_err_t blocking_transmit_slave_serial(byte TxBuf);
 #include "soc/rtc_cntl_reg.h"
 #include <HTTPClient.h>
 
-// extern const char* ssid;
-// extern const char* password;
-// extern String serverName;   
-// extern String serverName;   
-// extern String serverPath;  // Flask upload route
-// extern const int serverPort;
-// extern WiFiClient client;
-
 IPAddress init_wifi();
 
 #endif
 //*/
-
-
 
 #define USE_CAMERA 1
 #ifdef USE_CAMERA
