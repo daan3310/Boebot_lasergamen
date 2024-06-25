@@ -49,7 +49,9 @@ byte UI_layer_error_handling(byte error)
     return 0;
 }
 
+
 // Function for keeping up the millis timer and checking if you're allowed to send a Status again
+// 
 void UI_layer_Shoot()
 {
     CurrentMillis = millis();

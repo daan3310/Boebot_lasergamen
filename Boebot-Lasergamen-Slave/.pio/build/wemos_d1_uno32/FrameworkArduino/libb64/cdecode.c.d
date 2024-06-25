@@ -1,3 +1,3 @@
 .pio/build/wemos_d1_uno32/FrameworkArduino/libb64/cdecode.c.o: \
- C:/Users/vuile/.platformio/packages/framework-arduinoespressif32/cores/esp32/libb64/cdecode.c \
- C:/Users/vuile/.platformio/packages/framework-arduinoespressif32/cores/esp32/libb64/cdecode.h
+ C:/Users/daniel/.platformio/packages/framework-arduinoespressif32/cores/esp32/libb64/cdecode.c \
+ C:/Users/daniel/.platformio/packages/framework-arduinoespressif32/cores/esp32/libb64/cdecode.h
