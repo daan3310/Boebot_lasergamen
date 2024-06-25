@@ -13,21 +13,7 @@ byte teamcolour = 7;
 byte acknowledge = 8;
 byte error1 = 9;
 byte nul = 0;
-// char arg(char serCom[]){
-// 	char *token;
-// 	token = strtok(serCom, ",");
-// 	int length = strlen(serCom);
-// 	int i;
-// 	int p = 0;
-// 	while(token != NULL){
-// 		for(i=0; i<strlen(token); i++){
-// 			receivearg[p][i] = token[i];
-// 		}
-// 		p++;
-// 		token = strtok(NULL, ",");
-// 	}
-// 	p = 0;
-// }
+
 
 void updateFSM(void)
 {
@@ -48,6 +34,7 @@ void updateFSM(void)
                 if(startgame == RxBuf)
                 {
                     //Gamestate("/gamestate/", MAC_ADDRESS_DEF);
+
                     currentState = STATE_1;
                 }
             }
@@ -88,6 +75,7 @@ void updateFSM(void)
                     currentState = STATE_3;
                 }
                 else if(startgame == RxBuf2){
+
                     currentState = STATE_1;
                 }
             }

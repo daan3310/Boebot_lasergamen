@@ -8,6 +8,7 @@
 
 #include "driver/spi_slave.h"
 #include <HardwareSerial.h>
+#include <string.h>
 
 #define MAP_SPI_PINS 1
 #define DEBUG 0
@@ -24,13 +25,14 @@
 
 extern DMA_ATTR char sendbuf[4];
 extern DMA_ATTR char receivebuf[4];
-//extern byte RxB;
+
 extern spi_slave_transaction_t t;
 extern uint8_t my_post_trans_cb_flag;
 
 void my_post_trans_cb(spi_slave_transaction_t *trans);
 
 esp_err_t blocking_transmit_slave_serial(byte TxBuf);
+
 
 #endif
 

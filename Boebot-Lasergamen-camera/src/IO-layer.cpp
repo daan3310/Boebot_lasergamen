@@ -23,8 +23,6 @@ extern int hitpoints;
 extern int points;
 
 
-//char sendbuf[4] = {0};
-//char receivebuf[4] = {0};
 
 // Define callback flag and function
 uint8_t my_post_trans_cb_flag = 0;
@@ -46,14 +44,12 @@ esp_err_t blocking_transmit_slave_serial(byte TxBuf)
     // }
     byte datarec = Serial2.read();
     RxB = datarec;
+
   }
   String RecVal = (String) RxB;
-  // Read incoming data
-  // SendMessage("/ESP_DEBUG",RecVal);
-  // int datarec = Serial.read() - '0';
-  // RxB = datarec;
-  //strcpy(RxBuf, stringrec.c_str());
+
   return RxB;
+
   
   //return ESP_OK;
 }

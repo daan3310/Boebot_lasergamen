@@ -15,7 +15,7 @@ void Logiclayer_set_colour(byte Color[3]);
 byte Logiclayer_Startup_Serial(byte state);
 
 // Definition for SPI Commands from master to slave
-enum SPICMD
+enum SERCMD
 {
     SHUTDOWN,       // Shutdown om de espcam te resetten
     PLACEMAKER,     // Plaatsmaker betekent niks voor de espcam maar dan kan je de data in de registers uitlezen van espcam

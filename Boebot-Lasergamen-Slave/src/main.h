@@ -7,6 +7,7 @@
 #include <math.h>
 #include <SPI.h>
 #include "Config.h"
+
 #include <ESP32Servo.h>
 
 #include <Stepper.h>
@@ -20,11 +21,8 @@
 
 
 void Function_Print_Serial_output(byte CMD);
-
 void Function_Print_Serial_input(int state);
-
 void servodirection(signed char Direction);
-
 void Task1code( void * parameter);
 void Task2code( void * parameter);
 

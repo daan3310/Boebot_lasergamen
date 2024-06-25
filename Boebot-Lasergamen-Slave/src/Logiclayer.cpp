@@ -19,6 +19,7 @@ byte teamcolour = 7;
 byte acknowledge = 8;
 byte error1 = 9;
 char** Serial_Data_In;
+
 struct PS4 Logiclayer_Besturing_Data(struct PS4 PS4Inputs)
 {
   uint ServoHoek = 0;
@@ -64,17 +65,17 @@ byte Logiclayer_Serial_CMD(byte CMD)
   {
     case SHUTDOWN: //1
     {
-      
+
       return serial_send_command(shutdown);
     }
     case PLACEMAKER: //2
     {
-      
+
       return serial_send_command(placemaker);
     }
     case STARTGAME: //3
     {
-      
+
       return serial_send_command(startgame);
     }
     case ACKNOWLEDGE:
@@ -83,12 +84,12 @@ byte Logiclayer_Serial_CMD(byte CMD)
     }
     case STATUSSLAVE:
     {
-      
+
       return serial_send_command(statusslave);
     }
     case SHOOT:
     {
-      
+
       return serial_send_command(shoot);
     }
     case ERROR:
@@ -99,6 +100,7 @@ byte Logiclayer_Serial_CMD(byte CMD)
     case TEAMCOLOUR:
     {
       
+
       return serial_send_command(teamcolour);
     }
     default:
@@ -156,7 +158,6 @@ byte Logiclayer_Serial_CMD_NO_DATA(byte CMD)
 
 void Logiclayer_set_colour(byte Color[3])
 {
-// functie om ledstrip 
 
 
 PS4.setLed(Color[0], Color[1], Color[2]);
@@ -190,6 +191,7 @@ switch (state)
         //Function_Print_Spi_input(state);
 
         if (My_Serial_dataIn == acknowledge) 
+
         {
           delay(TIMEBETWEENCMDS);
           state = 2;
@@ -211,6 +213,7 @@ switch (state)
         Function_Print_Serial_input(state);
 
         if (My_Serial_dataIn == error1)
+
         {
            //UI_layer_error_handling (result[1]);
         }

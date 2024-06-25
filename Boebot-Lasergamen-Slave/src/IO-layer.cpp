@@ -125,10 +125,32 @@ byte serial_send_command(byte cmd) {
   }
   Serial.print("De receive data: ");
   Serial.println(My_Serial_dataIn);
+
   return 0;
 }
 
-
+void LedLevens(){
+  byte data[DATALENGTH - 1] = {0};  // Initialize the data array with 0s
+  //serial_send_command(GAMESTATE, data);
+  CRGB leds_levens[NUM_LEDS_LEVENS];
+  FastLED.addLeds<WS2812, LED_PIN_LEVENS, GRB>(leds_levens, NUM_LEDS_LEVENS);
+  int lives = My_Serial_dataIn[0];
+   if (lives > NUM_LEDS_LEVENS) {
+        lives = NUM_LEDS_LEVENS;
+    }
+    
+    // Turn on LEDs for the lives
+    for (int i = 0; i < lives; i++) {
+        leds_levens[i] = CRGB::Red; // Set the color of the lives LEDs, e.g., red
+    }
+    
+    // Turn off remaining LEDs
+    for (int i = lives; i < NUM_LEDS_UNDERGLOW; i++) {
+        leds_levens[i] = CRGB::Black; // Set the color to black (off)
+    }
+    
+    FastLED.show(); // Update the LED strip to display changes
+}
 
 
 void InitTimerInterrupt(uint Prescaler, uint TimerTicks)
@@ -140,12 +162,17 @@ void InitTimerInterrupt(uint Prescaler, uint TimerTicks)
     timerAlarmWrite(Timer0_Cfg, TimerTicks, true); 
     timerAlarmEnable(Timer0_Cfg);
 }
-
-void InitLedstrip()
-{
-
-
+void InitLedStrip(){
+ byte data[DATALENGTH - 1] = {0};  // Initialize the data array with 0s
+  CRGB leds_underglow[NUM_LEDS_UNDERGLOW];
+  
+  FastLED.addLeds<WS2812, LED_PIN_UNDERGLOW, GRB>(leds_underglow, NUM_LEDS_UNDERGLOW  );
+  serial_send_command(TEAMCOLOUR, data);
+  CRGB Teamkleur = CRGB(My_Serial_dataIn[0], My_Serial_dataIn[1], My_Serial_dataIn[2]);
+  fill_solid(leds_underglow, NUM_LEDS_UNDERGLOW, Teamkleur);
+  FastLED.show();  
 }
+
 
 void InitStepperMotor()
 {
