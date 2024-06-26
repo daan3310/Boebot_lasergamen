@@ -7,7 +7,7 @@ SPIClass * vspi = NULL;
 
 byte My_Flag_SPI;
 byte My_Serial_dataIn;
-
+CRGB teamkleur;
 void IRAM_ATTR Timer0_ISR()
 {
   My_Flag_SPI = 1;
@@ -106,6 +106,50 @@ byte serial_send_command(byte cmd) {
   Serial.println(My_Serial_dataIn);
 
   return 0;
+}
+void InitLedStrip(){
+  CRGB leds_underglow[NUM_LEDS_UNDERGLOW];
+  
+  FastLED.addLeds<WS2812, LED_PIN_UNDERGLOW, GRB>(leds_underglow, NUM_LEDS_UNDERGLOW  );
+  switch (serial_send_command(TEAMCOLOUR))
+  {
+  case 1:
+    teamkleur = 255,0,0;
+    break;
+  case 2:
+    teamkleur = 0,255,0;
+    break;
+  case 3:
+    teamkleur = 0,0,255;
+    break;
+  case 4:
+    teamkleur = 255,255,0;
+    break;
+  default:
+    break;
+  }
+ 
+  fill_solid(leds_underglow, NUM_LEDS_UNDERGLOW, teamkleur);
+  FastLED.show();  
+}
+void LedLevens(){
+  CRGB leds_levens[NUM_LEDS_LEVENS];
+  FastLED.addLeds<WS2812, LED_PIN_LEVENS, GRB>(leds_levens, NUM_LEDS_LEVENS);
+  byte lives = serial_send_command(GAMESTATE);
+   if (lives > NUM_LEDS_LEVENS) {
+        lives = NUM_LEDS_LEVENS;
+    }
+    
+    for (int i = 0; i < lives; i++) {
+        leds_levens[i] = teamkleur; // Set the color of the lives LEDs, e.g., red
+    }
+    
+    // Turn off remaining LEDs
+    for (int i = lives; i < NUM_LEDS_UNDERGLOW; i++) {
+        leds_levens[i] = CRGB::Black; // Set the color to black (off)
+    }
+    
+    FastLED.show(); // Update the LED strip to display changes
 }
 
 void InitTimerInterrupt(uint Prescaler, uint TimerTicks)

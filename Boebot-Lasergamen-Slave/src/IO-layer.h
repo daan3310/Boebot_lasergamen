@@ -19,6 +19,7 @@ uint initMotors(int timer);
 uint updateMotor(motor currentMotor, int motorPower);
 void InitTimerInterrupt(uint Prescaler, uint TimerTicks);
 void InitLedStrip();
+void LedLevens();
 byte serial_send_command(byte cmd);
 
 struct PS4 

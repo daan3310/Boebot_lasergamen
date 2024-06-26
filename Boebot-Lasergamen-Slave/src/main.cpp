@@ -95,10 +95,12 @@ void Task1code( void * parameter) // Taken voor core 0
 
   
   InitTimerInterrupt(PRESCALER, TIMERTICKS); // Init Timer interrupt returns a flag pointer 
+  InitLedStrip;
   byte junk = 0;
 
   while(1) 
   {
+    LedLevens();
    if (Flag_SER != 0 && Shoot == 0xAA)
    {
     //Serial.println("Bang!");
