@@ -25,14 +25,10 @@
 
 extern DMA_ATTR char sendbuf[4];
 extern DMA_ATTR char receivebuf[4];
-
 extern spi_slave_transaction_t t;
 extern uint8_t my_post_trans_cb_flag;
-
 void my_post_trans_cb(spi_slave_transaction_t *trans);
-
 esp_err_t blocking_transmit_slave_serial(byte TxBuf);
-
 
 #endif
 
@@ -45,20 +41,10 @@ esp_err_t blocking_transmit_slave_serial(byte TxBuf);
 #include "soc/rtc_cntl_reg.h"
 #include <HTTPClient.h>
 
-// extern const char* ssid;
-// extern const char* password;
-// extern String serverName;   
-// extern String serverName;   
-// extern String serverPath;  // Flask upload route
-// extern const int serverPort;
-// extern WiFiClient client;
-
 IPAddress init_wifi();
 
 #endif
 //*/
-
-
 
 #define USE_CAMERA 1
 #ifdef USE_CAMERA
@@ -84,6 +70,9 @@ IPAddress init_wifi();
 #define HREF_GPIO_NUM     23
 #define PCLK_GPIO_NUM     22
 
+/**
+ * @brief Uniek Mac address voor elke tank
+ */
 #define MAC_ADDRESS_DEF "02:11:22:AA:BB:CC"
 
 esp_err_t init_camera();

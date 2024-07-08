@@ -146,7 +146,6 @@ void Task2code( void * parameter) // Taken voor core 1
 }
 
 void Function_Print_Serial_output(byte CMD)
-
 {
   Serial.println();
   Serial.print("Data out:");
@@ -167,7 +166,7 @@ void Function_Print_Serial_input(int state)
   Serial.println();
 }
 
-unsigned long previousMillis = 0;  // stores the last time the servo was updated
+unsigned long previousMillis = 0;   // stores the last time the servo was updated
 const long interval = 10;           // interval at which to move the servo (milliseconds)
 
 void servodirection(signed char Direction)
