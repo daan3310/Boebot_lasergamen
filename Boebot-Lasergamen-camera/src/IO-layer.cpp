@@ -101,6 +101,8 @@ void init_game(void){
  * @brief Connect to the host
  * 
  * Het device stuurt een bericht naar de host met het mac-address om zich aan te melden.
+ * 
+ * @see init_game()
  */
 bool connect_pi(String server_path,String address) {
   #ifdef DEBUG  
@@ -228,6 +230,9 @@ bool connect_pi(String server_path,String address) {
 
 /**
  * @brief stuur debug message
+ * 
+ * Stuur een debug bericht naar de server. 
+ * Omdat er geen seriële poort beschikbaar is voor serial.println hiermee debuggen.
  */
 void SendMessage(String server_path, String debug_message){
   #ifdef DEBUG  
@@ -413,16 +418,18 @@ bool Gamestate(String server_path,String address){
 
 WiFiUDP udp;
 unsigned int localUdpPort = 5005;  // Local port to listen on
-char incomingPacket[255];  // Buffer for incoming packets
+char incomingPacket[255];          // Buffer for incoming packets
 
 /**
  * @brief Wait for a message
  * 
  * Wait to receive a message from the host. 
+ * 
+ * @see MessageFSM()
  */
 int WaitForMessage(void){
   #ifdef DEBUG
-  //Serial.print(".");
+  Serial.print(".");
   #endif
   String Message;
 
@@ -459,6 +466,9 @@ int WaitForMessage(void){
   }
 }
 
+/**
+ * @brief Initializeer de wifi.
+ */
 IPAddress init_wifi(){
     #ifdef DEBUG
     Serial.println("going to init wifi");
@@ -498,6 +508,9 @@ IPAddress init_wifi(){
 #endif
 
 #ifdef USE_CAMERA
+/**
+ * @brief stuur een foto naar de gamemaster
+ */
 String sendPhoto(){
   String getAll;
   String getBody;
@@ -587,6 +600,9 @@ unsigned long benchMark_sendPhoto(){
     // }
 }
 
+/**
+ * @brief Initializeer de Camera
+ */
 esp_err_t init_camera(){
     camera_config_t config;
     config.ledc_channel = LEDC_CHANNEL_0;
