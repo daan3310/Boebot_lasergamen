@@ -29,6 +29,7 @@ enum SERCMD
     GAME_END,
     GOTHIT,
     SLAVE_ERROR,
+    HITPOINTS,
 
     AMOUNTOFCMD
 };

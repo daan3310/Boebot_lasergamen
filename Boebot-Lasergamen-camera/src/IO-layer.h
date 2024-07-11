@@ -73,7 +73,7 @@ IPAddress init_wifi();
 /**
  * @brief Uniek Mac address voor elke tank
  */
-#define MAC_ADDRESS_DEF "02:11:22:AA:BB:CC"
+#define MAC_ADDRESS_DEF "01:11:22:AA:BB:CC"
 
 esp_err_t init_camera();
 bool connect_pi(String server_path,String address);

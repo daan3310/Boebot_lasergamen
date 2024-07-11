@@ -13,6 +13,7 @@ byte teamcolour = 7;
 byte acknowledge = 8;
 byte error1 = 9;
 byte nul = 0;
+byte HIT_POINTS = 13;
 
 
 void updateFSM(void)
@@ -71,6 +72,10 @@ void updateFSM(void)
                 if(shoot == RxBuf4)
                 {
                     sendPhoto();
+                }
+                else if(HIT_POINTS == RxBuf4)
+                {
+                    byte RxBuf4 = blocking_transmit_slave_serial(hitpoints); 
                 }
                 else if(startgame == RxBuf4){
                     currentState = STATE_1;

@@ -107,6 +107,7 @@ byte serial_send_command(byte cmd) {
 
   return 0;
 }
+
 void InitLedStrip(){
   CRGB leds_underglow[NUM_LEDS_UNDERGLOW];
   
@@ -132,10 +133,11 @@ void InitLedStrip(){
   fill_solid(leds_underglow, NUM_LEDS_UNDERGLOW, teamkleur);
   FastLED.show();  
 }
+
 void LedLevens(){
   CRGB leds_levens[NUM_LEDS_LEVENS];
   FastLED.addLeds<WS2812, LED_PIN_LEVENS, GRB>(leds_levens, NUM_LEDS_LEVENS);
-  byte lives = serial_send_command(GAMESTATE);
+  byte lives = serial_send_command(HITPOINTS);
    if (lives > NUM_LEDS_LEVENS) {
         lives = NUM_LEDS_LEVENS;
     }
