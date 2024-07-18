@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Countdown</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background-color: #282c34;
+            color: #fff;
+            font-size: 48px;
+            text-align: center;
+        }
+        .countdown {
+            animation: fade 1s infinite;
+        }
+        @keyframes fade {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div id="countdown" class="countdown">3</div>
+
+    <script>
+        let countdownElement = document.getElementById('countdown');
+        let countdownValue = 3; // Start countdown from 3
+
+        const countdownInterval = setInterval(() => {
+            countdownValue--; // Decrease countdown value
+            countdownElement.textContent = countdownValue; // Update the display
+
+            if (countdownValue <= 0) {
+                clearInterval(countdownInterval); // Stop the countdown
+                window.location.href = '/scoreboard'; // Redirect to the scoreboard
+            }
+        }, 1000); // Update every second
+    </script>
+</body>
+</html>
