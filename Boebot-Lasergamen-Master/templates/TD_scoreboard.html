@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaphy Lasergame Scoreboard</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background-color: #333; /* Set background color */
+        }
+        .header {
+            text-align: center;
+            background-color: #444;
+            color: #fff;
+            padding: 15px 0;
+            font-size: 50px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+        }
+        .timer {
+            font-size: 40px;
+            font-weight: bold;
+            color: #fff;
+            text-align: center;
+            margin-top: 80px; /* Adjusted to position below the header */
+        }
+        .scoreboard {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: calc(100% - 150px); /* Adjusted to accommodate the header and timer */
+            padding-top: 20px;
+            box-sizing: border-box;
+            color: #fff;
+            text-align: center;
+            flex-direction: column;
+        }
+        .team-container {
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+        }
+        .team {
+            flex: 1;
+            padding: 20px;
+            font-size: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .team1 {
+            background-color: #004D99; /* Dark Blue */
+            margin-right: 10px; /* Space between the teams */
+        }
+        .team2 {
+            background-color: #CC0000; /* Dark Red */
+            margin-left: 10px; /* Space between the teams */
+        }
+        .score {
+            font-size: 80px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        Leaphy Lasergame!
+    </div>
+    <div class="timer" id="remaining-time">00:00</div>
+    <div class="scoreboard">
+        <div class="team-container">
+            <div class="team team1">
+                Team Blue
+                <div class="score" id="scoreTeam1">{{ scores.scoreTeam1 }}</div>
+            </div>
+            <div class="team team2">
+                Team Red
+                <div class="score" id="scoreTeam2">{{ scores.scoreTeam2 }}</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateScores() {
+            fetch('/latest_scores')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('scoreTeam1').innerText = data.scoreTeam1;
+                    document.getElementById('scoreTeam2').innerText = data.scoreTeam2;
+                })
+                .catch(error => console.error('Error fetching scores:', error));
+        }
+
+        function updateRemainingTime() {
+            fetch('/remaining_time')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.remaining_time !== undefined) {
+                        let minutes = Math.floor(data.remaining_time / 60);
+                        let seconds = data.remaining_time % 60;
+                        document.getElementById("remaining-time").textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                        if (data.remaining_time <= 0) {
+                            window.location.href = '/start';
+                        }
+                    }
+                });
+        }
+
+        // Update scores and remaining time every second
+        setInterval(updateScores, 1000);
+        setInterval(updateRemainingTime, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!-- templates/start_game.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Game</title>
+    <style>
+        body, html {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh; /* Full viewport height */
+            display: flex;
+            flex-direction: column; /* Stack children vertically */
+            justify-content: flex-start; /* Align children at the start */
+            align-items: center; /* Center children horizontally */
+            background: linear-gradient(to right, #004D99 50%, #CC0000 50%);
+            color: white;
+        }
+        #title-container {
+            width: 100%; /* Full width */
+            text-align: center; /* Center the title text */
+            padding: 20px 0; /* Padding at the top and bottom */
+        }
+        form {
+            background: rgba(255, 255, 255, 0.8); /* Slightly transparent white */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-top: 20px; /* Add space between the title and the form */
+            width: 300px; /* Fixed width for form */
+        }
+        h1 {
+            color: #333;
+        }
+        label {
+            font-size: 16px;
+            color: #666;
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            background: white;
+            color: black;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="title-container">
+        <h1>Start Game</h1>
+    </div>
+    <form action="/start_game" method="post">
+        <label for="game_mode">Choose a game mode:</label>
+        <select name="game_mode" id="game_mode">
+            <option value="Team Deathmatch">Team Deathmatch</option>
+            <option value="Free For All">Free for All</option>
+        </select>
+        <label for="duration">Choose game duration:</label>
+        <select name="duration" id="duration">
+            <option value="3">3 Minutes</option>
+            <option value="5">5 Minutes</option>
+            <option value="10">10 Minutes</option>
+        </select>
+        <button type="submit">Start Game</button>
+    </form>
+</body>
+</html>

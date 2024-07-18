@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaphy Lasergame Free For All Scoreboard</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background-color: #333; /* Set background color */
+        }
+        .header {
+            text-align: center;
+            background-color: #444;
+            color: #fff;
+            padding: 15px 0;
+            font-size: 50px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+        }
+        .timer {
+            font-size: 40px;
+            font-weight: bold;
+            color: #fff;
+            text-align: center;
+            margin-top: 80px; /* Adjusted to position below the header */
+        }
+        .scoreboard {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            height: calc(100% - 150px); /* Adjusted to accommodate the header and timer */
+            padding-top: 20px;
+            box-sizing: border-box;
+            color: #fff;
+            text-align: center;
+        }
+        .player {
+            flex: 1 1 200px;
+            padding: 20px;
+            font-size: 30px;
+            margin: 10px;
+            border-radius: 10px;
+            background-color: #555;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        .score {
+            font-size: 80px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        Leaphy Lasergame!
+    </div>
+    <div class="timer" id="remaining-time">00:00</div>
+    <div class="scoreboard">
+        {% for mac_address, hits in scores.items() %}
+            <div class="player">
+                {{ mac_address }}
+                <div class="score" id="score_{{ mac_address }}">{{ hits }}</div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        function updateScores() {
+            fetch('/latest_scores')
+                .then(response => response.json())
+                .then(data => {
+                    for (const [mac, score] of Object.entries(data)) {
+                        document.getElementById('score_' + mac).innerText = score;
+                    }
+                })
+                .catch(error => console.error('Error fetching scores:', error));
+        }
+
+        function updateRemainingTime() {
+            fetch('/remaining_time')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.remaining_time !== undefined) {
+                        let minutes = Math.floor(data.remaining_time / 60);
+                        let seconds = data.remaining_time % 60;
+                        document.getElementById("remaining-time").textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                        if (data.remaining_time <= 0) {
+                            window.location.href = '/start';
+                        }
+                    }
+                });
+        }
+
+        // Update scores and remaining time every second
+        setInterval(updateScores, 1000);
+        setInterval(updateRemainingTime, 1000);
+    </script>
+</body>
+</html>
